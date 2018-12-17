@@ -3,6 +3,11 @@ package excel;
 import java.util.HashMap;
 import java.util.Map;
 
+/**
+ * 
+ * @author 625
+ *
+ */
 public class POIConstant {
 
 	// 单元格坐标对应数字Map
@@ -62,45 +67,24 @@ public class POIConstant {
 		cellRefNums.put("AY", 50);
 		cellRefNums.put("AZ", 51);
 	}
-	// ----------------------------------------start 列宽度定义
-	// -------------------------------------
-
-	/**
-	 * 列宽自动
-	 */
-	public static final int AUTO = 0;
 
 	/**
 	 * 列宽单位-字符
 	 */
-	private static int CHARUNIT = 2 * 256;
+	private final static int CHARUNIT = 2 * 310;
 
 	/**
 	 * 格式化(24小时制)<br>
-	 * FORMAT_DateTime: 日期时间
+	 * FORMAT_DateTime: 日期时间 yyyy-MM-dd HH:mm
 	 */
-	public static final String FMTDATETIME = "yyyy-MM-dd HH:mm:ss";
+	public final static String FMTDATETIME = "yyyy-MM-dd HH:mm";
 
 	/**
 	 * 格式化(24小时制)<br>
-	 * FORMAT_DateTime: 日期时间
+	 * FORMAT_DateTime: 日期时间 yyyy-MM-dd
 	 */
-	public static final String FMTDATE = "yyyy-MM-dd";
+	public final static String FMTDATE = "yyyy-MM-dd";
 
-	/**
-	 * 居右
-	 */
-	public static final String RIGHT = "RIGHT";
-
-	/**
-	 * 居中
-	 */
-	public static final String CENTER = "CENTER";
-
-	/**
-	 * 居左
-	 */
-	public static final String LEFT = "LEFT";
 
 	/**
 	 * 宽度设置,
@@ -125,6 +109,5 @@ public class POIConstant {
 		}
 		return nums;
 	}
-	// ----------------------------------------end 列宽度定义
-	// -------------------------------------
+
 }

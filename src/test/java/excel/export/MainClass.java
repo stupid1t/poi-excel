@@ -3,18 +3,21 @@ package excel.export;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.poi.ss.usermodel.HorizontalAlignment;
+import org.apache.poi.ss.usermodel.IndexedColors;
+import org.apache.poi.ss.usermodel.VerticalAlignment;
 import org.apache.poi.ss.usermodel.Workbook;
 
 import excel.ExcelUtils;
+import excel.ExcelUtils.Column;
 import excel.ExcelUtils.ExportRules;
-import excel.POIConstant;
 
 public class MainClass {
 
@@ -22,10 +25,11 @@ public class MainClass {
 		try {
 			long s = System.currentTimeMillis();
 			export1();
-			// export2();
-			// export3();
-			// export4();
-			System.out.println("耗时:"+(System.currentTimeMillis()-s));
+			export2();
+			export3();
+			export4();
+			export5();
+			System.out.println("耗时:" + (System.currentTimeMillis() - s));
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -47,33 +51,31 @@ public class MainClass {
 			obj.setAreaName("华东长三角");
 			obj.setProvince("河北省");
 			obj.setCity("保定市");
-			obj.setStatusName("已签署协议");
-			obj.setScount("9.55");
-			obj.setAreaScore(1.2332);
-			obj.setResourceScore(2.4232);
-			obj.setManageScore(3.2323);
-			obj.setResourceScore(4.0323);
-			obj.setReviewScore(5.2323);
-			obj.setTeamScore(6.0234);
-			obj.setPotentialScore(21232133.0423);
+			obj.setPeople("张三" + i);
+			obj.setLeader("李四" + i);
+			obj.setScount(50);
+			obj.setAvg(60.0);
 			obj.setCreateTime(new Date());
+			obj.setImg(ExcelUtils.ImageParseBytes(new File("src/test/java/excel/export/1.png")));
 			data.add(obj);
 		}
 		// 2.导出标题设置，可为空
 		String title = "项目资源统计";
 		// 3.导出的hearder设置
-		String[] hearder = { "序号", "项目名称", "所属区域", "省份", "市", "项目状态", "字段A", "字段B", "字段C", "字段D", "字段E", "字段F", "字段" };
-		// 4.导出hearder对应的字段设置，列宽设置
-		Object[][] fileds = { { "projectName", POIConstant.width(1) }, // 1.导出字段;2.列宽设置;3.居左居右，默认居中
-				{ "areaName", POIConstant.width(2) }, { "province", POIConstant.width(3) }, // 5个汉字长度
-				{ "city", POIConstant.width(4) }, { "statusName", POIConstant.width(5) }, { "scount", POIConstant.width(6), POIConstant.RIGHT }, // 该字段，数字设置居右
-				{ "areaScore", POIConstant.width(7) }, { "resourceScore", POIConstant.width(8) }, { "manageScore", POIConstant.width(9) }, { "reviewScore", POIConstant.width(10) },
-				{ "teamScore", POIConstant.width(11) }, { "createTime", POIConstant.width(12) } };
+		String[] hearder = { "序号", "项目名称", "所属区域", "省份", "市", "项目所属人", "项目领导人", "得分", "平均分", "创建时间", "项目图片" };
+		// 4.导出hearder对应的字段设置
+		Column[] column = { Column.field("projectName"), Column.field("areaName"), Column.field("province"),
+				Column.field("city"), Column.field("people"), Column.field("leader"), Column.field("scount"),
+				Column.field("avg"), Column.field("createTime"),
+				// 项目图片
+				Column.field("img")
+
+		};
 		// 5.执行导出到工作簿
-		// ExportRules:1.是否序号;2.字段信息;3.标题设置可为空;4.表头设置;5.表尾设置可为空
-		Workbook bean = ExcelUtils.createWorkbook(data, new ExportRules(true, fileds, title, hearder, null));
+		// ExportRules:1.是否序号;2.列设置;3.标题设置可为空;4.表头设置;5.表尾设置可为空
+		Workbook bean = ExcelUtils.createWorkbook(data, new ExportRules(true, column, title, hearder, null));
 		// 6.写出文件
-		bean.write(new FileOutputStream("src/test/java/excel/export/export1.xlsx"));
+		bean.write(new FileOutputStream("src/test/java/excel/export/export1.xls"));
 	}
 
 	/**
@@ -84,74 +86,81 @@ public class MainClass {
 	public static void export2() throws Exception {
 		// 1.获取导出的数据体
 		List<ProjectEvaluate> data = new ArrayList<ProjectEvaluate>();
-		for (int i = 0; i < 10; i++) {
+		for (int i = 0; i < 50; i++) {
 			ProjectEvaluate obj = new ProjectEvaluate();
 			obj.setProjectName("中青旅" + i);
 			obj.setAreaName("华东长三角");
 			obj.setProvince("河北省");
 			obj.setCity("保定市");
-			obj.setStatusName("已签署协议");
-			obj.setScount("9.55");
-			obj.setAreaScore(1.2332);
-			obj.setResourceScore(2.4232);
-			obj.setManageScore(3.2323);
-			obj.setResourceScore(4.0323);
-			obj.setReviewScore(5.2323);
-			obj.setTeamScore(6.0234);
-			obj.setPotentialScore(21232133.0423);
+			obj.setPeople("张三" + i);
+			obj.setLeader("李四" + i);
+			obj.setScount(50);
+			obj.setAvg(60.0);
 			obj.setCreateTime(new Date());
+			obj.setImg(ExcelUtils.ImageParseBytes(new File("src/test/java/excel/export/1.png")));
 			data.add(obj);
 		}
 		// 2.表头设置,可以对应excel设计表头，一看就懂
 		HashMap<String, String> headerRules = new HashMap<>();
-		headerRules.put("1,1,A,M", "项目资源统计");
+		headerRules.put("1,1,A,K", "项目资源统计");
 		headerRules.put("2,3,A,A", "序号");
-		headerRules.put("2,3,B,B", "项目名称");
-		headerRules.put("2,3,C,C", "所属区域");
-		headerRules.put("2,3,D,D", "省份");
-		headerRules.put("2,3,E,E", "市");
-		headerRules.put("2,3,F,F", "项目状态");
-		headerRules.put("2,3,G,G", "总分");
-		headerRules.put("2,2,H,M", "单项评分");
-		headerRules.put("3,3,H,H", "区位条件");
-		headerRules.put("3,3,I,I", "资源禀赋");
-		headerRules.put("3,3,J,J", "经营现状");
-		headerRules.put("3,3,K,K", "考察印象");
-		headerRules.put("3,3,L,L", "管理团队");
-		headerRules.put("3,3,M,M", "创建时间");
+		headerRules.put("2,2,B,E", "基本信息");
+		headerRules.put("3,3,B,B", "项目名称");
+		headerRules.put("3,3,C,C", "所属区域");
+		headerRules.put("3,3,D,D", "省份");
+		headerRules.put("3,3,E,E", "市");
+		headerRules.put("2,3,F,F", "项目所属人");
+		headerRules.put("2,3,G,G", "市项目领导人");
+		headerRules.put("2,2,H,I", "分值");
+		headerRules.put("3,3,H,H", "得分");
+		headerRules.put("3,3,I,I", "平均分");
+		headerRules.put("2,3,J,J", "创建时间");
+		headerRules.put("2,3,K,K", "项目图片");
 		// 3.尾部设置，一般可以用来设计合计栏
 		HashMap<String, String> footerRules = new HashMap<>();
 		footerRules.put("1,2,A,C", "注释:");
-		footerRules.put("1,2,D,M", "导出参考代码！");
-		// 4.导出字段设置
-		Object[][] fields = { { "projectName", POIConstant.AUTO }, // 1.导出字段;2.列宽设置;3.居左居右，默认居中
-				{ "areaName", POIConstant.AUTO }, { "province", POIConstant.width(5) }, // 5个汉字长度
-				{ "city", POIConstant.AUTO }, { "statusName", POIConstant.AUTO },
-				{ "scount", POIConstant.AUTO, POIConstant.RIGHT }, // 该字段，数字设置居右
-				{ "areaScore", POIConstant.AUTO }, { "resourceScore", POIConstant.AUTO },
-				{ "manageScore", POIConstant.AUTO }, { "reviewScore", POIConstant.AUTO },
-				{ "teamScore", POIConstant.AUTO }, { "createTime", POIConstant.width(10) } };
-		// 5.执行导出到工作簿
-		// ExportRules:1.是否序号;2.字段信息;3.标题设置可为空;4.表头设置;5.表尾设置可为空
+		footerRules.put("1,2,D,K", "导出参考代码！");
+		// 4.导出hearder对应的字段设置
+		Column[] column = {
 
-		Workbook bean = ExcelUtils.createWorkbook(data, new ExportRules(true, fields, headerRules, footerRules),
-				(fieldName, value, rows) -> {
-					System.out.println("当前导出的数据体为:" + rows);
-					System.out.println("当前导出值为:" + value);
-					// 创建日期，formatter一下
-					if (fieldName.equals("createTime")) {
-						value = new SimpleDateFormat(POIConstant.FMTDATE).format((Date) (value));
-					}
-					// 设置图片
-					if (fieldName.equals("img")) {
-						// 1.假使实体中存储的是文件路径，将路径变成byte返回value就可以
-						value = "src/test/java/excel/export/1.png";
-						value = ExcelUtils.ImageParseBytes(new File((String) value));
+				Column.field("projectName"),
+				// 4.1设置此列宽度为10
+				Column.field("areaName").width(10),
+				// 4.2设置此列下拉框数据
+				Column.field("province").width(5).dorpDown(new String[] { "陕西省", "山西省", "辽宁省" }),
+				// 4.3设置此列水平居右
+				Column.field("city").align(HorizontalAlignment.RIGHT),
+				// 4.4 设置此列垂直居上
+				Column.field("people").valign(VerticalAlignment.TOP),
+				// 4.5 设置此列单元格 自定义校验 只能输入文本
+				Column.field("leader").width(4).verifyCustom("VALUE(F3:F500)", "我是提示"),
+				// 4.6设置此列单元格 整数 数据校验 ，同时设置背景色为棕色
+				Column.field("scount").verifyIntNum("10~20").backColor(IndexedColors.BROWN),
+				// 4.7设置此列单元格 浮点数 数据校验， 同时设置字体颜色红色
+				Column.field("avg").verifyFloatNum("10.0~20.0").color(IndexedColors.RED),
+				// 4.8设置此列单元格 日期 数据校验 ，同时宽度为20、限制用户表格输入、水平居中、垂直居中、背景色、字体颜色
+				Column.field("createTime").width(20).verifyDate("2000-01-03 12:35~3000-05-06 23:23")
+						.align(HorizontalAlignment.LEFT).valign(VerticalAlignment.CENTER)
+						.backColor(IndexedColors.YELLOW).color(IndexedColors.GOLD),
+				// 4.9项目图片
+				Column.field("img")
+
+		};
+		// 5.执行导出到工作簿
+		// ExportRules:1.是否序号;2.列设置;3.标题设置可为空;4.表头设置;5.表尾设置可为空
+		Workbook bean = ExcelUtils.createWorkbook(data, new ExportRules(true, column, headerRules, footerRules),
+				(fieldName, value, row, col) -> {
+					if ("projectName".equals(fieldName) && row.getProjectName().equals("中青旅23")) {
+						col.align(HorizontalAlignment.LEFT);
+						col.valign(VerticalAlignment.CENTER);
+						col.height(2);
+						col.backColor(IndexedColors.RED);
+						col.color(IndexedColors.YELLOW);
 					}
 					return value;
 				});
 		// 6.写出文件
-		bean.write(new FileOutputStream("src/test/java/excel/export/export2.xlsx"));
+		bean.write(new FileOutputStream("src/test/java/excel/export/export2.xls"));
 	}
 
 	/**
@@ -180,46 +189,91 @@ public class MainClass {
 		// 3.导出的hearder设置
 		String[] hearder = { "學生姓名", "所在班級", "所在學校", "更多父母姓名" };
 		// 4.导出hearder对应的字段设置，列宽设置
-		Object[][] fileds = { { "name", POIConstant.AUTO }, // 1.导出字段;2.列宽设置;3.居左居右，默认居中
-				{ "classRoom.name", POIConstant.AUTO }, { "classRoom.school.name", POIConstant.AUTO }, // 5个汉字长度
-				{ "moreInfo.parent.name", POIConstant.AUTO } };
+		Column[] column = { Column.field("name"), Column.field("classRoom.name"), Column.field("classRoom.school.name"),
+				Column.field("moreInfo.parent.name"), };
 		// 5.执行导出到工作簿
 		// ExportRules:1.是否序号;2.字段信息;3.标题设置可为空;4.表头设置;5.表尾设置可为空
-		Workbook bean = ExcelUtils.createWorkbook(data, new ExportRules(false, fileds, title, hearder, null));
+		Workbook bean = ExcelUtils.createWorkbook(data, new ExportRules(false, column, title, hearder, null));
 		// 6.写出文件
-		bean.write(new FileOutputStream("src/test/java/excel/export/export3.xlsx"));
+		bean.write(new FileOutputStream("src/test/java/excel/export/export3.xls"));
 	}
 
 	/**
 	 * 
-	 * map对象的简单导出
+	 * 简单导出
 	 * 
 	 * @throws Exception
 	 */
 	public static void export4() throws Exception {
 		// 1.获取导出的数据体
-		List<Map<String, String>> data = new ArrayList<Map<String, String>>();
+		List<ProjectEvaluate> data = new ArrayList<ProjectEvaluate>();
 		for (int i = 0; i < 10; i++) {
-			// 學生
-			Map<String, String> map = new HashMap<>();
-			map.put("name", "张三");
-			map.put("classRoomName", "三班");
-			map.put("school", "世纪中心");
-			map.put("parent", "张无忌");
-			data.add(map);
+			ProjectEvaluate obj = new ProjectEvaluate();
+			obj.setProjectName("中青旅" + i);
+			obj.setAreaName("华东长三角");
+			obj.setProvince("河北省");
+			obj.setCity("保定市");
+			obj.setPeople("张三" + i);
+			obj.setLeader("李四" + i);
+			obj.setScount(50);
+			obj.setAvg(60.0);
+			obj.setCreateTime(new Date());
+			obj.setImg(ExcelUtils.ImageParseBytes(new File("src/test/java/excel/export/1.png")));
+			data.add(obj);
 		}
 		// 2.导出标题设置，可为空
-		String title = "學生基本信息";
+		String title = "项目资源统计";
 		// 3.导出的hearder设置
-		String[] hearder = { "學生姓名", "所在班級", "所在學校", "更多父母姓名" };
-		// 4.导出hearder对应的字段设置，列宽设置
-		Object[][] fileds = { { "name", POIConstant.AUTO }, // 1.导出字段;2.列宽设置;3.居左居右，默认居中
-				{ "classRoomName", POIConstant.AUTO }, { "school", POIConstant.AUTO }, // 5个汉字长度
-				{ "parent", POIConstant.AUTO } };
+		String[] hearder = { "序号", "项目名称", "所属区域", "省份", "市", "项目所属人", "项目领导人", "得分", "平均分", "创建时间", "项目图片" };
+		// 4.导出hearder对应的字段设置
+		Column[] column = { Column.field("projectName"), Column.field("areaName"), Column.field("province"),
+				Column.field("city"), Column.field("people"), Column.field("leader"), Column.field("scount"),
+				Column.field("avg"), Column.field("createTime"),
+				// 项目图片
+				Column.field("img")
+
+		};
 		// 5.执行导出到工作簿
-		// ExportRules:1.是否序号;2.字段信息;3.标题设置可为空;4.表头设置;5.表尾设置可为空
-		Workbook bean = ExcelUtils.createWorkbook(data, new ExportRules(false, fileds, title, hearder, null));
+		// ExportRules:1.是否序号;2.列设置;3.标题设置可为空;4.表头设置;5.表尾设置可为空
+		Workbook bean = ExcelUtils.createWorkbook(data, new ExportRules(true, column, title, hearder, null));
 		// 6.写出文件
-		bean.write(new FileOutputStream("src/test/java/excel/export/export4.xlsx"));
+		bean.write(new FileOutputStream("src/test/java/excel/export/export1.xls"));
 	}
+
+	/**
+	 * 
+	 * 模板导出
+	 * 
+	 * @throws Exception
+	 */
+	public static void export5() throws Exception {
+		List<String> list = new ArrayList<>();
+		for (int i = 0; i < 50; i++) {
+			list.add(i + "");
+		}
+		String[] drop = list.toArray(new String[list.size()]);
+
+		// 1.导出标题设置，可为空
+		String title = "客户导入";
+		// 2.导出的hearder设置
+		String[] hearder = { "宝宝姓名", "宝宝昵称", "家长姓名", "手机号码", "宝宝生日", "月龄", "宝宝性别", "来源渠道", "市场人员", "咨询顾问", "客服顾问",
+				"分配校区", "备注" };
+		// 3.导出hearder对应的字段设置，列宽设置
+		Column[] column = { Column.field("宝宝姓名"), Column.field("宝宝昵称"), Column.field("家长姓名").dorpDown(drop),
+				Column.field("手机号码").verifyText("11~11", "请输入11位的手机号码！"),
+				Column.field("宝宝生日").verifyDate("2000-01-01~3000-12-31"),
+				Column.field("月龄").width(4).verifyCustom("VALUE(F3:F6000)", "月齡格式：如1年2个月则输入14"),
+				Column.field("宝宝性别").dorpDown(new String[] { "男", "女" }),
+				Column.field("来源渠道").width(12).dorpDown(new String[] { "品推", "市场" }),
+				Column.field("市场人员").width(6).dorpDown(new String[] { "张三", "李四" }),
+				Column.field("咨询顾问").width(6).dorpDown(new String[] { "张三", "李四" }),
+				Column.field("客服顾问").width(6).dorpDown(new String[] { "大唐", "银泰" }),
+				Column.field("分配校区").width(6).dorpDown(new String[] { "大唐", "银泰" }), Column.field("备注") };
+		// 5.执行导出到工作簿
+		Workbook bean = ExcelUtils.createWorkbook(Collections.emptyList(),
+				new ExportRules(false, column, title, hearder, null).setXlsx(true));
+		// 6.写出文件
+		bean.write(new FileOutputStream("src/test/java/excel/export/export5.xlsx"));
+	}
+
 }

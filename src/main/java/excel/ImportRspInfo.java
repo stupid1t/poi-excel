@@ -5,7 +5,7 @@ import java.util.List;
 /**
  * excel 导入返回的实体类
  * 
- * @author lt
+ * @author 625
  *
  * @param <T>
  */

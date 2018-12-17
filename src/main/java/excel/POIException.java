@@ -3,9 +3,10 @@ package excel;
 import java.security.InvalidParameterException;
 
 /**
- * 业务异常处理类
+ * 625
  * 
- * @author lixiangjing
+ * @author Administrator
+ *
  */
 public class POIException extends RuntimeException {
 

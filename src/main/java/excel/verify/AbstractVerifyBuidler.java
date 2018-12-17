@@ -58,5 +58,10 @@ public abstract class AbstractVerifyBuidler {
 		}
 		return fileValue;
 	}
+	
+	public Map<String, AbstractCellVerify> getVerifys() {
+		return verifys;
+	}
+
 
 }
