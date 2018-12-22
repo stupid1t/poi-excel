@@ -1,12 +1,12 @@
 # excel-poi （[git地址](http://https://gitee.com/stupid1t/small_tools)）
 
-==导入:==
+### 导入
 1. 支持严格的单元格校验
 2. 支持数据行的图片导入
 3. 3支持数据回调处理
 4. 03和07都支持
 
-==导出:==
+### 导出
 1. 动态表头+表尾
 2. 支持List<Map>数据
 3. 支持图片导出，
@@ -17,14 +17,14 @@
 8. 导出03和07都支持，默认为03，具体看以下使用方式
 
 
-==选择03还是07？==
+### 选择03还是07？
 1. 03速度较快，单sheet最大65535行，体积大
 2. 07速度慢，单sheet最大1048576行，体积小
 
 
 ## 主要功能：
 ### 导入
-1.简单的导入:
+1. 简单的导入:
 ```java
 // 1.获取源文件
 Workbook wb = WorkbookFactory.create(new FileInputStream("src\\test\\java\\excel\\imports\\import.xlsx"));
@@ -42,7 +42,7 @@ if (list.isSuccess()) {
 }
 ```
 
-2.复杂导入，带图片导入，带回调处理
+2. 复杂导入，带图片导入，带回调处理
 ```java
 // 1.获取源文件
 Workbook wb = WorkbookFactory.create(new FileInputStream("src\\test\\java\\excel\\imports\\import.xlsx"));
@@ -69,7 +69,7 @@ if (list.isSuccess()) {
 }
 ```
 
-2.1自定义校验器，导入需要校验字段,必须继承AbstractVerifyBuidler
+3. 自定义校验器，导入需要校验字段,必须继承AbstractVerifyBuidler
 
 ```java
 public class ProjectVerifyBuilder extends AbstractVerifyBuidler {
@@ -106,7 +106,7 @@ public class ProjectVerifyBuilder extends AbstractVerifyBuidler {
 ![输入图片说明](https://images.gitee.com/uploads/images/2018/1118/104015_a439ba1a_1215820.png "QQ截图20181118104004.png")
 
 ### 导出
-1.简单导出
+1. 简单导出
 ```java
 // 1.获取导出的数据体
 List<ProjectEvaluate> data = new ArrayList<ProjectEvaluate>();
@@ -150,11 +150,11 @@ Workbook bean = ExcelUtils.createWorkbook(data, new ExportRules(true, column, ti
 bean.write(new FileOutputStream("src/test/java/excel/export/export1.xls"));
 ```
 
-#### 导出图
+#### 1导出图
 ![输入图片说明](https://images.gitee.com/uploads/images/2018/1215/161804_3ddf0b6b_1215820.png "1.png")
 
 
-2.复杂表格导出
+2. 复杂表格导出
 
 ```java
 // 1.获取导出的数据体
@@ -249,11 +249,11 @@ Workbook bean = ExcelUtils.createWorkbook(data, new ExportRules(true, column, he
 bean.write(new FileOutputStream("src/test/java/excel/export/export2.xls"));
 ```
 
-#### 导出图
+#### 2导出图
 ![输入图片说明](https://images.gitee.com/uploads/images/2018/1215/161814_61f83ff1_1215820.png "2.png")
 
 
-3.复杂的对象级联导出
+3. 复杂的对象级联导出
 
 ```java
 // 1.获取导出的数据体
@@ -286,7 +286,7 @@ bean.write(new FileOutputStream("src/test/java/excel/export/export3.xls"));
 #### 3导出图
 ![输入图片说明](https://images.gitee.com/uploads/images/2018/1209/193615_b483f034_1215820.png "4.png")
 
-4.map对象的简单导出
+4. map对象的简单导出
 
 ```java
 // 1.获取导出的数据体
@@ -316,7 +316,7 @@ bean.write(new FileOutputStream("src/test/java/excel/export/export4.xls"));
 #### 4导出图
 ![输入图片说明](https://images.gitee.com/uploads/images/2018/1209/193608_c75b81ee_1215820.png "4.png")
 
-5.模板导出
+5. 模板导出
 
 ```java
 // 1.导出标题设置，可为空
@@ -345,6 +345,3 @@ bean.write(new FileOutputStream("src/test/java/excel/export/export5.xlsx"));
 
 #### 5导出图
 ![输入图片说明](https://images.gitee.com/uploads/images/2018/1215/180646_50cc4004_1215820.png "5.png")
-
-# 经常会更新，随时关注哦 :laughing: 
-
