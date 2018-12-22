@@ -32,11 +32,6 @@
 		<artifactId>commons-lang3</artifactId>
 		<version>3.3.2</version>
 	</dependency>
-	<dependency>
-	  <groupId>com.github.binarywang</groupId>
-	  <artifactId>weixin-java-mp</artifactId>
-	  <version>3.2.6.B</version>
-	</dependency>
   </dependencies>
 </project>
 

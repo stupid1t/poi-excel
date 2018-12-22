@@ -338,9 +338,9 @@ Column[] column = {
 		Column.field("备注")
 	};
 // 5.执行导出到工作簿
-Workbook bean = ExcelUtils.createWorkbook(Collections.emptyList(), new ExportRules(false, column, title, hearder, null));
+Workbook bean = ExcelUtils.createWorkbook(Collections.emptyList(), new ExportRules(false, column, title, hearder, null).setXlsx(true));
 // 6.写出文件
-bean.write(new FileOutputStream("src/test/java/excel/export/export5.xls"));
+bean.write(new FileOutputStream("src/test/java/excel/export/export5.xlsx"));
 ```
 
 #### 5导出图

@@ -67,8 +67,6 @@ import org.apache.poi.xssf.usermodel.XSSFShape;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.openxmlformats.schemas.drawingml.x2006.spreadsheetDrawing.CTMarker;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import excel.callBack.ExportSheetCallback;
 import excel.callBack.ParseSheetCallback;
@@ -83,8 +81,6 @@ import excel.verify.ImgVerify;
  *
  */
 public class ExcelUtils {
-
-	private static final Logger LOG = LoggerFactory.getLogger(ExcelUtils.class);
 
 	/**
 	 * 设置打印方向
@@ -303,12 +299,17 @@ public class ExcelUtils {
 			// 3.时间校验
 			String date = column.getVerifyDate();
 			if (date != null) {
-				String[] split = date.split("~");
-				if (split.length < 2) {
+				String[] split = date.split("@");
+				String info = null;
+				if (split.length == 2) {
+					info = split[1];
+				}
+				String[] split1 = split[0].split("~");
+				if (split1.length < 2) {
 					throw new IllegalArgumentException("时间校验表达式不正确,请填写如2015-08-09~2016-09-10的值!");
 				}
 				try {
-					sheet.addValidationData(createDateValidation(sheet, split[0], split[1], j, maxRows));
+					sheet.addValidationData(createDateValidation(sheet, split1[0], split1[1], info, j, maxRows));
 				} catch (Exception e) {
 					e.printStackTrace();
 				}
@@ -317,21 +318,31 @@ public class ExcelUtils {
 			// 4.整数数字校验
 			String num = column.getVerifyIntNum();
 			if (num != null) {
-				String[] split = num.split("~");
-				if (split.length < 2) {
+				String[] split = num.split("@");
+				String info = null;
+				if (split.length == 2) {
+					info = split[1];
+				}
+				String[] split1 = split[0].split("~");
+				if (split1.length < 2) {
 					throw new IllegalArgumentException("数字表达式不正确,请填写如10~30的值!");
 				}
-				sheet.addValidationData(createNumValidation(sheet, split[0], split[1], j, maxRows));
+				sheet.addValidationData(createNumValidation(sheet, split1[0], split1[1], info, j, maxRows));
 			}
 
 			// 4.浮点数字校验
 			String floatNum = column.getVerifyFloatNum();
 			if (floatNum != null) {
-				String[] split = floatNum.split("~");
-				if (split.length < 2) {
+				String[] split = floatNum.split("@");
+				String info = null;
+				if (split.length == 2) {
+					info = split[1];
+				}
+				String[] split1 = split[0].split("~");
+				if (split1.length < 2) {
 					throw new IllegalArgumentException("数字表达式不正确,请填写如10.0~30.0的值!");
 				}
-				sheet.addValidationData(createFloatValidation(sheet, split[0], split[1], j, maxRows));
+				sheet.addValidationData(createFloatValidation(sheet, split1[0], split1[1], info, j, maxRows));
 			}
 
 			// 5.自定义校验
@@ -520,7 +531,6 @@ public class ExcelUtils {
 						FieldUtils.writeDeclaredField(t, filedName, cellValue, true);
 					} catch (POIException e) {
 						rowErrors.append(cellRef.formatAsString()).append(":").append(e.getMessage()).append("\t");
-						LOG.error(e.getMessage());
 					}
 					fieldNum++;
 				}
@@ -537,7 +547,6 @@ public class ExcelUtils {
 		} catch (Exception e) {
 			if (e instanceof POIException) {
 				errors.append(new StringBuffer(e.getMessage()).append("\t"));
-				LOG.error(e.getMessage());
 			} else {
 				e.printStackTrace();
 			}
@@ -1052,18 +1061,13 @@ public class ExcelUtils {
 	 * excel添加时间数据校验
 	 * 
 	 * 
-	 * @param sheet
-	 *            哪个 sheet 页添加校验
-	 * @param dataSource
-	 *            数据源数组
-	 * @param col
-	 *            第几列校验（0开始）
-	 * @param maxRow
-	 *            表头占用几行
+	 * @param sheet      哪个 sheet 页添加校验
+	 * @param dataSource 数据源数组
+	 * @param col        第几列校验（0开始）
+	 * @param maxRow     表头占用几行
 	 * @return
 	 */
-	private static DataValidation createDateValidation(Sheet sheet, String start, String end, int col, int maxRow)
-			throws Exception {
+	private static DataValidation createDateValidation(Sheet sheet, String start, String end, String info, int col, int maxRow) throws Exception {
 		String pattern = POIConstant.FMTDATETIME;
 		// 0.格式判断
 		if (start.length() != 16) {
@@ -1076,13 +1080,10 @@ public class ExcelUtils {
 		Date startDate = DateUtils.parseDate(start, pattern);
 		Date endDate = DateUtils.parseDate(end, pattern);
 		cal.setTime(startDate);
-		String formulaStart = "=DATE(" + cal.get(Calendar.YEAR) + "," + (cal.get(Calendar.MONTH) + 1) + ","
-				+ cal.get(Calendar.DATE) + ")";
+		String formulaStart = "=DATE(" + cal.get(Calendar.YEAR) + "," + (cal.get(Calendar.MONTH) + 1) + "," + cal.get(Calendar.DATE) + ")";
 		cal.setTime(endDate);
-		String formulaEnd = "=DATE(" + cal.get(Calendar.YEAR) + "," + (cal.get(Calendar.MONTH) + 1) + ","
-				+ cal.get(Calendar.DATE) + ")";
-		DataValidationConstraint constraint = helper.createDateConstraint(OperatorType.BETWEEN, formulaStart,
-				formulaEnd, pattern);
+		String formulaEnd = "=DATE(" + cal.get(Calendar.YEAR) + "," + (cal.get(Calendar.MONTH) + 1) + "," + cal.get(Calendar.DATE) + ")";
+		DataValidationConstraint constraint = helper.createDateConstraint(OperatorType.BETWEEN, formulaStart, formulaEnd, pattern);
 		DataValidation dataValidation = helper.createValidation(constraint, cellRangeAddressList);
 
 		// 处理Excel兼容性问题
@@ -1094,7 +1095,9 @@ public class ExcelUtils {
 		}
 		dataValidation.setEmptyCellAllowed(true);
 		dataValidation.setShowPromptBox(true);
-		dataValidation.createPromptBox("提示", "可输入的日期范围" + start + "~" + end);
+		if (info != null) {
+			dataValidation.createPromptBox("提示", info);
+		}
 		// 2.设置单元格格式
 		Workbook workbook = sheet.getWorkbook();
 		CellStyle style = workbook.createCellStyle();
@@ -1108,17 +1111,13 @@ public class ExcelUtils {
 	 * excel添加数字校验
 	 * 
 	 * 
-	 * @param sheet
-	 *            哪个 sheet 页添加校验
-	 * @param dataSource
-	 *            数据源数组
-	 * @param col
-	 *            第几列校验（0开始）
-	 * @param maxRow
-	 *            表头占用几行
+	 * @param sheet      哪个 sheet 页添加校验
+	 * @param dataSource 数据源数组
+	 * @param col        第几列校验（0开始）
+	 * @param maxRow     表头占用几行
 	 * @return
 	 */
-	private static DataValidation createNumValidation(Sheet sheet, String minNum, String maxNum, int col, int maxRow) {
+	private static DataValidation createNumValidation(Sheet sheet, String minNum, String maxNum, String info, int col, int maxRow) {
 		// 1.设置验证
 		CellRangeAddressList cellRangeAddressList = new CellRangeAddressList(maxRow, 65535, col, col);
 		DataValidationHelper helper = sheet.getDataValidationHelper();
@@ -1134,7 +1133,9 @@ public class ExcelUtils {
 		}
 		dataValidation.setEmptyCellAllowed(true);
 		dataValidation.setShowPromptBox(true);
-		dataValidation.createPromptBox("提示", "请输入" + minNum + "~" + maxNum + "位的整数");
+		if (info != null) {
+			dataValidation.createPromptBox("提示", info);
+		}
 		return dataValidation;
 	}
 
@@ -1142,20 +1143,14 @@ public class ExcelUtils {
 	 * excel添加数字校验
 	 * 
 	 * 
-	 * @param sheet
-	 *            哪个 sheet 页添加校验
-	 * @param minNum
-	 *            最小值
-	 * @param maxNum
-	 *            最大值
-	 * @param col
-	 *            第几列校验（0开始）
-	 * @param maxRow
-	 *            表头占用几行
+	 * @param sheet  哪个 sheet 页添加校验
+	 * @param minNum 最小值
+	 * @param maxNum 最大值
+	 * @param col    第几列校验（0开始）
+	 * @param maxRow 表头占用几行
 	 * @return
 	 */
-	private static DataValidation createFloatValidation(Sheet sheet, String minNum, String maxNum, int col,
-			int maxRow) {
+	private static DataValidation createFloatValidation(Sheet sheet, String minNum, String maxNum, String info, int col, int maxRow) {
 		// 1.设置验证
 		CellRangeAddressList cellRangeAddressList = new CellRangeAddressList(maxRow, 65535, col, col);
 		DataValidationHelper helper = sheet.getDataValidationHelper();
@@ -1171,7 +1166,9 @@ public class ExcelUtils {
 		}
 		dataValidation.setEmptyCellAllowed(true);
 		dataValidation.setShowPromptBox(true);
-		dataValidation.createPromptBox("提示", "请输入" + minNum + "~" + maxNum + "位的浮点数字");
+		if (info != null) {
+			dataValidation.createPromptBox("提示", info);
+		}
 		return dataValidation;
 	}
 
@@ -1179,22 +1176,15 @@ public class ExcelUtils {
 	 * excel添加文本字符长度校验
 	 * 
 	 * 
-	 * @param sheet
-	 *            哪个 sheet 页添加校验
-	 * @param minNum
-	 *            最小值
-	 * @param maxNum
-	 *            最大值
-	 * @param info
-	 *            自定义提示
-	 * @param col
-	 *            第几列校验（0开始）
-	 * @param maxRow
-	 *            表头占用几行
+	 * @param sheet  哪个 sheet 页添加校验
+	 * @param minNum 最小值
+	 * @param maxNum 最大值
+	 * @param info   自定义提示
+	 * @param col    第几列校验（0开始）
+	 * @param maxRow 表头占用几行
 	 * @return
 	 */
-	private static DataValidation createTextLengthValidation(Sheet sheet, String minNum, String maxNum, String info,
-			int col, int maxRow) {
+	private static DataValidation createTextLengthValidation(Sheet sheet, String minNum, String maxNum, String info, int col, int maxRow) {
 		// 1.设置验证
 		CellRangeAddressList cellRangeAddressList = new CellRangeAddressList(maxRow, 65535, col, col);
 		DataValidationHelper helper = sheet.getDataValidationHelper();
@@ -1211,10 +1201,6 @@ public class ExcelUtils {
 		dataValidation.setShowPromptBox(true);
 		if (info != null) {
 			dataValidation.createPromptBox("提示", info);
-		} else if (minNum.equals(maxNum)) {
-			dataValidation.createPromptBox("提示", "文本长度限制为" + maxNum + "位");
-		} else {
-			dataValidation.createPromptBox("提示", "文本可输入长度为" + minNum + "~" + maxNum + "位");
 		}
 
 		return dataValidation;
@@ -1224,18 +1210,13 @@ public class ExcelUtils {
 	 * excel添加自定义校验
 	 * 
 	 * 
-	 * @param sheet
-	 *            哪个 sheet 页添加校验
-	 * @param formula
-	 *            表达式
-	 * @param col
-	 *            第几列校验（0开始）
-	 * @param maxRow
-	 *            表头占用几行
+	 * @param sheet   哪个 sheet 页添加校验
+	 * @param formula 表达式
+	 * @param col     第几列校验（0开始）
+	 * @param maxRow  表头占用几行
 	 * @return
 	 */
-	private static DataValidation createCustomValidation(Sheet sheet, String formula, String info, int col,
-			int maxRow) {
+	private static DataValidation createCustomValidation(Sheet sheet, String formula, String info, int col, int maxRow) {
 		String msg = "请输入正确的值！";
 		// 0.修正xls表达式不正确定位的问题,只修正了开始，如F3:F2000,修正了F3变为A0,F2000变为A2000
 		Workbook workbook = sheet.getWorkbook();
@@ -1662,8 +1643,7 @@ public class ExcelUtils {
 		/**
 		 * 字段名称
 		 * 
-		 * @param field
-		 *            字段名称
+		 * @param field 字段名称
 		 * @return
 		 */
 		public static Column style() {
@@ -1675,8 +1655,7 @@ public class ExcelUtils {
 		/**
 		 * 字段名称
 		 * 
-		 * @param field
-		 *            字段名称
+		 * @param field 字段名称
 		 * @return
 		 */
 		public static Column field(String field) {
@@ -1694,8 +1673,7 @@ public class ExcelUtils {
 		/**
 		 * 高度
 		 * 
-		 * @param height
-		 *            不设置默认
+		 * @param height 不设置默认
 		 * @return
 		 */
 		public Column height(int height) {
@@ -1717,8 +1695,7 @@ public class ExcelUtils {
 		/**
 		 * 宽度
 		 * 
-		 * @param width
-		 *            不设置默认自动
+		 * @param width 不设置默认自动
 		 * @return
 		 */
 		public Column width(int width) {
@@ -1732,8 +1709,7 @@ public class ExcelUtils {
 		/**
 		 * 水平定位
 		 * 
-		 * @param align
-		 *            ，CellStyle 取值
+		 * @param align ，CellStyle 取值
 		 * @return
 		 */
 		public Column align(HorizontalAlignment align) {
@@ -1751,8 +1727,7 @@ public class ExcelUtils {
 		/**
 		 * 设置字体颜色
 		 * 
-		 * @param backColor
-		 *            HSSFColor,XSSFColor
+		 * @param backColor HSSFColor,XSSFColor
 		 * @return
 		 */
 		public Column color(IndexedColors color) {
@@ -1788,8 +1763,7 @@ public class ExcelUtils {
 		/**
 		 * 设置垂直定位
 		 * 
-		 * @param vAlign
-		 *            默认居下
+		 * @param vAlign 默认居下
 		 * @return
 		 */
 		public Column valign(VerticalAlignment valign) {
@@ -1807,8 +1781,7 @@ public class ExcelUtils {
 		/**
 		 * 下拉列表数据
 		 * 
-		 * @param dorpDown
-		 *            下拉列表数据
+		 * @param dorpDown 下拉列表数据
 		 * @return
 		 */
 		public Column dorpDown(String[] dorpDown) {
@@ -1830,18 +1803,22 @@ public class ExcelUtils {
 		 * 
 		 * 日期数据校验
 		 *
-		 * @param verifyDate
-		 *            表达式，请填写例如2018-08-09~2019-08-09 格式也可以 yyyy-MM-dd HH:mm:ss
+		 * @param verifyDate 表达式，请填写例如2018-08-09~2019-08-09 格式也可以 yyyy-MM-dd HH:mm:ss
+		 * @param msgInfo    提示消息
 		 * @return
 		 */
-		public Column verifyDate(String verifyDate) {
+		public Column verifyDate(String verifyDate, String... msgInfo) {
 			if (style == 1) {
 				throw new UnsupportedOperationException("仅允许定义color/backColor/align/valign ！");
 			}
 			if (++verifyCount > 1) {
 				throw new UnsupportedOperationException("同一列只能定义一个数据校验！");
 			}
-			this.verifyDate = verifyDate;
+			if (msgInfo.length > 0) {
+				this.verifyDate = verifyDate + "@" + msgInfo[0];
+			} else {
+				this.verifyDate = verifyDate;
+			}
 
 			return this;
 		}
@@ -1853,38 +1830,44 @@ public class ExcelUtils {
 		/**
 		 * 整数数字数据校验
 		 * 
-		 * @param verifyNum
-		 *            表达式,请填写例如10~30
+		 * @param verifyNum 表达式,请填写例如10~30
+		 * @param msgInfo   提示消息
 		 * @return
 		 */
-		public Column verifyIntNum(String verifyIntNum) {
+		public Column verifyIntNum(String verifyIntNum, String... msgInfo) {
 			if (style == 1) {
 				throw new UnsupportedOperationException("仅允许定义color/backColor/align/valign ！");
 			}
 			if (++verifyCount > 1) {
 				throw new UnsupportedOperationException("同一列只能定义一个数据校验！");
 			}
-			this.verifyIntNum = verifyIntNum;
+			if (msgInfo.length > 0) {
+				this.verifyIntNum = verifyIntNum + "@" + msgInfo[0];
+			} else {
+				this.verifyIntNum = verifyIntNum;
+			}
 			return this;
 		}
 
 		/**
 		 * 浮点数字数据校验
 		 * 
-		 * @param verifyNum
-		 *            表达式,请填写例如10.0~30.0
-		 * @param msgInfo
-		 *            提示消息
+		 * @param verifyNum 表达式,请填写例如10.0~30.0
+		 * @param msgInfo   提示消息
 		 * @return
 		 */
-		public Column verifyFloatNum(String verifyFloatNum) {
+		public Column verifyFloatNum(String verifyFloatNum, String... msgInfo) {
 			if (style == 1) {
 				throw new UnsupportedOperationException("仅允许定义color/backColor/align/valign ！");
 			}
 			if (++verifyCount > 1) {
 				throw new UnsupportedOperationException("同一列只能定义一个数据校验！");
 			}
-			this.verifyFloatNum = verifyFloatNum;
+			if (msgInfo.length > 0) {
+				this.verifyFloatNum = verifyFloatNum + "@" + msgInfo[0];
+			} else {
+				this.verifyFloatNum = verifyFloatNum;
+			}
 			return this;
 		}
 
@@ -1899,11 +1882,8 @@ public class ExcelUtils {
 		/**
 		 * 自定义表达式校验
 		 * 
-		 * @param verifyCustom
-		 *            表达式 ，
-		 *            注意！！！xls格式和xlsx格式的表达式不太一样，xls从当前位置A1开始算起，xlsx从当前位置开始算起,已经修正过了
-		 * @param msgInfo
-		 *            提示消息
+		 * @param verifyCustom 表达式 ， 注意！！！xls格式和xlsx格式的表达式不太一样，xls从当前位置A1开始算起，xlsx从当前位置开始算起,已经修正过了
+		 * @param msgInfo      提示消息
 		 * @return
 		 */
 		public Column verifyCustom(String verifyCustom, String... msgInfo) {
@@ -1928,10 +1908,8 @@ public class ExcelUtils {
 		/**
 		 * 文本长度校验
 		 * 
-		 * @param verifyText
-		 *            比如输入1~2
-		 * @param msgInfo
-		 *            提示消息
+		 * @param verifyText 比如输入1~2
+		 * @param msgInfo    提示消息
 		 * @return
 		 */
 		public Column verifyText(String verifyText, String... msgInfo) {

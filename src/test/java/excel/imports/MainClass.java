@@ -1,9 +1,8 @@
 package excel.imports;
 
 import java.io.FileInputStream;
-import java.util.Map;
+import java.util.List;
 
-import org.apache.poi.ss.usermodel.PictureData;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.ss.usermodel.WorkbookFactory;
@@ -16,6 +15,14 @@ import excel.export.ProjectEvaluate;
 
 public class MainClass {
 
+	public static void main(String[] args) {
+		try {
+			test();
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
 	public static void parseSheet() throws Exception {
 		// 1.获取源文件
 		Workbook wb = WorkbookFactory.create(new FileInputStream("src\\test\\java\\excel\\imports\\import.xlsx"));
@@ -50,6 +57,24 @@ public class MainClass {
 			//打印图片byte数组长度
 			byte[] img = list.getData().get(0).getImg();
 			System.out.println(img);
+		} else {
+			// 导入有错误，打印输出错误
+			System.out.println(list.getMessage());
+		}
+	}
+
+	public static void test() throws Exception {
+		Workbook wb = WorkbookFactory.create(new FileInputStream("src\\test\\java\\excel\\imports\\things.xlsx"));
+		ImportRspInfo<Things> list = ExcelUtils.parseSheet(Things.class, ThingsVerifyBuilder.getInstance(), wb.getSheetAt(0), 2, 0);
+		if (list.isSuccess()) {
+			// 导入没有错误，打印数据
+			List<Things> data = list.getData();
+			for (Things things : data) {
+				// 打印图片byte数组长度
+				byte[] img = things.getPictureData();
+				System.out.println(img);
+			}
+
 		} else {
 			// 导入有错误，打印输出错误
 			System.out.println(list.getMessage());
