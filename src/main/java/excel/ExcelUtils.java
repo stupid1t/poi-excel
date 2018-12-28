@@ -552,7 +552,6 @@ public class ExcelUtils {
 	 * @return
 	 */
 	private static int getLastRealLastRow(Row row) {
-		int rt = -1;
 		Sheet sheet = row.getSheet();
 		short lastCellNum = row.getLastCellNum();
 		if (lastCellNum == -1) {
@@ -561,11 +560,9 @@ public class ExcelUtils {
 			while (newRow == null) {
 				newRow = sheet.getRow(--rowNum);
 			}
-			rt = getLastRealLastRow(newRow);
-		} else {
-			return row.getRowNum();
+			return getLastRealLastRow(newRow);
 		}
-		return rt;
+		return row.getRowNum();
 	}
 
 	/**
