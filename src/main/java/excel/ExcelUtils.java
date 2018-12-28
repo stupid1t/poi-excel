@@ -159,12 +159,10 @@ public class ExcelUtils {
 	/**
 	 * 导出
 	 * 
-	 * @param <T>
+	 * @param             <T>
 	 * 
-	 * @param data
-	 *            数据源
-	 * @param exportRules
-	 *            导出规则
+	 * @param data        数据源
+	 * @param exportRules 导出规则
 	 * @return
 	 */
 	public static <T> Workbook createWorkbook(List<T> data, ExportRules exportRules) {
@@ -176,14 +174,10 @@ public class ExcelUtils {
 	 * 
 	 * 导出方法
 	 * 
-	 * @param list
-	 *            数据源
-	 * @param hearderRules
-	 *            （如带序号，在规则里设置序头） 表头规则
-	 * @param autoNum
-	 *            带序号
-	 * @param column
-	 *            导出列的定义
+	 * @param list         数据源
+	 * @param hearderRules （如带序号，在规则里设置序头） 表头规则
+	 * @param autoNum      带序号
+	 * @param column       导出列的定义
 	 * @return
 	 * @throws Exception
 	 */
@@ -447,44 +441,31 @@ public class ExcelUtils {
 	/**
 	 * 解析Sheet
 	 * 
-	 * @param clss
-	 *            结果bean
-	 * @param verifyBuilder
-	 *            校验器
-	 * @param sheet
-	 *            解析的sheet
-	 * @param dataStartRow
-	 *            开始行:从0开始计
-	 * @param dataEndRowCount
-	 *            尾行非数据行数量
+	 * @param clss            结果bean
+	 * @param verifyBuilder   校验器
+	 * @param sheet           解析的sheet
+	 * @param dataStartRow    开始行:从0开始计
+	 * @param dataEndRowCount 尾行非数据行数量
 	 * @return
 	 * @throws Exception
 	 */
-	public static <T> ImportRspInfo<T> parseSheet(Class<T> clss, AbstractVerifyBuidler verifyBuilder, Sheet sheet,
-			int dataStartRow, int dataEndRowCount) {
+	public static <T> ImportRspInfo<T> parseSheet(Class<T> clss, AbstractVerifyBuidler verifyBuilder, Sheet sheet, int dataStartRow, int dataEndRowCount) {
 		return parseSheet(clss, verifyBuilder, sheet, dataStartRow, dataEndRowCount, null);
 	}
 
 	/**
 	 * 解析Sheet
 	 * 
-	 * @param clss
-	 *            结果bean
-	 * @param verifyBuilder
-	 *            校验器
-	 * @param sheet
-	 *            解析的sheet
-	 * @param dataStartRow
-	 *            开始行
-	 * @param dataEndRowCount
-	 *            尾行数量
-	 * @param callback
-	 *            加入回调逻辑
+	 * @param clss            结果bean
+	 * @param verifyBuilder   校验器
+	 * @param sheet           解析的sheet
+	 * @param dataStartRow    开始行
+	 * @param dataEndRowCount 尾行数量
+	 * @param callback        加入回调逻辑
 	 * @return
 	 * @throws Exception
 	 */
-	public static <T> ImportRspInfo<T> parseSheet(Class<T> clss, AbstractVerifyBuidler verifyBuilder, Sheet sheet,
-			int dataStartRow, int dataEndRowCount, ParseSheetCallback<T> callback) {
+	public static <T> ImportRspInfo<T> parseSheet(Class<T> clss, AbstractVerifyBuidler verifyBuilder, Sheet sheet, int dataStartRow, int dataEndRowCount, ParseSheetCallback<T> callback) {
 		ImportRspInfo<T> rsp = new ImportRspInfo<T>();
 		List<T> beans = new ArrayList<>();
 		// 获取excel中所有图片
@@ -498,7 +479,7 @@ public class ExcelUtils {
 			if (abstractCellVerify instanceof ImgVerify) {
 				imgField.add(key);
 				if (pictures == null) {
-					pictures = getSheetPictures(sheetIndex,sheet);
+					pictures = getSheetPictures(sheetIndex, sheet);
 				}
 			}
 		}
@@ -506,7 +487,8 @@ public class ExcelUtils {
 		StringBuffer rowErrors = new StringBuffer();
 		try {
 			int rowStart = sheet.getFirstRowNum() + dataStartRow;
-			int rowEnd = sheet.getLastRowNum() - dataEndRowCount;
+			// warn获取真实的数据行尾数
+			int rowEnd = getLastRealLastRow(sheet.getRow(sheet.getLastRowNum())) - 1 - dataEndRowCount;
 			for (int rowNum = rowStart; rowNum <= rowEnd; rowNum++) {
 				Row r = sheet.getRow(rowNum);
 				// 创建对象
@@ -519,7 +501,7 @@ public class ExcelUtils {
 					try {
 						Object cellValue = null;
 						if (imgField.size() > 0 && imgField.contains(filedName)) {
-							String pictrueIndex = sheetIndex+"," + rowNum + "," + cellNum;
+							String pictrueIndex = sheetIndex + "," + rowNum + "," + cellNum;
 							PictureData remove = pictures.remove(pictrueIndex);
 							cellValue = remove == null ? null : remove.getData();
 						} else {
@@ -564,14 +546,34 @@ public class ExcelUtils {
 	}
 
 	/**
+	 * 获取真实的数据行
+	 * 
+	 * @param r
+	 * @return
+	 */
+	private static int getLastRealLastRow(Row row) {
+		int rt = -1;
+		Sheet sheet = row.getSheet();
+		short lastCellNum = row.getLastCellNum();
+		if (lastCellNum == -1) {
+			int rowNum = row.getRowNum();
+			Row newRow = sheet.getRow(--rowNum);
+			while (newRow == null) {
+				newRow = sheet.getRow(--rowNum);
+			}
+			rt = getLastRealLastRow(newRow);
+		} else {
+			return row.getRowNum();
+		}
+		return rt;
+	}
+
+	/**
 	 * 读取字段的值
 	 * 
-	 * @param clsInfo
-	 *            类信息
-	 * @param t
-	 *            当前值
-	 * @param fields
-	 *            字段名称
+	 * @param clsInfo 类信息
+	 * @param t       当前值
+	 * @param fields  字段名称
 	 * @return
 	 * @throws Exception
 	 */
@@ -681,20 +683,14 @@ public class ExcelUtils {
 	/**
 	 * 给单元格设置值
 	 * 
-	 * @param wb
-	 *            工作簿
-	 * @param value
-	 *            列值
-	 * @param pattern
-	 *            格式化值
-	 * @param cell
-	 *            单元格
-	 * @param createDrawingPatriarch
-	 *            画图器
+	 * @param wb                     工作簿
+	 * @param value                  列值
+	 * @param pattern                格式化值
+	 * @param cell                   单元格
+	 * @param createDrawingPatriarch 画图器
 	 * @param subCellStyle
 	 */
-	private static void setCellValue(Drawing<Picture> createDrawingPatriarch, Column sourceColumn, Column customColumn,
-			Object value, Cell cell, Map<Object, CellStyle> subCellStyle) {
+	private static void setCellValue(Drawing<Picture> createDrawingPatriarch, Column sourceColumn, Column customColumn, Object value, Cell cell, Map<Object, CellStyle> subCellStyle) {
 		Workbook workbook = cell.getSheet().getWorkbook();
 		// 0.判断是否需要用用户的样式
 		boolean customer = false;
@@ -869,6 +865,13 @@ public class ExcelUtils {
 		return footerNum;
 	}
 
+	/**
+	 * 获取单元格的值
+	 * 
+	 * @param r
+	 * @param cellNum
+	 * @return
+	 */
 	private static Object getCellValue(Row r, int cellNum) {
 		// 缺失列处理政策
 		Cell cell = r.getCell(cellNum, MissingCellPolicy.CREATE_NULL_AS_BLANK);
@@ -906,10 +909,8 @@ public class ExcelUtils {
 	/**
 	 * 获取Excel2003图片
 	 * 
-	 * @param sheetNum
-	 *            当前sheet下标
-	 * @param sheet
-	 *            当前sheet对象
+	 * @param sheetNum 当前sheet下标
+	 * @param sheet    当前sheet对象
 	 * @return Map key:图片单元格索引（0-sheet下标,1-列号,1-行号）String，value:图片流PictureData
 	 * @throws IOException
 	 */
@@ -926,12 +927,9 @@ public class ExcelUtils {
 	/**
 	 * 获取Excel2003图片
 	 * 
-	 * @param sheetNum
-	 *            当前sheet编号
-	 * @param sheet
-	 *            当前sheet对象
-	 * @param workbook
-	 *            工作簿对象
+	 * @param sheetNum 当前sheet编号
+	 * @param sheet    当前sheet对象
+	 * @param workbook 工作簿对象
 	 * @return Map key:图片单元格索引（0-sheet下标,1-列号,1-行号）String，value:图片流PictureData
 	 * @throws IOException
 	 */
@@ -945,8 +943,7 @@ public class ExcelUtils {
 					HSSFPicture pic = (HSSFPicture) shape;
 					int pictureIndex = pic.getPictureIndex() - 1;
 					HSSFPictureData picData = pictures.get(pictureIndex);
-					String picIndex = String.valueOf(sheetNum) + "," + String.valueOf(anchor.getRow1()) + ","
-							+ String.valueOf(anchor.getCol1());
+					String picIndex = String.valueOf(sheetNum) + "," + String.valueOf(anchor.getRow1()) + "," + String.valueOf(anchor.getCol1());
 					sheetIndexPicMap.put(picIndex, picData);
 				}
 			}
@@ -959,12 +956,9 @@ public class ExcelUtils {
 	/**
 	 * 获取Excel2007图片
 	 * 
-	 * @param sheetNum
-	 *            当前sheet编号
-	 * @param sheet
-	 *            当前sheet对象
-	 * @param workbook
-	 *            工作簿对象
+	 * @param sheetNum 当前sheet编号
+	 * @param sheet    当前sheet对象
+	 * @param workbook 工作簿对象
 	 * @return Map key:图片单元格索引（0,1,1）String，value:图片流PictureData
 	 */
 	private static Map<String, PictureData> getSheetPictrues07(int sheetNum, XSSFSheet sheet) {
@@ -991,14 +985,10 @@ public class ExcelUtils {
 	 * excel添加下拉数据校验
 	 * 
 	 * 
-	 * @param sheet
-	 *            哪个 sheet 页添加校验
-	 * @param dataSource
-	 *            数据源数组
-	 * @param col
-	 *            第几列校验（0开始）
-	 * @param maxRow
-	 *            表头占用几行
+	 * @param sheet      哪个 sheet 页添加校验
+	 * @param dataSource 数据源数组
+	 * @param col        第几列校验（0开始）
+	 * @param maxRow     表头占用几行
 	 * @return
 	 */
 	private static DataValidation createDropDownValidation(Sheet sheet, String[] dataSource, int col, int maxRow) {
@@ -1387,19 +1377,13 @@ public class ExcelUtils {
 		/**
 		 * 常规一行表头构造,不带尾部
 		 * 
-		 * @param autoNum
-		 *            是否自动序号
-		 * @param fields
-		 *            列数据规则定义
-		 * @param titile
-		 *            大标题
-		 * @param header
-		 *            表头标题
-		 * @param footerRules
-		 *            数据尾行合计
+		 * @param autoNum     是否自动序号
+		 * @param fields      列数据规则定义
+		 * @param titile      大标题
+		 * @param header      表头标题
+		 * @param footerRules 数据尾行合计
 		 */
-		public ExportRules(boolean autoNum, Column[] column, String titile, String[] header,
-				HashMap<String, String> footerRules) {
+		public ExportRules(boolean autoNum, Column[] column, String titile, String[] header, HashMap<String, String> footerRules) {
 			super();
 			this.autoNum = autoNum;
 			this.column = column;
@@ -1415,17 +1399,12 @@ public class ExcelUtils {
 		/**
 		 * 复杂表头构造
 		 * 
-		 * @param autoNum
-		 *            是否自动序号
-		 * @param fields
-		 *            列数据规则定义
-		 * @param headerRules
-		 *            表头设计
-		 * @param footerRules
-		 *            尾部合计栏设计
+		 * @param autoNum     是否自动序号
+		 * @param fields      列数据规则定义
+		 * @param headerRules 表头设计
+		 * @param footerRules 尾部合计栏设计
 		 */
-		public ExportRules(boolean autoNum, Column[] column, Map<String, String> headerRules,
-				Map<String, String> footerRules) {
+		public ExportRules(boolean autoNum, Column[] column, Map<String, String> headerRules, Map<String, String> footerRules) {
 			super();
 			this.autoNum = autoNum;
 			this.column = column;

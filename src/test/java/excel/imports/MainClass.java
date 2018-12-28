@@ -11,8 +11,6 @@ import excel.ExcelUtils;
 import excel.ImportRspInfo;
 import excel.export.ProjectEvaluate;
 
-
-
 public class MainClass {
 
 	public static void main(String[] args) {
@@ -23,16 +21,17 @@ public class MainClass {
 			e.printStackTrace();
 		}
 	}
+
 	public static void parseSheet() throws Exception {
 		// 1.获取源文件
 		Workbook wb = WorkbookFactory.create(new FileInputStream("src\\test\\java\\excel\\imports\\import.xlsx"));
 		// 2.获取sheet0导入
 		Sheet sheet = wb.getSheetAt(0);
 		// 3.生成VO实体
-		ImportRspInfo<ProjectEvaluate> list = ExcelUtils.parseSheet(ProjectEvaluate.class, ProjectVerifyBuilder.getInstance(), sheet, 3, 2);
+		ImportRspInfo<ProjectEvaluate> list = ExcelUtils.parseSheet(ProjectEvaluate.class, ProjectVerifyBuilder.getInstance(), sheet, 3, 0);
 		if (list.isSuccess()) {
 			// 导入没有错误，打印数据
-			System.out.println(list.getData());
+			System.out.println(list.getData().size());
 		} else {
 			// 导入有错误，打印输出错误
 			System.out.println(list.getMessage());
@@ -49,12 +48,12 @@ public class MainClass {
 		// parseSheet
 		ImportRspInfo<ProjectEvaluate> list = ExcelUtils.parseSheet(ProjectEvaluate.class, ProjectVerifyBuilder.getInstance(), wb.getSheetAt(0), 3, 2, (row, rowNum) -> {
 			// 其他逻辑处理
-			System.out.println("当前行数据为:"+row);
+			System.out.println("当前行数据为:" + row);
 		});
 		if (list.isSuccess()) {
 			// 导入没有错误，打印数据
 			System.out.println(list.getData());
-			//打印图片byte数组长度
+			// 打印图片byte数组长度
 			byte[] img = list.getData().get(0).getImg();
 			System.out.println(img);
 		} else {
@@ -69,12 +68,7 @@ public class MainClass {
 		if (list.isSuccess()) {
 			// 导入没有错误，打印数据
 			List<Things> data = list.getData();
-			for (Things things : data) {
-				// 打印图片byte数组长度
-				byte[] img = things.getPictureData();
-				System.out.println(img);
-			}
-
+			System.out.println(data.size());
 		} else {
 			// 导入有错误，打印输出错误
 			System.out.println(list.getMessage());
