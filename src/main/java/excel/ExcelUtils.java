@@ -488,7 +488,7 @@ public class ExcelUtils {
 		try {
 			int rowStart = sheet.getFirstRowNum() + dataStartRow;
 			// warn获取真实的数据行尾数
-			int rowEnd = getLastRealLastRow(sheet.getRow(sheet.getLastRowNum())) - 1 - dataEndRowCount;
+			int rowEnd = getLastRealLastRow(sheet.getRow(sheet.getLastRowNum())) - dataEndRowCount;
 			for (int rowNum = rowStart; rowNum <= rowEnd; rowNum++) {
 				Row r = sheet.getRow(rowNum);
 				// 创建对象
