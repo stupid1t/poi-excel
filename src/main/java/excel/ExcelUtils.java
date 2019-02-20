@@ -565,7 +565,7 @@ public class ExcelUtils {
 			int blankCell = 0;
 			for (int i = 0; i < lastCellNum; i++) {
 				Cell cell = row.getCell(i);
-				if (cell.getCellType() == CellType.BLANK) {
+				if (cell == null || cell.getCellType() == CellType.BLANK) {
 					blankCell++;
 				}
 			}
