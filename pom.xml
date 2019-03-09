@@ -8,6 +8,7 @@
     <packaging>jar</packaging>
     <name>poi-excel</name>
     <url>http://maven.apache.org</url>
+    <description>基于POI开发的excel操作</description>
     <licenses>
         <license>
             <name>The Apache Software License, Version 2.0</name>
