@@ -20,7 +20,7 @@
         <tag>master</tag>
         <url>git@github.com:stupdit1t/poi-excel.git</url>
         <connection>scm:git:git@github.com:stupdit1t/poi-excel.git</connection>
-        <developerConnection>scm:git:git@github.com:stupdit1t/poi-excel.gitt</developerConnection>
+        <developerConnection>scm:git:git@github.com:stupdit1t/poi-excel.git</developerConnection>
     </scm>
     <developers>
         <developer>
