@@ -90,7 +90,7 @@ public class POIConstant {
 	 * 宽度设置,
 	 * 
 	 * @param charNum 汉字数量
-	 * @return
+	 * @return int
 	 */
 	public static int width(int charNum) {
 		return CHARUNIT * charNum;
@@ -100,7 +100,7 @@ public class POIConstant {
 	 * 转换列坐标为数字
 	 * 
 	 * @param cellRefs 列坐标
-	 * @return
+	 * @return  int[]
 	 */
 	public static int[] convertToCellNum(String[] cellRefs) {
 		int[] nums = new int[cellRefs.length];
