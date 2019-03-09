@@ -1,1 +1,14 @@
+/target/*
+.settings
+.classpath
+.project
+.myumldata
+.springBeans
+.tern-project
 /target/
+rebel-remote.xml
+rebel.xml
+*.iml
+.idea
+.idea/*
+*/artifacts/*.xml
