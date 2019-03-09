@@ -1,5 +1,16 @@
 # excel-poi （[git地址](http://https://gitee.com/stupid1t/small_tools)）
 
+
+#### maven使用方式
+```java
+<!-- excel导入导出 -->
+<dependency>
+    <groupId>com.github.stupdit1t</groupId>
+    <artifactId>poi-excel</artifactId>
+    <version>1.0</version>
+</dependency>
+```
+
 ### 导入
 1. 支持严格的单元格校验
 2. 支持数据行的图片导入
