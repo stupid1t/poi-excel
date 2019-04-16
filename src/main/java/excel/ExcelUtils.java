@@ -503,7 +503,7 @@ public class ExcelUtils {
                         // 校验和格式化列值
                         cellValue = verifyBuilder.verify(filedName, cellValue);
                         // 填充列值
-                        FieldUtils.writeDeclaredField(t, filedName, cellValue, true);
+                        FieldUtils.writeField(t, filedName, cellValue, true);
                     } catch (POIException e) {
                         rowErrors.append(cellRef.formatAsString()).append(":").append(e.getMessage()).append("\t");
                     }
