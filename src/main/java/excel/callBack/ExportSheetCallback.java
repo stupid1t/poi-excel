@@ -1,6 +1,7 @@
 package excel.callBack;
 
-import excel.ExcelUtils.Column;
+
+import excel.Column;
 
 public interface ExportSheetCallback<T> {
 	/**
