@@ -1,21 +1,26 @@
 package excel.export;
 
-import java.io.*;
+import excel.Column;
+import excel.ExcelUtils;
+import excel.ExcelUtils.ExportRules;
+import org.apache.poi.ss.usermodel.HorizontalAlignment;
+import org.apache.poi.ss.usermodel.IndexedColors;
+import org.apache.poi.ss.usermodel.VerticalAlignment;
+import org.apache.poi.ss.usermodel.Workbook;
+
+import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
-import excel.Column;
-import org.apache.poi.ss.usermodel.HorizontalAlignment;
-import org.apache.poi.ss.usermodel.IndexedColors;
-import org.apache.poi.ss.usermodel.VerticalAlignment;
-import org.apache.poi.ss.usermodel.Workbook;
-
-import excel.ExcelUtils;
-import excel.ExcelUtils.ExportRules;
 
 public class MainClass {
 
@@ -89,11 +94,11 @@ public class MainClass {
     public static void main(String[] args) throws IOException {
         try {
             long s = System.currentTimeMillis();
-            //export1();
-            //export2();
-            //export3();
-            //export4();
-           // export5();
+            export1();
+            export2();
+            export3();
+            export4();
+            export5();
             export6();
             System.out.println("耗时:" + (System.currentTimeMillis() - s));
         } catch (Exception e) {
@@ -109,7 +114,7 @@ public class MainClass {
      */
     public static void export1() throws Exception {
         // 1.导出的hearder设置
-        String[] hearder = {"序号", "项目名称", "所属区域", "省份", "市", "项目所属人", "项目领导人", "得分", "平均分", "创建时间", "项目图片"};
+        String[] hearder = { "序号","项目名称", "所属区域", "省份", "市", "项目所属人", "项目领导人", "得分", "平均分", "创建时间", "项目图片"};
         // 2.导出hearder对应的字段设置
         Column[] column = {Column.field("projectName"), Column.field("areaName"), Column.field("province"),
                 Column.field("city"), Column.field("people"), Column.field("leader"), Column.field("scount"),

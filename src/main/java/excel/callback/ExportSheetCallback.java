@@ -1,8 +1,13 @@
-package excel.callBack;
+package excel.callback;
 
 
 import excel.Column;
 
+/**
+ * 导出回调函数
+ *
+ * @author 625
+ */
 public interface ExportSheetCallback<T> {
 	/**
 	 * 导出回调

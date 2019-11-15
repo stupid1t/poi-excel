@@ -5,7 +5,7 @@ import java.security.InvalidParameterException;
 /**
  * 625
  * 
- * @author Administrator
+ * @author 625
  *
  */
 public class POIException extends RuntimeException {

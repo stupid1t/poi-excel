@@ -16,7 +16,7 @@ import excel.verify.StringVerify;
 /**
  * 导入用户校验类
  * 
- * @author Administrator
+ * @author 625
  *
  */
 public class ProjectVerifyBuilder extends AbstractVerifyBuidler {

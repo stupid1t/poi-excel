@@ -10,7 +10,7 @@ import excel.POIException;
 /**
  * BigDecimal校验实体
  * 
- * @author Administrator
+ * @author 625
  *
  */
 public class BigDecimalVerify extends AbstractCellVerify {

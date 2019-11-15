@@ -12,7 +12,7 @@ import excel.POIException;
 /**
  * 日期校验实体
  * 
- * @author Administrator
+ * @author 625
  *
  */
 public class DateTimeVerify extends AbstractCellVerify {

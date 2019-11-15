@@ -8,7 +8,7 @@ import excel.POIException;
 /**
  * 字符值校验实体
  * 
- * @author Administrator
+ * @author 625
  *
  */
 public class StringVerify extends AbstractCellVerify {

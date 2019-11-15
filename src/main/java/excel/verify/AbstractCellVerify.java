@@ -7,5 +7,12 @@ package excel.verify;
  *
  */
 public abstract class AbstractCellVerify {
+
+	/**
+	 * 校验单元格值
+	 * @param cellValue
+	 * @return
+	 * @throws Exception
+	 */
 	public abstract Object verify(Object cellValue) throws Exception;
 }

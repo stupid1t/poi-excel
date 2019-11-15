@@ -8,7 +8,7 @@ import excel.POIException;
 /**
  * double校验实体
  * 
- * @author Administrator
+ * @author 625
  *
  */
 public class DoubleVerify extends AbstractCellVerify {

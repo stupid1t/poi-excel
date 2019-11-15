@@ -4,7 +4,11 @@ import org.apache.commons.lang3.StringUtils;
 
 import excel.POIException;
 
-
+/**
+ * int数据校验
+ *
+ * @author 625
+ */
 public class IntegerVerify extends AbstractCellVerify {
 	private String cellName;
 	private AbstractCellValueVerify cellValueVerify;

@@ -8,7 +8,7 @@ import excel.POIException;
 /**
  * long校验实体
  * 
- * @author Administrator
+ * @author 625
  *
  */
 public class LongVerify extends AbstractCellVerify {

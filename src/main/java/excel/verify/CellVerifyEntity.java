@@ -3,7 +3,7 @@ package excel.verify;
 /**
  * 列校验实体
  * 
- * @author Administrator
+ * @author 625
  *
  */
 public class CellVerifyEntity {

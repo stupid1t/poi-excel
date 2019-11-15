@@ -1,16 +1,15 @@
 package excel.verify;
 
-import java.util.regex.Pattern;
-
+import excel.POIException;
 import org.apache.commons.lang3.StringUtils;
 
-import excel.POIException;
+import java.util.regex.Pattern;
 
 
 /**
  * 正则校验
  * 
- * @author Administrator
+ * @author 625
  *
  */
 public class RegExpVerify extends AbstractCellVerify {

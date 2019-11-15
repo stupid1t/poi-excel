@@ -1,5 +1,10 @@
-package excel.callBack;
+package excel.callback;
 
+/**
+ * 导入回调函数
+ *
+ * @author 625
+ */
 public interface ParseSheetCallback<T> {
 	/**
 	 * 导入回调
