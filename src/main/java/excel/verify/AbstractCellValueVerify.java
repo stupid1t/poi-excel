@@ -11,7 +11,7 @@ public abstract class AbstractCellValueVerify {
 	 * 校验单元格值
 	 *
 	 * @param fileValue
-	 * @return
+	 * @return Object
 	 * @throws Exception
 	 */
 	public abstract Object verify(Object fileValue) throws Exception;
