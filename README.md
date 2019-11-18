@@ -9,7 +9,7 @@
 <dependency>
     <groupId>com.github.stupdit1t</groupId>
     <artifactId>poi-excel</artifactId>
-    <version>1.3</version>
+    <version>1.4</version>
 </dependency>
 ```
 ### 前言
