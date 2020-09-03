@@ -14,6 +14,10 @@ public class Parent {
 	public void setName(String name) {
 		this.name = name;
 	}
+
+	public int getAge(){
+		return 3;
+	}
 	
 	public Parent(String name) {
 		this.name = name;

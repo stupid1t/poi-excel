@@ -9,11 +9,11 @@
 <dependency>
     <groupId>com.github.stupdit1t</groupId>
     <artifactId>poi-excel</artifactId>
-    <version>1.4</version>
+    <version>1.5</version>
 </dependency>
 ```
 ### 前言
-> 本工程并没有使用注解方式实现，完全是编码方式。个人觉得注解方式对代码侵入比较大。不如纯编码方便，请以maven版本为主，此源码可能不是最新版本。环境为，POI4.0.1 ，JDK1.8
+> 简单快速上手，且满足绝大多数业务场景。屏蔽POI细节，学习成本低。本工程并没有使用注解方式实现，完全是编码方式。个人觉得注解方式对代码侵入比较大。不如纯编码方便，请以maven版本为主，此源码可能不是最新版本。环境为，POI4.0.1 ，JDK1.8
 
 ### 导入
 1. 支持严格的单元格校验
@@ -22,6 +22,7 @@
 4. 03和07都支持
 
 ### 导出
+
 1. 动态表头+表尾
 2. 支持List<Map>数据
 3. 支持图片导出，
@@ -31,6 +32,8 @@
 7. 支持模板导出
 8. 导出03和07都支持，默认为03，具体看以下使用方式
 9. 支持多sheet导出
+10. 支持大数据内存导出，防止OOM
+11. 支持全局样式设置,表头和单元格颜色 (1.5版本新增)
 
 
 ### 选择03还是07？
@@ -194,7 +197,7 @@ public class ProjectVerifyBuilder extends AbstractVerifyBuidler {
 ```java
 // 1.获取导出的数据体
  // 1.导出的hearder设置
-String[] hearder = {"序号", "项目名称", "所属区域", "省份", "市", "项目所属人", "项目领导人", "得分", "平均分", "创建时间", "项目图片"};
+String[] hearder = {"项目名称", "所属区域", "省份", "市", "项目所属人", "项目领导人", "得分", "平均分", "创建时间", "项目图片"};
 // 2.导出hearder对应的字段设置
 Column[] column = {Column.field("projectName"), Column.field("areaName"), Column.field("province"),
         Column.field("city"), Column.field("people"), Column.field("leader"), Column.field("scount"),
@@ -203,8 +206,27 @@ Column[] column = {Column.field("projectName"), Column.field("areaName"), Column
         Column.field("img")
 
 };
-// 3.执行导出到工作簿
-Workbook bean = ExcelUtils.createWorkbook(sheetData, ExportRules.simpleRule(column, hearder).title("项目资源统计").sheetName("mysheet1").autoNum(true), true,
+// 3.自定义表头title样式
+ICellStyle titleStyle = new ICellStyle() {
+    @Override
+    public CellPosition getPosition() {
+        return CellPosition.TITLE;
+    }
+
+    @Override
+    public void handleStyle(Font font, CellStyle style) {
+        font.setFontHeightInPoints((short) 15);
+        font.setColor(IndexedColors.RED.getIndex());
+        font.setBold(true);
+        // 左右居中
+        style.setAlignment(HorizontalAlignment.CENTER);
+        // 上下居中
+        style.setVerticalAlignment(VerticalAlignment.CENTER);
+        style.setFont(font);
+    }
+};
+// 4.执行导出到工作簿
+Workbook bean = ExcelUtils.createWorkbook(sheetData, ExportRules.simpleRule(column, hearder).globalStyle(titleStyle).title("项目资源统计").sheetName("mysheet1").autoNum(true), true,
         (feildName, value, t, customStyle) -> {
             //此处指向回调逻辑，可以修改写入excel的值,以及单元格样式，如颜色等
             return value;
@@ -220,7 +242,7 @@ bean.write(new FileOutputStream("src/test/java/excel/export/export1.xlsx"));
 2.复杂表格导出
 
 ```java
-// 1.表头设置,可以对应excel设计表头，一看就懂
+// 1.表头设置,可以对应excel设计表头，一看就懂,此处自动生成序号，需要自己设计序号列在第一位
 HashMap<String, String> headerRules = new HashMap<>();
 headerRules.put("1,1,A,K", "项目资源统计");
 headerRules.put("2,3,A,A", "序号");
@@ -359,7 +381,7 @@ for (int i = 0; i < moreSheetData.size(); i++) {
     if (i == 0) {
         List<ProjectEvaluate> data1 = (ArrayList<ProjectEvaluate>) moreSheetData.get(i);
         // 1.导出的hearder设置
-        String[] hearder = {"序号", "项目名称", "所属区域", "省份", "市", "项目所属人", "项目领导人", "得分", "平均分", "创建时间", "项目图片"};
+        String[] hearder = { "项目名称", "所属区域", "省份", "市", "项目所属人", "项目领导人", "得分", "平均分", "创建时间", "项目图片"};
         // 2.导出hearder对应的字段设置
         Column[] column = {Column.field("projectName"), Column.field("areaName"), Column.field("province"),
                 Column.field("city"), Column.field("people"), Column.field("leader"), Column.field("scount"),

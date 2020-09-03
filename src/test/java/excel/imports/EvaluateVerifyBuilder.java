@@ -5,10 +5,10 @@
  */
 package excel.imports;
 
-import excel.verify.AbstractVerifyBuidler;
-import excel.verify.CellVerifyEntity;
-import excel.verify.DateTimeVerify;
-import excel.verify.StringVerify;
+import com.github.stupdit1t.excel.verify.AbstractVerifyBuidler;
+import com.github.stupdit1t.excel.verify.CellVerifyEntity;
+import com.github.stupdit1t.excel.verify.DateTimeVerify;
+import com.github.stupdit1t.excel.verify.StringVerify;
 
 /**
  * 导入用户校验类

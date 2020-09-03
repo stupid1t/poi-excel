@@ -1,8 +1,12 @@
 package excel.export;
 
-import excel.Column;
-import excel.ExcelUtils;
-import excel.ExcelUtils.ExportRules;
+import com.github.stupdit1t.excel.Column;
+import com.github.stupdit1t.excel.ExcelUtils;
+import com.github.stupdit1t.excel.ExcelUtils.ExportRules;
+import com.github.stupdit1t.excel.style.CellPosition;
+import com.github.stupdit1t.excel.style.ICellStyle;
+import org.apache.poi.ss.usermodel.CellStyle;
+import org.apache.poi.ss.usermodel.Font;
 import org.apache.poi.ss.usermodel.HorizontalAlignment;
 import org.apache.poi.ss.usermodel.IndexedColors;
 import org.apache.poi.ss.usermodel.VerticalAlignment;
@@ -95,11 +99,11 @@ public class MainClass {
         try {
             long s = System.currentTimeMillis();
             export1();
-            export2();
-            export3();
-            export4();
-            export5();
-            export6();
+            //export2();
+            //export3();
+            //export4();
+            //export5();
+            //export6();
             System.out.println("耗时:" + (System.currentTimeMillis() - s));
         } catch (Exception e) {
             // TODO Auto-generated catch block
@@ -114,7 +118,7 @@ public class MainClass {
      */
     public static void export1() throws Exception {
         // 1.导出的hearder设置
-        String[] hearder = { "序号","项目名称", "所属区域", "省份", "市", "项目所属人", "项目领导人", "得分", "平均分", "创建时间", "项目图片"};
+        String[] hearder = { "项目名称", "所属区域", "省份", "市", "项目所属人", "项目领导人", "得分", "平均分", "创建时间", "项目图片"};
         // 2.导出hearder对应的字段设置
         Column[] column = {Column.field("projectName"), Column.field("areaName"), Column.field("province"),
                 Column.field("city"), Column.field("people"), Column.field("leader"), Column.field("scount"),
@@ -124,12 +128,33 @@ public class MainClass {
 
         };
         // 3.执行导出到工作簿
-        Workbook bean = ExcelUtils.createWorkbook(sheetData, ExportRules.simpleRule(column, hearder).title("项目资源统计").sheetName("mysheet1").autoNum(true), true,
-                (feildName, value, t, customStyle) -> {
-                    //此处指向回调逻辑，可以修改写入excel的值,以及单元格样式，如颜色等
-                    return value;
-                });
+        ICellStyle titleStyle = new ICellStyle() {
+            @Override
+            public CellPosition getPosition() {
+                return CellPosition.TITLE;
+            }
+
+            @Override
+            public void handleStyle(Font font, CellStyle style) {
+                font.setFontHeightInPoints((short) 15);
+                font.setColor(IndexedColors.RED.getIndex());
+                font.setBold(true);
+                // 左右居中
+                style.setAlignment(HorizontalAlignment.CENTER);
+                // 上下居中
+                style.setVerticalAlignment(VerticalAlignment.CENTER);
+                style.setFont(font);
+            }
+        };
+        Workbook bean = ExcelUtils.createWorkbook(sheetData, ExportRules.simpleRule(column, hearder)
+                .title("项目资源统计")
+                .autoNum(true)
+                .sheetName("mysheet1")
+                .globalStyle(titleStyle)
+                ,
+                true );
         // 4.写出文件
+        Workbook bigWorkbook = ExcelUtils.createBigWorkbook();
         bean.write(new FileOutputStream("src/test/java/excel/export/export1.xlsx"));
     }
 
@@ -213,7 +238,7 @@ public class MainClass {
         String[] hearder = {"學生姓名", "所在班級", "所在學校", "更多父母姓名"};
         // 2.导出hearder对应的字段设置，列宽设置
         Column[] column = {Column.field("name"), Column.field("classRoom.name"), Column.field("classRoom.school.name"),
-                Column.field("moreInfo.parent.name"),};
+                Column.field("moreInfo.parent.age"),};
         // 3.执行导出到工作簿
         Workbook bean = ExcelUtils.createWorkbook(complexData, ExportRules.simpleRule(column, hearder).title("學生基本信息"), true);
         // 4.写出文件
@@ -277,7 +302,7 @@ public class MainClass {
             if (i == 0) {
                 List<ProjectEvaluate> data1 = (ArrayList<ProjectEvaluate>) moreSheetData.get(i);
                 // 1.导出的hearder设置
-                String[] hearder = {"序号", "项目名称", "所属区域", "省份", "市", "项目所属人", "项目领导人", "得分", "平均分", "创建时间", "项目图片"};
+                String[] hearder = {"项目名称", "所属区域", "省份", "市", "项目所属人", "项目领导人", "得分", "平均分", "创建时间", "项目图片"};
                 // 2.导出hearder对应的字段设置
                 Column[] column = {Column.field("projectName"), Column.field("areaName"), Column.field("province"),
                         Column.field("city"), Column.field("people"), Column.field("leader"), Column.field("scount"),

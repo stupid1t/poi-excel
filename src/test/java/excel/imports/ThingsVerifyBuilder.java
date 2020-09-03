@@ -1,11 +1,11 @@
 package excel.imports;
 
-import excel.verify.AbstractVerifyBuidler;
-import excel.verify.CellVerifyEntity;
-import excel.verify.DoubleVerify;
-import excel.verify.ImgVerify;
-import excel.verify.IntegerVerify;
-import excel.verify.StringVerify;
+import com.github.stupdit1t.excel.verify.AbstractVerifyBuidler;
+import com.github.stupdit1t.excel.verify.CellVerifyEntity;
+import com.github.stupdit1t.excel.verify.DoubleVerify;
+import com.github.stupdit1t.excel.verify.ImgVerify;
+import com.github.stupdit1t.excel.verify.IntegerVerify;
+import com.github.stupdit1t.excel.verify.StringVerify;
 
 public class ThingsVerifyBuilder extends AbstractVerifyBuidler {
 	private static ThingsVerifyBuilder builder = new ThingsVerifyBuilder();

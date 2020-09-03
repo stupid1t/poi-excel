@@ -1,21 +1,20 @@
 package excel.imports;
 
-import java.io.FileInputStream;
-import java.util.List;
-
+import com.github.stupdit1t.excel.ExcelUtils;
+import com.github.stupdit1t.excel.common.ImportRspInfo;
+import excel.export.ProjectEvaluate;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.ss.usermodel.WorkbookFactory;
 
-import excel.ExcelUtils;
-import excel.ImportRspInfo;
-import excel.export.ProjectEvaluate;
+import java.io.FileInputStream;
+import java.util.List;
 
 public class MainClass {
 
 	public static void main(String[] args) {
 		try {
-			test();
+			parseSheetWithCallback();
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -44,7 +43,7 @@ public class MainClass {
 	 * @throws Exception
 	 */
 	public static void parseSheetWithCallback() throws Exception {
-		Workbook wb = WorkbookFactory.create(new FileInputStream("src\\test\\java\\excel\\imports\\import.xlsx"));
+		Workbook wb = WorkbookFactory.create(new FileInputStream("E:\\yami\\git\\poi-excel\\src\\test\\java\\excel\\imports\\import.xlsx"));
 		// parseSheet
 		ImportRspInfo<ProjectEvaluate> list = ExcelUtils.parseSheet(ProjectEvaluate.class, ProjectVerifyBuilder.getInstance(), wb.getSheetAt(0), 3, 2, (row, rowNum) -> {
 			// 其他逻辑处理
@@ -63,7 +62,7 @@ public class MainClass {
 	}
 
 	public static void test() throws Exception {
-		Workbook wb = WorkbookFactory.create(new FileInputStream("src\\test\\java\\excel\\imports\\things.xlsx"));
+		Workbook wb = WorkbookFactory.create(new FileInputStream("E:\\yami\\git\\poi-excel\\src\\test\\java\\excel\\imports\\import.xlsx"));
 		ImportRspInfo<Things> list = ExcelUtils.parseSheet(Things.class, ThingsVerifyBuilder.getInstance(), wb.getSheetAt(0), 2, 0);
 		if (list.isSuccess()) {
 			// 导入没有错误，打印数据
