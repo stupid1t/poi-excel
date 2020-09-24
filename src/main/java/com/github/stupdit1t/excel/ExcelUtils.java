@@ -592,7 +592,7 @@ public class ExcelUtils {
 	 * @param workbook excel对象
 	 * @param variable 内置变量
 	 */
-	public static Workbook readExcelWrite(Workbook workbook, Map<String, String> variable) {
+	private static Workbook readExcelWrite(Workbook workbook, Map<String, String> variable) {
 		int numberOfSheets = workbook.getNumberOfSheets();
 		for (int i = 0; i < numberOfSheets; i++) {
 			Sheet sheet = workbook.getSheetAt(i);
