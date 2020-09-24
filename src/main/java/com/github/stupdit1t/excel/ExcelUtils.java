@@ -43,7 +43,6 @@ import org.openxmlformats.schemas.drawingml.x2006.spreadsheetDrawing.CTMarker;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
-import java.text.DecimalFormat;
 import java.text.NumberFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -433,9 +432,10 @@ public class ExcelUtils {
 					RegionUtil.setBorderLeft(BorderStyle.THIN, cra, sheet);
 					RegionUtil.setBorderRight(BorderStyle.THIN, cra, sheet);
 				}
-				String cellValue = "";
-				cellValue = value;
-				CellUtil.createCell(sheet.getRow(firstRow), firstCol, cellValue, cellStyleSourece);
+				Cell cell = CellUtil.createCell(sheet.getRow(firstRow), firstCol, value, cellStyleSourece);
+				if (value.startsWith("=")) {
+					cell.setCellFormula(value.substring(1));
+				}
 			}
 
 		}
@@ -731,12 +731,17 @@ public class ExcelUtils {
 
 		// 判断值的类型后进行强制类型转换.再设置单元格格式
 		if (value instanceof String) {
-			cell.setCellValue(String.valueOf(value));
+			// 判断是否是公式
+			String strValue = String.valueOf(value);
+			if (strValue.startsWith("=")) {
+				cell.setCellFormula(strValue.substring(1));
+			} else {
+				cell.setCellValue(strValue);
+			}
 		} else if (value instanceof Integer) {
 			cell.setCellValue((Integer) (value));
 		} else if (value instanceof Double) {
-			DecimalFormat fmt = new DecimalFormat("#0.00");
-			cell.setCellValue(fmt.format((Double) (value)));
+			cell.setCellValue((Double) value);
 		} else if (value instanceof Long) {
 			cell.setCellValue((Long) (value));
 		} else if (value instanceof Date) {
@@ -1301,9 +1306,9 @@ public class ExcelUtils {
 		/**
 		 * 常规一行表头构造,不带尾部
 		 *
-		 * @param column      列数据规则定义
-		 * @param header      表头标题
-		 * @param simple      简单表头
+		 * @param column 列数据规则定义
+		 * @param header 表头标题
+		 * @param simple 简单表头
 		 */
 		private ExportRules(Column[] column, String[] header, boolean simple) {
 			super();

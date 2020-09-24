@@ -98,8 +98,8 @@ public class MainClass {
     public static void main(String[] args) throws IOException {
         try {
             long s = System.currentTimeMillis();
-            export1();
-            //export2();
+            //export1();
+            export2();
             //export3();
             //export4();
             //export5();
@@ -182,8 +182,8 @@ public class MainClass {
         headerRules.put("2,3,K,K", "项目图片");
         // 2.尾部设置，一般可以用来设计合计栏
         HashMap<String, String> footerRules = new HashMap<>();
-        footerRules.put("1,2,A,C", "注释:");
-        footerRules.put("1,2,D,K", "导出参考代码！");
+        footerRules.put("1,2,A,C", "合计:");
+        footerRules.put("1,2,D,K", "=SUM(H4:H13)");
         // 3.导出hearder对应的字段设置
         Column[] column = {
                 Column.field("projectName"),
