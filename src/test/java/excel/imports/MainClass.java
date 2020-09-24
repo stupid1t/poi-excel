@@ -8,13 +8,16 @@ import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.ss.usermodel.WorkbookFactory;
 
 import java.io.FileInputStream;
-import java.util.List;
+import java.io.FileOutputStream;
+import java.util.HashMap;
+import java.util.Map;
 
 public class MainClass {
 
 	public static void main(String[] args) {
 		try {
-			parseSheetWithCallback();
+			//parseSheetWithCallback();
+			readExcelWrite();
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -61,16 +64,16 @@ public class MainClass {
 		}
 	}
 
-	public static void test() throws Exception {
-		Workbook wb = WorkbookFactory.create(new FileInputStream("E:\\yami\\git\\poi-excel\\src\\test\\java\\excel\\imports\\import.xlsx"));
-		ImportRspInfo<Things> list = ExcelUtils.parseSheet(Things.class, ThingsVerifyBuilder.getInstance(), wb.getSheetAt(0), 2, 0);
-		if (list.isSuccess()) {
-			// 导入没有错误，打印数据
-			List<Things> data = list.getData();
-			System.out.println(data.size());
-		} else {
-			// 导入有错误，打印输出错误
-			System.out.println(list.getMessage());
-		}
+	public static void readExcelWrite() throws Exception {
+		Map<String,String> params = new HashMap<>();
+		params.put("a","今");
+		params.put("b","天");
+		params.put("c","好");
+		params.put("d","开");
+		params.put("e","心");
+		Workbook workbook = ExcelUtils.readExcelWrite("C:\\Users\\625\\Desktop\\工作簿.xlsx", params);
+		workbook.write(new FileOutputStream("C:\\Users\\625\\Desktop\\工作簿 副本.xlsx"));
+		workbook.close();
 	}
+
 }

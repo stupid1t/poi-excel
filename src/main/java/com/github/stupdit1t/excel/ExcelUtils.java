@@ -41,6 +41,10 @@ import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.openxmlformats.schemas.drawingml.x2006.spreadsheetDrawing.CTMarker;
 
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.InputStream;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.text.NumberFormat;
@@ -547,6 +551,77 @@ public class ExcelUtils {
 	}
 
 	/**
+	 * 读取excel,替换内置变量
+	 *
+	 * @param filePath 文件路径
+	 * @param variable 内置变量
+	 */
+	public static Workbook readExcelWrite(String filePath, Map<String, String> variable) {
+		try (
+				FileInputStream is = new FileInputStream(filePath);
+		) {
+
+			return readExcelWrite(is, variable);
+		} catch (FileNotFoundException e) {
+			e.printStackTrace();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		return null;
+	}
+
+	/**
+	 * 读取excel,替换内置变量
+	 *
+	 * @param is       excel文件流
+	 * @param variable 内置变量
+	 */
+	public static Workbook readExcelWrite(InputStream is, Map<String, String> variable) {
+		try {
+			Workbook wb = WorkbookFactory.create(is);
+			return readExcelWrite(wb, variable);
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		return null;
+	}
+
+	/**
+	 * 读取excel,替换内置变量
+	 *
+	 * @param workbook excel对象
+	 * @param variable 内置变量
+	 */
+	public static Workbook readExcelWrite(Workbook workbook, Map<String, String> variable) {
+		int numberOfSheets = workbook.getNumberOfSheets();
+		for (int i = 0; i < numberOfSheets; i++) {
+			Sheet sheet = workbook.getSheetAt(i);
+			Row lastRow = sheet.getRow(sheet.getLastRowNum());
+			int lastRealLastRow = getLastRealLastRow(lastRow);
+			for (int j = 0; j <= lastRealLastRow; j++) {
+				Row row = sheet.getRow(j);
+				short lastCellNum = row.getLastCellNum();
+				for (short k = 0; k < lastCellNum; k++) {
+					Object cellValue = getCellValue(row, k);
+					if (cellValue != null && cellValue instanceof String) {
+						String cellValueStr = (String) cellValue;
+						if (!cellValueStr.contains("$")) {
+							continue;
+						}
+						Set<String> vars = variable.keySet();
+						for (String var : vars) {
+							String value = variable.get(var);
+							cellValueStr = cellValueStr.replace("${" + var + "}", value);
+						}
+						row.getCell(k).setCellValue(cellValueStr);
+					}
+				}
+			}
+		}
+		return workbook;
+	}
+
+	/**
 	 * 获取真实的数据行
 	 *
 	 * @param row 单元格
@@ -573,6 +648,9 @@ public class ExcelUtils {
 			if (blankCell >= lastCellNum) {
 				int rowNum = row.getRowNum();
 				Row newRow = sheet.getRow(--rowNum);
+				while (newRow == null) {
+					newRow = sheet.getRow(--rowNum);
+				}
 				return getLastRealLastRow(newRow);
 			}
 		}
