@@ -33,7 +33,7 @@
 
 ##### 5. xls和xlsx都支持导出
 * 导出示例图
-![输入图片说明](https://images.gitee.com/uploads/images/2020/0924/171450_d907b932_1215820.png "导出示例图.png")
+![输入图片说明](https://images.gitee.com/uploads/images/2020/0924/172558_14a0ac1b_1215820.png "导入文件示例图.png")
 * 代码示例(1.2.3.4.5功能 )
 ```java
 // 0.准备数据
