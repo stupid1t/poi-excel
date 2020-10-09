@@ -50,6 +50,7 @@ import java.lang.reflect.Method;
 import java.text.NumberFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -471,6 +472,8 @@ public class ExcelUtils {
 	 * @return ImportRspInfo
 	 */
 	public static <T> ImportRspInfo<T> parseSheet(Class<T> clss, AbstractVerifyBuidler verifyBuilder, Sheet sheet, int dataStartRow, int dataEndRowCount, ParseSheetCallback<T> callback) {
+		// 规则初始化
+		verifyBuilder.init();
 		ImportRspInfo<T> rsp = new ImportRspInfo<T>();
 		List<T> beans = new ArrayList<>();
 		// 获取excel中所有图片
@@ -499,10 +502,10 @@ public class ExcelUtils {
 				// 创建对象
 				T t = clss.newInstance();
 				int fieldNum = 0;
-				for (int cellNum : POIConstant.convertToCellNum(verifyBuilder.cellRefs)) {
+				for (int cellNum : POIConstant.convertToCellNum(verifyBuilder.getCellRefs())) {
 					// 列坐标
 					CellReference cellRef = new CellReference(rowNum, cellNum);
-					String filedName = verifyBuilder.filedNames[fieldNum];
+					String filedName = verifyBuilder.getFiledNames()[fieldNum];
 					try {
 						Object cellValue = null;
 						if (imgField.size() > 0 && imgField.contains(filedName)) {
@@ -551,6 +554,72 @@ public class ExcelUtils {
 	}
 
 	/**
+	 * 读取规则excel数据内容为map
+	 *
+	 * @param filePath        文件路径
+	 * @param sheetNum        表格号
+	 * @param dataStartRow    开始读取行
+	 * @param dataEndRowCount 尾部
+	 * @return
+	 */
+	public static List<Map<String, Object>> readSheet(String filePath, int sheetNum, int dataStartRow, int dataEndRowCount) {
+		try (InputStream is = new FileInputStream(filePath)) {
+			return readSheet(is, sheetNum, dataStartRow, dataEndRowCount);
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		return Collections.emptyList();
+	}
+
+	/**
+	 * 读取规则excel数据内容为map
+	 *
+	 * @param is              文件流
+	 * @param dataStartRow    数据起始行
+	 * @param dataEndRowCount 尾部非数据行数量
+	 * @return
+	 */
+	public static List<Map<String, Object>> readSheet(InputStream is, int sheetNum, int dataStartRow, int dataEndRowCount) {
+		try (
+				Workbook wb = WorkbookFactory.create(is);
+		) {
+			Sheet sheet = wb.getSheetAt(sheetNum);
+			return readSheet(sheet, dataStartRow, dataEndRowCount);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return Collections.emptyList();
+	}
+
+	/**
+	 * 读取规则excel数据内容为map
+	 *
+	 * @param sheet
+	 * @param dataStartRow
+	 * @param dataEndRowCount 尾部
+	 * @return
+	 */
+	public static List<Map<String, Object>> readSheet(Sheet sheet, int dataStartRow, int dataEndRowCount) {
+		List<Map<String, Object>> sheetData = new ArrayList<>();
+		int rowStart = sheet.getFirstRowNum() + dataStartRow;
+		// 获取真实的数据行尾数
+		int rowEnd = getLastRealLastRow(sheet.getRow(sheet.getLastRowNum())) - dataEndRowCount;
+		for (int j = rowStart; j <= rowEnd; j++) {
+			Map<String, Object> cellMap = new HashMap<>();
+			Row row = sheet.getRow(j);
+			short lastCellNum = row.getLastCellNum();
+			char firstChar = 'A';
+			for (short k = 0; k < lastCellNum; k++) {
+				Object cellValue = getCellValue(row, k);
+				cellMap.put(Character.toString((char) (firstChar + k)), cellValue);
+			}
+			sheetData.add(cellMap);
+		}
+		// 返回结果
+		return sheetData;
+	}
+
+	/**
 	 * 读取excel,替换内置变量
 	 *
 	 * @param filePath 文件路径
@@ -558,7 +627,7 @@ public class ExcelUtils {
 	 */
 	public static Workbook readExcelWrite(String filePath, Map<String, String> variable) {
 		try (
-				FileInputStream is = new FileInputStream(filePath);
+				FileInputStream is = new FileInputStream(filePath)
 		) {
 
 			return readExcelWrite(is, variable);

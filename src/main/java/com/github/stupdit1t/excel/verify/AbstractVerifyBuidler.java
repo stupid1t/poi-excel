@@ -7,33 +7,44 @@ import java.util.Map;
 
 /**
  * 公共抽象校验类
- * 
- * @author 625
  *
+ * @author 625
  */
 public abstract class AbstractVerifyBuidler {
 
 	/**
 	 * 字段校验集
 	 */
-	protected List<CellVerifyEntity> cellEntitys = new ArrayList<>();
+	private List<CellVerifyEntity> cellEntitys = new ArrayList<>();
+
 	/**
 	 * 字段名称
 	 */
-	public String[] filedNames;
+	private String[] filedNames;
+
 	/**
 	 * key:cellName, value:对应的校验类
 	 */
 	private Map<String, AbstractCellVerify> verifys;
+
 	/**
 	 * 列坐标
 	 */
-	public String[] cellRefs;
+	private String[] cellRefs;
 
 	/**
-	 * 初始化
+	 * 构建导入规则
+	 */
+	protected abstract List<CellVerifyEntity> buildRule();
+
+	/**
+	 * 初始化规则
 	 */
 	public void init() {
+		if(!cellEntitys.isEmpty()){
+			return;
+		}
+		cellEntitys = buildRule();
 		// 1、初始化filedNames
 		filedNames = new String[cellEntitys.size()];
 		// 2、初始化cellRefs
@@ -48,6 +59,13 @@ public abstract class AbstractVerifyBuidler {
 		}
 	}
 
+	/**
+	 * 校验
+	 * @param fileName
+	 * @param fileValue
+	 * @return
+	 * @throws Exception
+	 */
 	public Object verify(String fileName, Object fileValue) throws Exception {
 		if (verifys == null) {
 			throw new Exception("AbstractVerifyBuidler的子类需要调用父类的init进行初始化！");
@@ -58,9 +76,25 @@ public abstract class AbstractVerifyBuidler {
 		}
 		return fileValue;
 	}
-	
+
+	/**
+	 * 获取验证器
+	 * @return
+	 */
 	public Map<String, AbstractCellVerify> getVerifys() {
 		return verifys;
+	}
+
+	public String[] getCellRefs() {
+		return cellRefs;
+	}
+
+	public String[] getFiledNames() {
+		return filedNames;
+	}
+
+	public List<CellVerifyEntity> getCellEntitys() {
+		return cellEntitys;
 	}
 
 

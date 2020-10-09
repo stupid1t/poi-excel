@@ -55,12 +55,12 @@ public class ProjectEvaluate {
 	/**
 	 * 总分
 	 */
-	private int scount;
+	private Integer scount;
 
 	/**
 	 * 历史平均分
 	 */
-	private double avg;
+	private Double avg;
 
 	/**
 	 * 项目所属人
