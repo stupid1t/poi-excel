@@ -320,7 +320,9 @@ public class ProjectVerifyBuilder extends AbstractVerifyBuidler {
 	/**
 	 * 定义列校验实体：提取的字段、提取列、校验规则
 	 */
-	private ProjectVerifyBuilder() {
+    @Override
+    protected List<CellVerifyEntity> buildRule() {
+        List<CellVerifyEntity> cellEntitys = new ArrayList<>();
 		cellEntitys.add(new CellVerifyEntity("projectName", "B", new StringVerify("项目名称", true)));
 		cellEntitys.add(new CellVerifyEntity("areaName", "C", new StringVerify("所属区域", true)));
 		cellEntitys.add(new CellVerifyEntity("province", "D", new StringVerify("省份", true)));
@@ -331,8 +333,7 @@ public class ProjectVerifyBuilder extends AbstractVerifyBuidler {
 		cellEntitys.add(new CellVerifyEntity("avg", "I", new DoubleVerify("历史平均分", true)));
 		cellEntitys.add(new CellVerifyEntity("createTime", "J", new DateTimeVerify("创建时间", "yyyy-MM-dd HH:mm", true)));
 		cellEntitys.add(new CellVerifyEntity("img", "K", new ImgVerify("图片", false)));
-		// 必须调用
-		super.init();
+        retrun cellEntitys;
 	}
 }
 ```
