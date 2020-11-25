@@ -35,6 +35,50 @@
 ##### 3. 支持导出回调逻辑，处理业务数据化再导出
 
 ##### 4. 支持全局或者局部单元格的样式自定义
+```java
+// 1.导出的hearder设置
+String[] hearder = { "项目名称", "所属区域", "省份", "市", "项目所属人", "项目领导人", "得分", "平均分", "创建时间", "项目图片"};
+// 2.导出hearder对应的字段设置
+Column[] column = {Column.field("projectName"), Column.field("areaName"), Column.field("province"),
+        Column.field("city"), Column.field("people"), Column.field("leader"), Column.field("scount"),
+        Column.field("avg"), Column.field("createTime"),
+        // 项目图片
+        Column.field("img")
+
+};
+// 3.自定义标题样式
+ICellStyle titleStyle = new ICellStyle() {
+    @Override
+    public CellPosition getPosition() {
+        // 样式位置
+        return CellPosition.TITLE;
+    }
+
+    @Override
+    public void handleStyle(Font font, CellStyle style) {
+        font.setFontHeightInPoints((short) 15);
+        font.setColor(IndexedColors.RED.getIndex());
+        font.setBold(true);
+        // 左右居中
+        style.setAlignment(HorizontalAlignment.CENTER);
+        // 上下居中
+        style.setVerticalAlignment(VerticalAlignment.CENTER);
+        style.setFont(font);
+    }
+};
+// 3.执行导出到工作簿
+Workbook bean = ExcelUtils.createWorkbook(sheetData, ExportRules.simpleRule(column, hearder)
+        .title("项目资源统计")
+        .autoNum(true)
+        .sheetName("mysheet1")
+        // 应用样式
+        .globalStyle(titleStyle)
+        ,
+        true );
+// 4.写出文件
+Workbook bigWorkbook = ExcelUtils.createBigWorkbook();
+bean.write(new FileOutputStream("src/test/java/excel/export/export1.xlsx"));
+```
 
 ##### 5. xls和xlsx都支持导出
 * 导出示例图
