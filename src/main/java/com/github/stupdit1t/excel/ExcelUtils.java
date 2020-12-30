@@ -15,30 +15,14 @@ import com.github.stupdit1t.excel.verify.ImgVerify;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.reflect.FieldUtils;
 import org.apache.commons.lang3.time.DateUtils;
-import org.apache.poi.hssf.usermodel.HSSFClientAnchor;
-import org.apache.poi.hssf.usermodel.HSSFPatriarch;
-import org.apache.poi.hssf.usermodel.HSSFPicture;
-import org.apache.poi.hssf.usermodel.HSSFPictureData;
-import org.apache.poi.hssf.usermodel.HSSFShape;
-import org.apache.poi.hssf.usermodel.HSSFSheet;
-import org.apache.poi.hssf.usermodel.HSSFWorkbook;
+import org.apache.poi.hssf.usermodel.*;
 import org.apache.poi.ooxml.POIXMLDocumentPart;
 import org.apache.poi.ss.usermodel.*;
 import org.apache.poi.ss.usermodel.DataValidationConstraint.OperatorType;
 import org.apache.poi.ss.usermodel.Row.MissingCellPolicy;
-import org.apache.poi.ss.util.CellRangeAddress;
-import org.apache.poi.ss.util.CellRangeAddressList;
-import org.apache.poi.ss.util.CellReference;
-import org.apache.poi.ss.util.CellUtil;
-import org.apache.poi.ss.util.RegionUtil;
+import org.apache.poi.ss.util.*;
 import org.apache.poi.xssf.streaming.SXSSFWorkbook;
-import org.apache.poi.xssf.usermodel.XSSFClientAnchor;
-import org.apache.poi.xssf.usermodel.XSSFDataValidation;
-import org.apache.poi.xssf.usermodel.XSSFDrawing;
-import org.apache.poi.xssf.usermodel.XSSFPicture;
-import org.apache.poi.xssf.usermodel.XSSFShape;
-import org.apache.poi.xssf.usermodel.XSSFSheet;
-import org.apache.poi.xssf.usermodel.XSSFWorkbook;
+import org.apache.poi.xssf.usermodel.*;
 import org.openxmlformats.schemas.drawingml.x2006.spreadsheetDrawing.CTMarker;
 
 import java.io.FileInputStream;
@@ -48,16 +32,8 @@ import java.io.InputStream;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.text.NumberFormat;
-import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.Collections;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.Map.Entry;
-import java.util.Set;
 
 /**
  * excel导入导出工具，也可以导出模板
@@ -876,6 +852,28 @@ public class ExcelUtils {
 			cell.getRow().setHeight((short) height);
 		}
 
+		// 5.批注添加
+		String comment = customer ? customColumn.getComment() : sourceColumn.getComment();
+		if (StringUtils.isNotBlank(comment)) {
+			// 表示需要用户添加批注
+			Drawing<?> drawingPatriarch = cell.getSheet().createDrawingPatriarch();
+			ClientAnchor clientAnchor = null;
+			RichTextString richTextString = null;
+			if (workbook instanceof XSSFWorkbook) {
+				clientAnchor = new XSSFClientAnchor();
+				richTextString = new XSSFRichTextString();
+			} else if (workbook instanceof HSSFWorkbook) {
+				clientAnchor = new HSSFClientAnchor();
+				richTextString = new HSSFRichTextString();
+			} else {
+				clientAnchor = new XSSFClientAnchor();
+				richTextString = new XSSFRichTextString();
+			}
+			Comment cellComment = drawingPatriarch.createCellComment(clientAnchor);
+			cellComment.setString(richTextString);
+			cell.setCellComment(cellComment);
+		}
+
 		// 判断值的类型后进行强制类型转换.再设置单元格格式
 		if (value instanceof String) {
 			// 判断是否是公式
@@ -926,7 +924,7 @@ public class ExcelUtils {
 			if (workbook instanceof XSSFWorkbook) {
 				anchor = new XSSFClientAnchor(10, 10, 10, 10, x, y, x + 1, y + 1);
 				add1 = workbook.addPicture(data, XSSFWorkbook.PICTURE_TYPE_PNG);
-			} else if (workbook instanceof SXSSFWorkbook) {
+			} else if (workbook instanceof HSSFWorkbook) {
 				anchor = new XSSFClientAnchor(10, 10, 10, 10, (short) x, y, (short) (x + 1), y + 1);
 				add1 = workbook.addPicture(data, SXSSFWorkbook.PICTURE_TYPE_PNG);
 			} else {

@@ -85,6 +85,11 @@ public class Column {
     private String verifyCustom;
 
     /**
+     * 批注默认为空
+     */
+    private String comment;
+
+    /**
      * 定义规则个数
      */
     private int verifyCount;
@@ -220,6 +225,24 @@ public class Column {
         }
         this.backColor = backColor;
         return this;
+    }
+
+    /**
+     *  批注添加
+     *
+     * @param comment 批注添加
+     * @return Column
+     */
+    public Column comment(String comment) {
+        if (style == 1) {
+            set = 1;
+        }
+        this.comment = comment;
+        return this;
+    }
+
+    public String getComment() {
+        return comment;
     }
 
     VerticalAlignment getValign() {
@@ -396,4 +419,7 @@ public class Column {
     public int getSet() {
         return this.set;
     }
+
+
+
 }

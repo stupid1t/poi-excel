@@ -5,26 +5,10 @@ import com.github.stupdit1t.excel.ExcelUtils;
 import com.github.stupdit1t.excel.ExcelUtils.ExportRules;
 import com.github.stupdit1t.excel.style.CellPosition;
 import com.github.stupdit1t.excel.style.ICellStyle;
-import org.apache.poi.ss.usermodel.CellStyle;
-import org.apache.poi.ss.usermodel.Font;
-import org.apache.poi.ss.usermodel.HorizontalAlignment;
-import org.apache.poi.ss.usermodel.IndexedColors;
-import org.apache.poi.ss.usermodel.VerticalAlignment;
-import org.apache.poi.ss.usermodel.Workbook;
+import org.apache.poi.ss.usermodel.*;
 
-import java.io.ByteArrayOutputStream;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.io.*;
+import java.util.*;
 
 public class MainClass {
 
@@ -188,7 +172,7 @@ public class MainClass {
         Column[] column = {
                 Column.field("projectName"),
                 // 4.1设置此列宽度为10
-                Column.field("areaName").width(10),
+                Column.field("areaName").width(10).comment("你好吗"),
                 // 4.2设置此列下拉框数据
                 Column.field("province").width(5).dorpDown(new String[]{"陕西省", "山西省", "辽宁省"}),
                 // 4.3设置此列水平居右
@@ -213,7 +197,7 @@ public class MainClass {
         Workbook bean = ExcelUtils.createWorkbook(
                 sheetData,
                 ExportRules.complexRule(column, headerRules).autoNum(true).footerRules(footerRules).sheetName("mysheet2"),
-                true,
+                false,
                 (fieldName, value, row, col) -> {
                     if ("projectName".equals(fieldName) && row.getProjectName().equals("中青旅23")) {
                         col.align(HorizontalAlignment.LEFT);
@@ -225,7 +209,7 @@ public class MainClass {
                     return value;
                 });
         // 5.写出文件
-        bean.write(new FileOutputStream("src/test/java/excel/export/export2.xlsx"));
+        bean.write(new FileOutputStream("src/test/java/excel/export/export2.xls"));
     }
 
     /**
