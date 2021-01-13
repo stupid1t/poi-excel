@@ -135,8 +135,7 @@ public class MainClass {
                 .autoNum(true)
                 .sheetName("mysheet1")
                 .globalStyle(titleStyle)
-                ,
-                true );
+                );
         // 4.写出文件
         Workbook bigWorkbook = ExcelUtils.createBigWorkbook();
         bean.write(new FileOutputStream("src/test/java/excel/export/export1.xlsx"));
@@ -196,8 +195,7 @@ public class MainClass {
         // 4.执行导出到工作簿
         Workbook bean = ExcelUtils.createWorkbook(
                 sheetData,
-                ExportRules.complexRule(column, headerRules).autoNum(true).footerRules(footerRules).sheetName("mysheet2"),
-                false,
+                ExportRules.complexRule(column, headerRules).autoNum(true).footerRules(footerRules).sheetName("mysheet2").xlsx(false),
                 (fieldName, value, row, col) -> {
                     if ("projectName".equals(fieldName) && row.getProjectName().equals("中青旅23")) {
                         col.align(HorizontalAlignment.LEFT);
@@ -224,7 +222,7 @@ public class MainClass {
         Column[] column = {Column.field("name"), Column.field("classRoom.name"), Column.field("classRoom.school.name"),
                 Column.field("moreInfo.parent.age"),};
         // 3.执行导出到工作簿
-        Workbook bean = ExcelUtils.createWorkbook(complexData, ExportRules.simpleRule(column, hearder).title("學生基本信息"), true);
+        Workbook bean = ExcelUtils.createWorkbook(complexData, ExportRules.simpleRule(column, hearder).title("學生基本信息"));
         // 4.写出文件
         bean.write(new FileOutputStream("src/test/java/excel/export/export3.xlsx"));
     }
@@ -242,7 +240,7 @@ public class MainClass {
                 Column.field("age"),
         };
         // 3.执行导出到工作簿
-        Workbook bean = ExcelUtils.createWorkbook(mapData, ExportRules.simpleRule(column, hearder), true);
+        Workbook bean = ExcelUtils.createWorkbook(mapData, ExportRules.simpleRule(column, hearder));
         // 4.写出文件
         bean.write(new FileOutputStream("src/test/java/excel/export/export4.xlsx"));
     }
@@ -268,7 +266,7 @@ public class MainClass {
                 Column.field("客服顾问").width(6).dorpDown(new String[]{"大唐", "银泰"}),
                 Column.field("分配校区").width(6).dorpDown(new String[]{"大唐", "银泰"}), Column.field("备注")};
         // 3.执行导出到工作簿
-        Workbook bean = ExcelUtils.createWorkbook(Collections.emptyList(), ExportRules.simpleRule(column, hearder), true);
+        Workbook bean = ExcelUtils.createWorkbook(Collections.emptyList(), ExportRules.simpleRule(column, hearder));
         // 4.写出文件
         bean.write(new FileOutputStream("src/test/java/excel/export/export5.xlsx"));
     }

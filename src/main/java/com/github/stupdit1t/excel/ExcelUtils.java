@@ -31,7 +31,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
-import java.text.NumberFormat;
 import java.util.*;
 import java.util.Map.Entry;
 
@@ -57,7 +56,9 @@ public class ExcelUtils {
 
 	/**
 	 * 创建大数据workBook
-	 * 避免OOM,导出速度比较慢
+	 * 避免OOM,导出速度比较慢.
+	 *
+	 *  默认后缀 xlsx
 	 */
 	public static Workbook createBigWorkbook() {
 		Workbook wb = new SXSSFWorkbook();
@@ -67,6 +68,8 @@ public class ExcelUtils {
 	/**
 	 * 创建大数据workBook
 	 * 避免OOM,导出速度比较慢
+	 *
+	 * 默认后缀 xlsx
 	 *
 	 * @param rowAccessWindowSize 在内存中的行数
 	 */
@@ -98,11 +101,10 @@ public class ExcelUtils {
 	 * @param <T>
 	 * @param data        数据源
 	 * @param exportRules 导出规则
-	 * @param xlsx        是否为此格式
 	 * @return Workbook
 	 */
-	public static <T> Workbook createWorkbook(List<T> data, ExportRules exportRules, boolean xlsx) {
-		Workbook work = createWorkbook(data, exportRules, xlsx, null);
+	public static <T> Workbook createWorkbook(List<T> data, ExportRules exportRules) {
+		Workbook work = createWorkbook(data, exportRules, null);
 		return work;
 	}
 
@@ -111,12 +113,11 @@ public class ExcelUtils {
 	 *
 	 * @param data        数据源
 	 * @param exportRules 导出规则
-	 * @param xlsx        是否为此格式
 	 * @param callBack    回调处理
 	 * @return Workbook
 	 */
-	public static <T> Workbook createWorkbook(List<T> data, ExportRules exportRules, boolean xlsx, ExportSheetCallback<T> callBack) {
-		Workbook emptyWorkbook = createEmptyWorkbook(xlsx);
+	public static <T> Workbook createWorkbook(List<T> data, ExportRules exportRules, ExportSheetCallback<T> callBack) {
+		Workbook emptyWorkbook = createEmptyWorkbook(exportRules.isXlsx());
 		fillBook(emptyWorkbook, data, exportRules, callBack);
 		return emptyWorkbook;
 	}
@@ -984,13 +985,7 @@ public class ExcelUtils {
 				if (DateUtil.isCellDateFormatted(cell)) {
 					obj = cell.getDateCellValue();
 				} else {
-					// 处理POI读取数字自动加.
-					NumberFormat nf = NumberFormat.getInstance();
-					String result = nf.format(cell.getNumericCellValue());
-					if (result.indexOf(",") >= 0) {
-						result = result.replace(",", "");
-					}
-					obj = result;
+					obj = cell.getNumericCellValue();
 				}
 				break;
 			case BOOLEAN:
@@ -1424,6 +1419,11 @@ public class ExcelUtils {
 		private boolean simple;
 
 		/**
+		 * 是否导出xlsx
+		 */
+		private boolean xlsx = true;
+
+		/**
 		 * 全局单元格样式
 		 */
 		private ICellStyle[] globalStyle = DefaultCellStyleEnum.values();
@@ -1566,6 +1566,15 @@ public class ExcelUtils {
 		public ExportRules globalStyle(ICellStyle... styles) {
 			this.globalStyle = styles;
 			return this;
+		}
+
+		public ExportRules xlsx(boolean xlsx) {
+			this.xlsx = xlsx;
+			return this;
+		}
+
+		public boolean isXlsx() {
+			return xlsx;
 		}
 	}
 }
