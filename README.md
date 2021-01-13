@@ -4,7 +4,7 @@
 <dependency>
     <groupId>com.github.stupdit1t</groupId>
     <artifactId>poi-excel</artifactId>
-    <version>1.7</version>
+    <version>1.8</version>
 </dependency>
 ```
 ## 一. 项目优势
