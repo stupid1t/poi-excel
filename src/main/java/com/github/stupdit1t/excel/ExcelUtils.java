@@ -31,6 +31,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
+import java.math.BigDecimal;
 import java.util.*;
 import java.util.Map.Entry;
 
@@ -57,8 +58,8 @@ public class ExcelUtils {
 	/**
 	 * 创建大数据workBook
 	 * 避免OOM,导出速度比较慢.
-	 *
-	 *  默认后缀 xlsx
+	 * <p>
+	 * 默认后缀 xlsx
 	 */
 	public static Workbook createBigWorkbook() {
 		Workbook wb = new SXSSFWorkbook();
@@ -68,7 +69,7 @@ public class ExcelUtils {
 	/**
 	 * 创建大数据workBook
 	 * 避免OOM,导出速度比较慢
-	 *
+	 * <p>
 	 * 默认后缀 xlsx
 	 *
 	 * @param rowAccessWindowSize 在内存中的行数
@@ -884,12 +885,12 @@ public class ExcelUtils {
 			} else {
 				cell.setCellValue(strValue);
 			}
-		} else if (value instanceof Integer) {
-			cell.setCellValue((Integer) (value));
-		} else if (value instanceof Double) {
-			cell.setCellValue((Double) value);
+		} else if (value instanceof BigDecimal || value instanceof Float || value instanceof Double) {
+			cell.setCellValue(((Number) value).doubleValue());
 		} else if (value instanceof Long) {
-			cell.setCellValue((Long) (value));
+			cell.setCellValue((Long) value);
+		} else if (value instanceof Integer) {
+			cell.setCellValue((Integer) value);
 		} else if (value instanceof Date) {
 			// 1.格式化为年月日时分
 			String pattern = POIConstant.FMT_DATE_TIME;
