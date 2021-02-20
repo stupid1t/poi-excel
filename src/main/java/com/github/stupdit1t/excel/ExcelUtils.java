@@ -927,10 +927,10 @@ public class ExcelUtils {
 				anchor = new XSSFClientAnchor(10, 10, 10, 10, x, y, x + 1, y + 1);
 				add1 = workbook.addPicture(data, XSSFWorkbook.PICTURE_TYPE_PNG);
 			} else if (workbook instanceof HSSFWorkbook) {
-				anchor = new XSSFClientAnchor(10, 10, 10, 10, (short) x, y, (short) (x + 1), y + 1);
+				anchor = new HSSFClientAnchor(10, 10, 10, 10, (short) x, y, (short) (x + 1), y + 1);
 				add1 = workbook.addPicture(data, SXSSFWorkbook.PICTURE_TYPE_PNG);
 			} else {
-				anchor = new HSSFClientAnchor(10, 10, 10, 10, (short) x, y, (short) (x + 1), y + 1);
+				anchor = new XSSFClientAnchor(10, 10, 10, 10, (short) x, y, (short) (x + 1), y + 1);
 				add1 = workbook.addPicture(data, XSSFWorkbook.PICTURE_TYPE_PNG);
 			}
 			createDrawingPatriarch.createPicture(anchor, add1);
