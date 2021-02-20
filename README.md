@@ -4,7 +4,7 @@
 <dependency>
     <groupId>com.github.stupdit1t</groupId>
     <artifactId>poi-excel</artifactId>
-    <version>1.8</version>
+    <version>1.8.1</version>
 </dependency>
 ```
 ## 一. 项目优势
@@ -16,8 +16,9 @@
 ## 二. 更新记录
 >  有需求才有进步，这个轮子本身就是从0开始因为需求慢慢叠加起来的。有新需求提出来,我觉得合适会更新. 如有疑问可加群帮解答: 811606008
 
-### v1.9(未发布)
+### v1.8.1
    1. 导出修复BigDecimal和Float识别为字符串，不能应用公式的BUG
+   2. 修复图片导出不同版本报错的BUG
 
 ### v1.8
    1. 添加单元格设置批注功能，方法在Column.comment  也支持回调设置，同样方法comment
