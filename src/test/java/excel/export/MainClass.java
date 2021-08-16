@@ -83,7 +83,7 @@ public class MainClass {
         try {
             long s = System.currentTimeMillis();
             //export1();
-            export2();
+            export7();
             //export3();
             //export4();
             //export5();
@@ -320,6 +320,61 @@ public class MainClass {
         }
         // 4.写出文件
         emptyWorkbook.write(new FileOutputStream("src/test/java/excel/export/export6.xlsx"));
+    }
+
+    /**
+     * 复杂导出
+     *
+     * @throws Exception
+     */
+    public static void export7() throws Exception {
+        // 1.表头设置,可以对应excel设计表头，一看就懂
+        HashMap<String, String> headerRules = new HashMap<>();
+        headerRules.put("1,1,A,K", "项目资源统计");
+        headerRules.put("2,2,A,K", "序号");
+        headerRules.put("3,3,A,K", "序号2");
+        headerRules.put("4,4,A,K", "序号2");
+        // 3.导出hearder对应的字段设置
+        Column[] column = {
+                Column.field("projectName"),
+                // 4.1设置此列宽度为10
+                Column.field("areaName").width(10).comment("你好吗"),
+                // 4.2设置此列下拉框数据
+                Column.field("province").width(5).dorpDown(new String[]{"陕西省", "山西省", "辽宁省"}),
+                // 4.3设置此列水平居右
+                Column.field("city").align(HorizontalAlignment.RIGHT),
+                // 4.4 设置此列垂直居上
+                Column.field("people").valign(VerticalAlignment.TOP),
+                // 4.5 设置此列单元格 自定义校验 只能输入文本
+                Column.field("leader").width(4).verifyCustom("VALUE(F3:F500)", "我是提示"),
+                // 4.6设置此列单元格 整数 数据校验 ，同时设置背景色为棕色
+                Column.field("scount").verifyIntNum("10~20").backColor(IndexedColors.BROWN),
+                // 4.7设置此列单元格 浮点数 数据校验， 同时设置字体颜色红色
+                Column.field("avg").verifyFloatNum("10.0~20.0").color(IndexedColors.RED),
+                // 4.8设置此列单元格 日期 数据校验 ，同时宽度为20、限制用户表格输入、水平居中、垂直居中、背景色、字体颜色
+                Column.field("createTime").width(20).verifyDate("2000-01-03 12:35~3000-05-06 23:23")
+                        .align(HorizontalAlignment.LEFT).valign(VerticalAlignment.CENTER)
+                        .backColor(IndexedColors.YELLOW).color(IndexedColors.GOLD),
+                // 4.9项目图片
+                Column.field("img")
+
+        };
+        // 4.执行导出到工作簿
+        Workbook bean = ExcelUtils.createWorkbook(
+                sheetData,
+                ExportRules.complexRule(column, headerRules).autoNum(true).sheetName("mysheet2").xlsx(false),
+                (fieldName, value, row, col) -> {
+                    if ("projectName".equals(fieldName) && row.getProjectName().equals("中青旅23")) {
+                        col.align(HorizontalAlignment.LEFT);
+                        col.valign(VerticalAlignment.CENTER);
+                        col.height(2);
+                        col.backColor(IndexedColors.RED);
+                        col.color(IndexedColors.YELLOW);
+                    }
+                    return value;
+                });
+        // 5.写出文件
+        bean.write(new FileOutputStream("src/test/java/excel/export/export7.xls"));
     }
 
     /**

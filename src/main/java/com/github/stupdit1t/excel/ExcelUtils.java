@@ -188,7 +188,7 @@ public class ExcelUtils {
 		// 合并模式
 		if (exportRules.ifMerge) {
 			// 冻结表头
-			sheet.createFreezePane(0, maxRows, 0, maxRows);
+			//sheet.createFreezePane(0, maxRows, 0, maxRows);
 			// header
 			Map<String, String> rules = exportRules.headerRules;
 			Iterator<Entry<String, String>> entries = rules.entrySet().iterator();
@@ -202,6 +202,12 @@ public class ExcelUtils {
 				int lastRow = (int) range[1] - 1;
 				int firstCol = POIConstant.cellRefNums.get(range[2]);
 				int lastCol = POIConstant.cellRefNums.get(range[3]);
+				if ((maxColumns - 1) == lastCol - firstCol) {
+					// 占满全格，则为表头
+					CellUtil.createCell(sheet.getRow(firstRow), firstCol, value, titleStyleSourece);
+				} else {
+					CellUtil.createCell(sheet.getRow(firstRow), firstCol, value, headerStyleSourece);
+				}
 				if ((lastRow - firstRow) != 0 || (lastCol - firstCol) != 0) {
 					CellRangeAddress cra = new CellRangeAddress(firstRow, lastRow, firstCol, lastCol);
 					sheet.addMergedRegion(cra);
@@ -209,13 +215,6 @@ public class ExcelUtils {
 					RegionUtil.setBorderBottom(BorderStyle.THIN, cra, sheet);
 					RegionUtil.setBorderLeft(BorderStyle.THIN, cra, sheet);
 					RegionUtil.setBorderRight(BorderStyle.THIN, cra, sheet);
-				}
-
-				if ((maxColumns - 1) == lastCol - firstCol) {
-					// 占满全格，则为表头
-					CellUtil.createCell(sheet.getRow(firstRow), firstCol, value, titleStyleSourece);
-				} else {
-					CellUtil.createCell(sheet.getRow(firstRow), firstCol, value, headerStyleSourece);
 				}
 			}
 		} else {// 非合并
@@ -229,9 +228,9 @@ public class ExcelUtils {
 			} else {
 				// 冻结表头
 				sheet.createFreezePane(0, 2, 0, 2);
+				CellUtil.createCell(sheet.getRow(0), 0, exportRules.title, titleStyleSourece);
 				CellRangeAddress cra = new CellRangeAddress(0, 0, 0, maxColumns);
 				sheet.addMergedRegion(cra);
-				CellUtil.createCell(sheet.getRow(0), 0, exportRules.title, titleStyleSourece);
 				String[] hearder = exportRules.header;
 				for (int i = 0; i < hearder.length; i++) {
 					CellUtil.createCell(sheet.getRow(1), i, hearder[i], headerStyleSourece);
@@ -407,6 +406,10 @@ public class ExcelUtils {
 				int lastRow = (int) range[1] + currRownum - 1;
 				int firstCol = POIConstant.cellRefNums.get(range[2]);
 				int lastCol = POIConstant.cellRefNums.get(range[3]);
+				Cell cell = CellUtil.createCell(sheet.getRow(firstRow), firstCol, value, cellStyleSourece);
+				if (value.startsWith("=")) {
+					cell.setCellFormula(value.substring(1));
+				}
 				if ((lastRow - firstRow) != 0 || (lastCol - firstCol) != 0) {
 					CellRangeAddress cra = new CellRangeAddress(firstRow, lastRow, firstCol, lastCol);
 					sheet.addMergedRegion(cra);
@@ -414,10 +417,6 @@ public class ExcelUtils {
 					RegionUtil.setBorderTop(BorderStyle.THIN, cra, sheet);
 					RegionUtil.setBorderLeft(BorderStyle.THIN, cra, sheet);
 					RegionUtil.setBorderRight(BorderStyle.THIN, cra, sheet);
-				}
-				Cell cell = CellUtil.createCell(sheet.getRow(firstRow), firstCol, value, cellStyleSourece);
-				if (value.startsWith("=")) {
-					cell.setCellFormula(value.substring(1));
 				}
 			}
 
