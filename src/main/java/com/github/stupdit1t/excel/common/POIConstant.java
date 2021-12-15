@@ -97,12 +97,12 @@ public class POIConstant {
         String stopIndex = StringUtils.repeat('Z', times);
         String index = "A";
         int columnIndex = 0;
-        cellRefNums.put(index, columnIndex);
+        cellRefNums.put(index, columnIndex + 1);
         numsRefCell.put(columnIndex, index);
         while (true && !index.equals(stopIndex)) {
             columnIndex++;
             index = Common.charAdd(index);
-            cellRefNums.put(index, columnIndex);
+            cellRefNums.put(index, columnIndex + 1);
             numsRefCell.put(columnIndex, index);
         }
     }
