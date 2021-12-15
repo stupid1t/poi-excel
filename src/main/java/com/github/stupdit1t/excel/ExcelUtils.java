@@ -658,7 +658,11 @@ public class ExcelUtils {
 							String value = variable.get(var);
 							cellValueStr = cellValueStr.replace("${" + var + "}", value);
 						}
-						row.getCell(k).setCellValue(cellValueStr);
+						if (cellValueStr.startsWith("=")) {
+							row.getCell(k).setCellFormula(cellValueStr.substring(1));
+						} else {
+							row.getCell(k).setCellValue(cellValueStr);
+						}
 					}
 				}
 			}
