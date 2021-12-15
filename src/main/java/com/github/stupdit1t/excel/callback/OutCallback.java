@@ -8,7 +8,9 @@ import com.github.stupdit1t.excel.Column;
  *
  * @author 625
  */
-public interface ExportSheetCallback<T> {
+
+@FunctionalInterface
+public interface OutCallback<T> {
 	/**
 	 * 导出回调
 	 * 

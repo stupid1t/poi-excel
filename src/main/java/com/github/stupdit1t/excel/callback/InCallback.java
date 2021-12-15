@@ -5,7 +5,9 @@ package com.github.stupdit1t.excel.callback;
  *
  * @author 625
  */
-public interface ParseSheetCallback<T> {
+
+@FunctionalInterface
+public interface InCallback<T> {
 	/**
 	 * 导入回调
 	 * 

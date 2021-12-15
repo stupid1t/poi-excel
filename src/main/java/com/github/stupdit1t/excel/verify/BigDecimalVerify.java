@@ -1,70 +1,45 @@
 package com.github.stupdit1t.excel.verify;
 
-import com.github.stupdit1t.excel.common.POIException;
-import org.apache.commons.lang3.StringUtils;
+import com.github.stupdit1t.excel.verify.rule.AbsCellVerifyRule;
 
 import java.math.BigDecimal;
-
+import java.util.function.Function;
 
 
 /**
  * BigDecimal校验实体
- * 
- * @author 625
  *
+ * @author 625
  */
-public class BigDecimalVerify extends AbstractCellVerify {
-	private String cellName;
-	private AbstractCellValueVerify cellValueVerify;
-	private boolean allowNull;
+public class BigDecimalVerify extends AbsCellVerifyRule<BigDecimal> {
 
-	public BigDecimalVerify(String cellName, boolean allowNull) {
-		this.cellName = cellName;
-		this.allowNull = allowNull;
-	}
+    /**
+     * 常规验证
+     *
+     * @param allowNull
+     */
+    public BigDecimalVerify(boolean allowNull) {
+        super(allowNull);
+    }
 
-	public BigDecimalVerify(String cellName, AbstractCellValueVerify cellValueVerify, boolean allowNull) {
-		super();
-		this.cellName = cellName;
-		this.cellValueVerify = cellValueVerify;
-		this.allowNull = allowNull;
-	}
+    /**
+     * 自定义验证
+     *
+     * @param allowNull
+     * @param customVerify
+     */
+    public BigDecimalVerify(boolean allowNull, Function<Object, BigDecimal> customVerify) {
+        super(allowNull, customVerify);
+    }
 
-	@Override
-	public Object verify(Object cellValue) throws Exception {
-		if (allowNull) {
-			if (cellValue != null && StringUtils.isNotEmpty(String.valueOf(cellValue))) {
-				cellValue = format(cellValue);
-				if (null != cellValueVerify) {
-					cellValue = cellValueVerify.verify(cellValue);
-				}
-				return cellValue;
-			}
-			return cellValue;
-		}
-
-		if (cellValue == null || StringUtils.isEmpty(String.valueOf(cellValue))) {
-			throw POIException.newMessageException(cellName + "不能为空");
-		}
-
-		if (format(cellValue).doubleValue() < 0) {
-			throw POIException.newMessageException(cellName + "必须大于零");
-		}
-
-		cellValue = format(cellValue);
-		if (null != cellValueVerify) {
-			cellValue = cellValueVerify.verify(cellValue);
-		}
-		return cellValue;
-	}
-
-	private BigDecimal format(Object fileValue) {
-		BigDecimal value;
-		try {
-			value = new BigDecimal(String.valueOf(fileValue));
-		} catch (Exception e) {
-			throw POIException.newMessageException(cellName + "格式不正确:" + fileValue);
-		}
-		return value;
-	}
+    @Override
+    public BigDecimal doVerify(String fieldName, Object cellValue) throws Exception {
+        if (cellValue instanceof BigDecimal) {
+            return (BigDecimal) cellValue;
+        } else if (cellValue instanceof Number) {
+            Number old = (Number) cellValue;
+            return new BigDecimal(old.toString());
+        }
+        return new BigDecimal(cellValue.toString());
+    }
 }

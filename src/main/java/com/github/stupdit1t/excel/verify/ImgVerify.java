@@ -1,7 +1,10 @@
 package com.github.stupdit1t.excel.verify;
 
 
-import com.github.stupdit1t.excel.common.POIException;
+import com.github.stupdit1t.excel.common.PoiException;
+import com.github.stupdit1t.excel.verify.rule.AbsCellVerifyRule;
+
+import java.util.function.Function;
 
 /**
  * 字符值校验实体
@@ -9,41 +12,33 @@ import com.github.stupdit1t.excel.common.POIException;
  * @author 625
  *
  */
-public class ImgVerify extends AbstractCellVerify {
-	private String cellName;
-	private AbstractCellValueVerify cellValueVerify;
-	private boolean allowNull;
+public class ImgVerify extends AbsCellVerifyRule<byte[]> {
 
-	public ImgVerify(String cellName, boolean allowNull) {
-		this.cellName = cellName;
-		this.allowNull = allowNull;
+	/**
+	 * 常规验证
+	 *
+	 * @param allowNull
+	 */
+	public ImgVerify(boolean allowNull) {
+		super(allowNull);
 	}
 
-	public ImgVerify(String cellName, AbstractCellValueVerify cellValueVerify, boolean allowNull) {
-		super();
-		this.cellName = cellName;
-		this.cellValueVerify = cellValueVerify;
-		this.allowNull = allowNull;
+	/**
+	 * 自定义验证
+	 *
+	 * @param allowNull
+	 * @param customVerify
+	 */
+	public ImgVerify(boolean allowNull, Function<Object, byte[]> customVerify) {
+		super(allowNull, customVerify);
 	}
 
 	@Override
-	public Object verify(Object cellValue) throws Exception {
-		if (allowNull) {
-			if (cellValue != null) {
-				if (null != cellValueVerify) {
-					cellValue = cellValueVerify.verify(cellValue);
-				}
-				return cellValue;
-			}
-			return cellValue;
+	public byte[] doVerify(String fieldName, Object cellValue) throws Exception {
+		if (cellValue instanceof byte[]) {
+			return (byte[]) cellValue;
 		}
-		if (cellValue == null) {
-			throw POIException.newMessageException(cellName + "不能为空");
-		}
-		if (null != cellValueVerify) {
-			cellValue = cellValueVerify.verify(cellValue);
-		}
-		return cellValue;
+		throw PoiException.error("图片验证未知异常!");
 	}
 
 }

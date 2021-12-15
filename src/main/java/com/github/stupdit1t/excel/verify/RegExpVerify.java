@@ -1,8 +1,9 @@
 package com.github.stupdit1t.excel.verify;
 
-import com.github.stupdit1t.excel.common.POIException;
-import org.apache.commons.lang3.StringUtils;
+import com.github.stupdit1t.excel.common.PoiException;
+import com.github.stupdit1t.excel.verify.rule.AbsCellVerifyRule;
 
+import java.util.function.Function;
 import java.util.regex.Pattern;
 
 
@@ -12,54 +13,36 @@ import java.util.regex.Pattern;
  * @author 625
  *
  */
-public class RegExpVerify extends AbstractCellVerify {
-	private String cellName;
-	private String pattern;
-	private AbstractCellValueVerify cellValueVerify;
-	private boolean allowNull;
+public class RegExpVerify extends AbsCellVerifyRule<String> {
 
-	public RegExpVerify(String cellName, String pattern, boolean allowNull) {
-		this.cellName = cellName;
+	private String pattern;
+
+	/**
+	 * 常规验证
+	 *
+	 * @param allowNull
+	 */
+	public RegExpVerify(String pattern, boolean allowNull) {
+		super(allowNull);
 		this.pattern = pattern;
-		this.allowNull = allowNull;
 	}
 
-	public RegExpVerify(String cellName, String pattern, AbstractCellValueVerify cellValueVerify, boolean allowNull) {
-		super();
-		this.cellName = cellName;
+	/**
+	 * 自定义验证
+	 *
+	 * @param allowNull
+	 * @param customVerify
+	 */
+	public RegExpVerify(String pattern, boolean allowNull, Function<Object, String> customVerify) {
+		super(allowNull, customVerify);
 		this.pattern = pattern;
-		this.cellValueVerify = cellValueVerify;
-		this.allowNull = allowNull;
 	}
 
 	@Override
-	public Object verify(Object cellValue) throws Exception {
-		if (allowNull) {
-			if (cellValue != null && StringUtils.isNotEmpty(String.valueOf(cellValue))) {
-				cellValue = format(cellValue);
-				if (null != cellValueVerify) {
-					cellValue = cellValueVerify.verify(cellValue);
-				}
-				return cellValue;
-			}
-			return cellValue;
-		}
-
-		if (cellValue == null || StringUtils.isEmpty(String.valueOf(cellValue))) {
-			throw POIException.newMessageException(cellName + "不能为空");
-		}
-
-		cellValue = format(cellValue);
-		if (null != cellValueVerify) {
-			cellValue = cellValueVerify.verify(cellValue);
-		}
-		return cellValue;
-	}
-
-	private String format(Object fileValue) {
-		String value = String.valueOf(fileValue);
+	public String doVerify(String fieldName, Object cellValue) throws Exception{
+		String value = String.valueOf(cellValue);
 		if (!Pattern.matches(pattern, value)) {
-			throw POIException.newMessageException(cellName + "格式不正确:" + fileValue);
+			throw PoiException.error("格式不正确");
 		}
 		return value;
 	}

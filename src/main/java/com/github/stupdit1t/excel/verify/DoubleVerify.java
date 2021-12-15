@@ -1,8 +1,8 @@
 package com.github.stupdit1t.excel.verify;
 
-import com.github.stupdit1t.excel.common.POIException;
-import org.apache.commons.lang3.StringUtils;
+import com.github.stupdit1t.excel.verify.rule.AbsCellVerifyRule;
 
+import java.util.function.Function;
 
 
 /**
@@ -11,58 +11,36 @@ import org.apache.commons.lang3.StringUtils;
  * @author 625
  *
  */
-public class DoubleVerify extends AbstractCellVerify {
-	private String cellName;
-	private AbstractCellValueVerify cellValueVerify;
-	private boolean allowNull;
+public class DoubleVerify extends AbsCellVerifyRule<Double> {
 
-	public DoubleVerify(String cellName, boolean allowNull) {
-		this.cellName = cellName;
-		this.allowNull = allowNull;
+	/**
+	 * 常规验证
+	 *
+	 * @param allowNull
+	 */
+	public DoubleVerify(boolean allowNull) {
+		super(allowNull);
 	}
 
-	public DoubleVerify(String cellName, AbstractCellValueVerify cellValueVerify, boolean allowNull) {
-		super();
-		this.cellName = cellName;
-		this.cellValueVerify = cellValueVerify;
-		this.allowNull = allowNull;
+	/**
+	 * 自定义验证
+	 *
+	 * @param allowNull
+	 * @param customVerify
+	 */
+	public DoubleVerify(boolean allowNull, Function<Object, Double> customVerify) {
+		super(allowNull, customVerify);
 	}
 
 	@Override
-	public Object verify(Object cellValue) throws Exception {
-		if (allowNull) {
-			if (cellValue != null && StringUtils.isNotEmpty(String.valueOf(cellValue))) {
-				cellValue = format(cellValue);
-				if (null != cellValueVerify) {
-					cellValue = cellValueVerify.verify(cellValue);
-				}
-				return cellValue;
-			}
-			return cellValue;
+	public Double doVerify(String fieldName, Object cellValue) throws Exception {
+		if (cellValue instanceof Double) {
+			return (Double) cellValue;
+		} else if (cellValue instanceof Number) {
+			Number old = (Number) cellValue;
+			return old.doubleValue();
 		}
-
-		if (cellValue == null || StringUtils.isEmpty(String.valueOf(cellValue))) {
-			throw POIException.newMessageException(cellName + "不能为空");
-		}
-
-		if (format(cellValue) < 0) {
-			throw POIException.newMessageException(cellName + "必须大于零");
-		}
-
-		cellValue = format(cellValue);
-		if (null != cellValueVerify) {
-			cellValue = cellValueVerify.verify(cellValue);
-		}
-		return cellValue;
+		return Double.parseDouble(cellValue.toString());
 	}
 
-	private double format(Object fileValue) {
-		double value;
-		try {
-			value = Double.valueOf(String.valueOf(fileValue));
-		} catch (Exception e) {
-			throw POIException.newMessageException(cellName + "格式不正确:" + fileValue);
-		}
-		return value;
-	}
 }

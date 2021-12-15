@@ -1,7 +1,7 @@
 package excel.imports;
 
 import com.github.stupdit1t.excel.ExcelUtils;
-import com.github.stupdit1t.excel.common.ImportRspInfo;
+import com.github.stupdit1t.excel.common.ImportResult;
 import excel.export.ProjectEvaluate;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
@@ -17,7 +17,7 @@ public class MainClass {
 
 	public static void main(String[] args) {
 		try {
-			readSheet();
+			parseSheet();
 			//readExcelWrite();
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
@@ -27,11 +27,11 @@ public class MainClass {
 
 	public static void parseSheet() throws Exception {
 		// 1.获取源文件
-		Workbook wb = WorkbookFactory.create(new FileInputStream("src\\test\\java\\excel\\imports\\import.xlsx"));
+		Workbook wb = WorkbookFactory.create(new FileInputStream("C:\\Users\\damon.li\\Documents\\code\\self\\poi-excel\\src\\test\\java\\excel\\imports\\import.xls"));
 		// 2.获取sheet0导入
 		Sheet sheet = wb.getSheetAt(0);
 		// 3.生成VO实体
-		ImportRspInfo<ProjectEvaluate> list = ExcelUtils.parseSheet(ProjectEvaluate.class, new ProjectVerifyBuilder(), sheet, 3, 0);
+		ImportResult<ProjectEvaluate> list = ExcelUtils.parseSheet(ProjectEvaluate.class, new ProjectVerifyBuilder(), sheet, 3, 0);
 		if (list.isSuccess()) {
 			// 导入没有错误，打印数据
 			System.out.println(list.getData().size());
@@ -49,7 +49,7 @@ public class MainClass {
 	public static void parseSheetWithCallback() throws Exception {
 		Workbook wb = WorkbookFactory.create(new FileInputStream("E:\\self\\git\\poi-excel-github\\src\\test\\java\\excel\\imports\\import.xls"));
 		// parseSheet
-		ImportRspInfo<ProjectEvaluate> list = ExcelUtils.parseSheet(ProjectEvaluate.class, new ProjectVerifyBuilder(), wb.getSheetAt(0), 3, 2, (row, rowNum) -> {
+		ImportResult<ProjectEvaluate> list = ExcelUtils.parseSheet(ProjectEvaluate.class, new ProjectVerifyBuilder(), wb.getSheetAt(0), 3, 2, (row, rowNum) -> {
 			// 其他逻辑处理
 			System.out.println("当前行数据为:" + row);
 		});

@@ -39,7 +39,7 @@ public class MainClass {
     static {
 
         // 1.单sheet数据填充
-        for (int i = 0; i < 1000000; i++) {
+        for (int i = 0; i < 10; i++) {
             ProjectEvaluate obj = new ProjectEvaluate();
             obj.setProjectName("中青旅" + i);
             obj.setAreaName("华东长三角"+Math.random());
@@ -82,7 +82,7 @@ public class MainClass {
     public static void main(String[] args) throws IOException {
         try {
             long s = System.currentTimeMillis();
-            export1();
+            export2();
             //export7();
             //export3();
             //export4();

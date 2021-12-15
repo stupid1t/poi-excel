@@ -1,75 +1,50 @@
 package com.github.stupdit1t.excel.verify;
 
-import com.github.stupdit1t.excel.common.POIException;
-import org.apache.commons.lang3.StringUtils;
+import com.github.stupdit1t.excel.verify.rule.AbsCellVerifyRule;
 
-import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
-
+import java.util.function.Function;
 
 
 /**
  * 日期校验实体
- * 
- * @author 625
  *
+ * @author 625
  */
-public class DateTimeVerify extends AbstractCellVerify {
-	private String cellName;
-	private String pattern;
-	private AbstractCellValueVerify cellValueVerify;
-	private boolean allowNull;
+public class DateTimeVerify extends AbsCellVerifyRule<Date> {
 
-	public DateTimeVerify(String cellName, String targerPattern, boolean allowNull) {
-		this.cellName = cellName;
-		this.pattern = targerPattern;
-		this.allowNull = allowNull;
-	}
+    private String pattern;
 
-	public DateTimeVerify(String cellName, String pattern, AbstractCellValueVerify cellValueVerify, boolean allowNull) {
-		super();
-		this.cellName = cellName;
-		this.pattern = pattern;
-		this.cellValueVerify = cellValueVerify;
-		this.allowNull = allowNull;
-	}
+    /**
+     * 常规验证
+     *
+     * @param allowNull
+     */
+    public DateTimeVerify(String pattern, boolean allowNull) {
+        super(allowNull);
+        this.pattern = pattern;
+    }
 
-	@Override
-	public Object verify(Object cellValue) throws Exception {
-		if (allowNull) {
-			if (cellValue != null && StringUtils.isNotEmpty(String.valueOf(cellValue))) {
-				cellValue = format(cellValue);
-				if (null != cellValueVerify) {
-					cellValue = cellValueVerify.verify(cellValue);
-				}
-				return cellValue;
-			}
-			return cellValue;
-		}
+    /**
+     * 自定义验证
+     *
+     * @param allowNull
+     * @param customVerify
+     */
+    public DateTimeVerify(String pattern, boolean allowNull, Function<Object, Date> customVerify) {
+        super(allowNull, customVerify);
+        this.pattern = pattern;
+    }
 
-		if (cellValue == null || StringUtils.isEmpty(String.valueOf(cellValue))) {
-			throw POIException.newMessageException(cellName + "不能为空");
-		}
+    @Override
+    public Date doVerify(String fieldName, Object cellValue) throws Exception {
+        if (cellValue instanceof Date) {
+            return (Date) cellValue;
+        }
+        SimpleDateFormat format = new SimpleDateFormat(pattern);
+        return format.parse(String.valueOf(cellValue));
 
-		cellValue = format(cellValue);
-		if (null != cellValueVerify) {
-			cellValue = cellValueVerify.verify(cellValue);
-		}
-		return cellValue;
-	}
+    }
 
-	private Date format(Object fileValue) {
-		if (fileValue instanceof Date) {
-			return (Date) fileValue;
-		}
-		Date value = null;
-		try {
-			SimpleDateFormat format = new SimpleDateFormat(pattern);
-			value = format.parse(String.valueOf(fileValue));
-		} catch (ParseException e) {
-			throw POIException.newMessageException(cellName + "格式不正确:" + fileValue);
-		}
-		return value;
-	}
 }

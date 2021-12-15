@@ -7,7 +7,7 @@ package com.github.stupdit1t.excel;
  * @version: 2019年08月31日 19:52
  */
 
-import com.github.stupdit1t.excel.common.POIConstant;
+import com.github.stupdit1t.excel.common.PoiCommon;
 import org.apache.poi.ss.usermodel.HorizontalAlignment;
 import org.apache.poi.ss.usermodel.IndexedColors;
 import org.apache.poi.ss.usermodel.VerticalAlignment;
@@ -151,7 +151,7 @@ public class Column {
         if (style == 1) {
             set = 1;
         }
-        this.height = POIConstant.width(height);
+        this.height = PoiCommon.width(height);
         return this;
     }
 
@@ -173,7 +173,7 @@ public class Column {
         if (style == 1) {
             throw new UnsupportedOperationException("仅允许定义color/backColor/align/valign ！");
         }
-        this.width = POIConstant.width(width);
+        this.width = PoiCommon.width(width);
         return this;
     }
 

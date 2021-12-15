@@ -9,7 +9,7 @@ import java.util.List;
  *
  * @param <T>
  */
-public class ImportRspInfo<T> {
+public class ImportResult<T> {
 
 	private boolean success = true;
 

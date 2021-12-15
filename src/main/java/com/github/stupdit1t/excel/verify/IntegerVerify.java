@@ -1,7 +1,9 @@
 package com.github.stupdit1t.excel.verify;
 
-import com.github.stupdit1t.excel.common.POIException;
-import org.apache.commons.lang3.StringUtils;
+import com.github.stupdit1t.excel.common.PoiException;
+import com.github.stupdit1t.excel.verify.rule.AbsCellVerifyRule;
+
+import java.util.function.Function;
 
 
 /**
@@ -9,53 +11,38 @@ import org.apache.commons.lang3.StringUtils;
  *
  * @author 625
  */
-public class IntegerVerify extends AbstractCellVerify {
-	private String cellName;
-	private AbstractCellValueVerify cellValueVerify;
-	private boolean allowNull;
+public class IntegerVerify extends AbsCellVerifyRule<Integer> {
+    /**
+     * 常规验证
+     *
+     * @param allowNull
+     */
+    public IntegerVerify(boolean allowNull) {
+        super(allowNull);
+    }
 
-	public IntegerVerify(String cellName, boolean allowNull) {
-		this.cellName = cellName;
-		this.allowNull = allowNull;
-	}
+    /**
+     * 自定义验证
+     *
+     * @param allowNull
+     * @param customVerify
+     */
+    public IntegerVerify(boolean allowNull, Function<Object, Integer> customVerify) {
+        super(allowNull, customVerify);
+    }
 
-	public IntegerVerify(String cellName, AbstractCellValueVerify cellValueVerify, boolean allowNull) {
-		this.cellName = cellName;
-		this.cellValueVerify = cellValueVerify;
-		this.allowNull = allowNull;
-	}
-
-	@Override
-	public Object verify(Object cellValue) throws Exception {
-		if (allowNull) {
-			if (cellValue != null && StringUtils.isNotEmpty(String.valueOf(cellValue))) {
-				cellValue = format(cellValue);
-				if (null != cellValueVerify) {
-					cellValue = cellValueVerify.verify(cellValue);
-				}
-				return cellValue;
-			}
-			return cellValue;
-		}
-
-		if (cellValue == null || StringUtils.isEmpty(String.valueOf(cellValue))) {
-			throw POIException.newMessageException(cellName + "不能为空");
-		}
-
-		cellValue = format(cellValue);
-		if (null != cellValueVerify) {
-			cellValue = cellValueVerify.verify(cellValue);
-		}
-		return cellValue;
-	}
-
-	private int format(Object fileValue) {
-		int value;
-		try {
-			value = Double.valueOf(String.valueOf(fileValue)).intValue();
-		} catch (Exception e) {
-			throw POIException.newMessageException(cellName + "格式不正确:" + fileValue);
-		}
-		return value;
-	}
+    @Override
+    public Integer doVerify(String fieldName, Object cellValue) throws Exception {
+        if (cellValue instanceof Integer) {
+            return (Integer) cellValue;
+        } else if (cellValue instanceof Number) {
+            Number old = (Number) cellValue;
+            double diff = old.doubleValue() - old.intValue();
+            if (diff > 0) {
+                throw PoiException.error("格式不正确");
+            }
+            return old.intValue();
+        }
+        return Integer.parseInt(cellValue.toString());
+    }
 }
