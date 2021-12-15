@@ -67,7 +67,7 @@ public class MainClass {
 
 	public static void readSheet() throws Exception {
 
-		List<Map<String, Object>> lists = ExcelUtils.readSheet("C:\\Users\\625\\Desktop\\全国三甲医院导航上线情况.xlsx",0, 1, 0);
+		List<Map<String, Object>> lists = ExcelUtils.readSheet("C:\\Users\\damon.li\\Desktop\\123.xlsx",0, 0, 0);
 		System.out.println(lists.get(0).size());
 	}
 

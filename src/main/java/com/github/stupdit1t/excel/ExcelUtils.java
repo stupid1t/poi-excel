@@ -585,10 +585,9 @@ public class ExcelUtils {
 			Map<String, Object> cellMap = new HashMap<>();
 			Row row = sheet.getRow(j);
 			short lastCellNum = row.getLastCellNum();
-			char firstChar = 'A';
-			for (short k = 0; k < lastCellNum; k++) {
+			for (int k = 0; k < lastCellNum; k++) {
 				Object cellValue = getCellValue(row, k);
-				cellMap.put(Character.toString((char) (firstChar + k)), cellValue);
+				cellMap.put(POIConstant.numsRefCell.get(k), cellValue);
 			}
 			sheetData.add(cellMap);
 		}

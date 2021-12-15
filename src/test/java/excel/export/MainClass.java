@@ -39,18 +39,18 @@ public class MainClass {
     static {
 
         // 1.单sheet数据填充
-        for (int i = 0; i < 10; i++) {
+        for (int i = 0; i < 1000000; i++) {
             ProjectEvaluate obj = new ProjectEvaluate();
             obj.setProjectName("中青旅" + i);
-            obj.setAreaName("华东长三角");
-            obj.setProvince("河北省");
-            obj.setCity("保定市");
+            obj.setAreaName("华东长三角"+Math.random());
+            obj.setProvince("河北省"+i);
+            obj.setCity("保定市"+i);
             obj.setPeople("张三" + i);
             obj.setLeader("李四" + i);
-            obj.setScount(50);
-            obj.setAvg(60.0);
+            obj.setScount((int) Math.random()*100);
+            obj.setAvg(Math.random());
             obj.setCreateTime(new Date());
-            obj.setImg(ImageParseBytes(new File("src/test/java/excel/export/1.png")));
+            //obj.setImg(ImageParseBytes(new File("src/test/java/excel/export/1.png")));
             sheetData.add(obj);
         }
         // 2.map型数据填充
@@ -82,8 +82,8 @@ public class MainClass {
     public static void main(String[] args) throws IOException {
         try {
             long s = System.currentTimeMillis();
-            //export1();
-            export7();
+            export1();
+            //export7();
             //export3();
             //export4();
             //export5();
@@ -102,20 +102,17 @@ public class MainClass {
      */
     public static void export1() throws Exception {
         // 1.导出的hearder设置
-        String[] hearder = { "项目名称", "所属区域", "省份", "市", "项目所属人", "项目领导人", "得分", "平均分", "创建时间", "项目图片"};
+        String[] hearder = { "项目名称", "所属区域", "省份", "市", "项目所属人", "项目领导人", "得分", "平均分", "创建时间"};
         // 2.导出hearder对应的字段设置
-        Column[] column = {Column.field("projectName"), Column.field("areaName"), Column.field("province"),
+        Column[] column = {Column.field("projectName"), Column.field("areaName").width(30), Column.field("province"),
                 Column.field("city"), Column.field("people"), Column.field("leader"), Column.field("scount"),
-                Column.field("avg"), Column.field("createTime"),
-                // 项目图片
-                Column.field("img")
-
+                Column.field("avg"), Column.field("createTime")
         };
         // 3.执行导出到工作簿
         ICellStyle titleStyle = new ICellStyle() {
             @Override
             public CellPosition getPosition() {
-                return CellPosition.TITLE;
+                return CellPosition.CELL;
             }
 
             @Override
@@ -128,17 +125,19 @@ public class MainClass {
                 // 上下居中
                 style.setVerticalAlignment(VerticalAlignment.CENTER);
                 style.setFont(font);
+                //折行显示
+                style.setWrapText(true);
             }
         };
-        Workbook bean = ExcelUtils.createWorkbook(sheetData, ExportRules.simpleRule(column, hearder)
+        Workbook bigWorkbook = ExcelUtils.createBigWorkbook(500);
+        ExcelUtils.fillBook(bigWorkbook,sheetData, ExportRules.simpleRule(column, hearder)
                 .title("项目资源统计")
                 .autoNum(true)
                 .sheetName("mysheet1")
                 .globalStyle(titleStyle)
                 );
         // 4.写出文件
-        Workbook bigWorkbook = ExcelUtils.createBigWorkbook();
-        bean.write(new FileOutputStream("src/test/java/excel/export/export1.xlsx"));
+        bigWorkbook.write(new FileOutputStream("src/test/java/excel/export/export1.xlsx"));
     }
 
     /**
