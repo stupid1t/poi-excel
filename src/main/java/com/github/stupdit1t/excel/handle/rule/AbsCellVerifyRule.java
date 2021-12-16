@@ -1,4 +1,4 @@
-package com.github.stupdit1t.excel.verify.rule;
+package com.github.stupdit1t.excel.handle.rule;
 
 import com.github.stupdit1t.excel.common.PoiException;
 import org.apache.commons.lang3.StringUtils;
@@ -67,7 +67,7 @@ public abstract class AbsCellVerifyRule<T> {
      * @param cellValue 列值
      * @throws Exception
      */
-    public T verify(String filed, String fieldName, Object cellValue) throws PoiException {
+    public T handle(String filed, String fieldName, Object cellValue) throws PoiException {
         // 空值处理
         cellValue = handleNull(fieldName, cellValue);
         if (cellValue == null) {
@@ -78,7 +78,7 @@ public abstract class AbsCellVerifyRule<T> {
             endVal = customVerify.apply(cellValue);
         } else {
             try {
-                endVal = doVerify(filed, cellValue);
+                endVal = doHandle(filed, cellValue);
             } catch (PoiException e) {
                 throw e;
             } catch (Exception e) {
@@ -95,5 +95,5 @@ public abstract class AbsCellVerifyRule<T> {
      * @param cellValue 列值
      * @throws Exception
      */
-    public abstract T doVerify(String fieldName, Object cellValue) throws Exception;
+    public abstract T doHandle(String fieldName, Object cellValue) throws Exception;
 }

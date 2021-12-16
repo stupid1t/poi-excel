@@ -1,9 +1,10 @@
-package com.github.stupdit1t.excel.verify.rule;
+package com.github.stupdit1t.excel.handle.rule;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.function.Consumer;
 
 /**
  * 校验规则
@@ -33,15 +34,23 @@ public abstract class AbsSheetVerifyRule {
     private String[] cellRefs;
 
     /**
-     * 构建导入规则
+     * 添加规则
+     *
+     * @param index
+     * @param field
+     * @param filedName
+     * @param cellVerify
      */
-    protected abstract void buildRule(List<CellVerifyRule> cellVerifyRules);
+    public void addRule(String index, String field, String filedName, AbsCellVerifyRule cellVerify) {
+        CellVerifyRule cellVerifyRule = new CellVerifyRule(index, field, filedName, cellVerify);
+        this.cellVerifyRules.add(cellVerifyRule);
+    }
 
     /**
      * 初始化规则
      */
     public void init() {
-        buildRule(cellVerifyRules);
+        buildRule();
         // 1、初始化filedNames
         fields = new String[cellVerifyRules.size()];
         // 2、初始化cellRefs
@@ -67,7 +76,9 @@ public abstract class AbsSheetVerifyRule {
     public Object verify(String filed, Object fileValue) throws Exception {
         if (columnVerifyRule.containsKey(filed)) {
             CellVerifyRule cellVerifyRule = columnVerifyRule.get(filed);
-            return cellVerifyRule.getCellVerify().verify(cellVerifyRule.getField(), cellVerifyRule.getFieldName(), fileValue);
+            if (cellVerifyRule.getCellVerify() != null) {
+                return cellVerifyRule.getCellVerify().handle(cellVerifyRule.getField(), cellVerifyRule.getFieldName(), fileValue);
+            }
         }
         return fileValue;
     }
@@ -86,5 +97,25 @@ public abstract class AbsSheetVerifyRule {
 
     public String[] getCellRefs() {
         return cellRefs;
+    }
+
+    /**
+     * 构建导入规则
+     */
+    protected abstract void buildRule();
+
+    /**
+     * 匿名抽象类规则
+     * @param absSheetVerifyRuleConsumer
+     * @return
+     */
+    public static AbsSheetVerifyRule buildRule(Consumer<AbsSheetVerifyRule> absSheetVerifyRuleConsumer){
+        AbsSheetVerifyRule absSheetVerifyRule = new AbsSheetVerifyRule() {
+            @Override
+            protected void buildRule() {
+                absSheetVerifyRuleConsumer.accept(this);
+            }
+        };
+        return absSheetVerifyRule;
     }
 }

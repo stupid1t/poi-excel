@@ -2,17 +2,17 @@ package com.github.stupdit1t.excel;
 
 import com.github.stupdit1t.excel.callback.InCallback;
 import com.github.stupdit1t.excel.callback.OutCallback;
+import com.github.stupdit1t.excel.common.ImportResult;
 import com.github.stupdit1t.excel.common.PoiCommon;
 import com.github.stupdit1t.excel.common.PoiConstant;
-import com.github.stupdit1t.excel.common.ImportResult;
 import com.github.stupdit1t.excel.common.PoiException;
+import com.github.stupdit1t.excel.handle.ImgHandler;
+import com.github.stupdit1t.excel.handle.rule.AbsCellVerifyRule;
+import com.github.stupdit1t.excel.handle.rule.AbsSheetVerifyRule;
+import com.github.stupdit1t.excel.handle.rule.CellVerifyRule;
 import com.github.stupdit1t.excel.style.CellPosition;
 import com.github.stupdit1t.excel.style.DefaultCellStyleEnum;
 import com.github.stupdit1t.excel.style.ICellStyle;
-import com.github.stupdit1t.excel.verify.rule.AbsCellVerifyRule;
-import com.github.stupdit1t.excel.verify.rule.AbsSheetVerifyRule;
-import com.github.stupdit1t.excel.verify.ImgVerify;
-import com.github.stupdit1t.excel.verify.rule.CellVerifyRule;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.reflect.FieldUtils;
 import org.apache.commons.lang3.time.DateUtils;
@@ -35,6 +35,7 @@ import java.lang.reflect.Method;
 import java.math.BigDecimal;
 import java.util.*;
 import java.util.Map.Entry;
+import java.util.function.Consumer;
 
 /**
  * excel导入导出工具，也可以导出模板
@@ -434,22 +435,23 @@ public class ExcelUtils {
      * @param dataEndRowCount 尾行非数据行数量，比如统计行2行，则写2
      * @return ImportRspInfo
      */
-    public static <T> ImportResult<T> parseSheet(Class<T> clss, AbsSheetVerifyRule verifyBuilder, Sheet sheet, int dataStartRow, int dataEndRowCount) {
+    public static <T> ImportResult<T> parseSheet(Class<T> clss, Consumer<AbsSheetVerifyRule> verifyBuilder, Sheet sheet, int dataStartRow, int dataEndRowCount) {
         return parseSheet(clss, verifyBuilder, sheet, dataStartRow, dataEndRowCount, null);
     }
 
     /**
      * 解析Sheet
      *
-     * @param clss            结果bean
-     * @param verifyBuilder   校验器
-     * @param sheet           解析的sheet
-     * @param dataStartRow    开始行:从0开始计，表示excel第一行
-     * @param dataEndRowCount 尾行非数据行数量，比如统计行2行，则写2
-     * @param callback        加入回调逻辑
+     * @param cls                结果bean
+     * @param absSheetVerifyRule 校验器
+     * @param sheet              解析的sheet
+     * @param dataStartRow       开始行:从0开始计，表示excel第一行
+     * @param dataEndRowCount    尾行非数据行数量，比如统计行2行，则写2
+     * @param callback           加入回调逻辑
      * @return ImportRspInfo
      */
-    public static <T> ImportResult<T> parseSheet(Class<T> clss, AbsSheetVerifyRule verifyBuilder, Sheet sheet, int dataStartRow, int dataEndRowCount, InCallback<T> callback) {
+    public static <T> ImportResult<T> parseSheet(Class<T> cls, Consumer<AbsSheetVerifyRule> absSheetVerifyRule, Sheet sheet, int dataStartRow, int dataEndRowCount, InCallback<T> callback) {
+        AbsSheetVerifyRule verifyBuilder = AbsSheetVerifyRule.buildRule(absSheetVerifyRule);
         // 规则初始化
         verifyBuilder.init();
         ImportResult<T> rsp = new ImportResult<T>();
@@ -463,7 +465,7 @@ public class ExcelUtils {
         for (String key : keySet) {
             CellVerifyRule cellVerifyRule = verifys.get(key);
             AbsCellVerifyRule cellVerify = cellVerifyRule.getCellVerify();
-            if (cellVerify instanceof ImgVerify) {
+            if (cellVerify instanceof ImgHandler) {
                 imgField.add(key);
                 if (pictures == null || pictures.isEmpty()) {
                     pictures = getSheetPictures(sheetIndex, sheet);
@@ -479,7 +481,7 @@ public class ExcelUtils {
             for (int rowNum = rowStart; rowNum <= rowEnd; rowNum++) {
                 Row r = sheet.getRow(rowNum);
                 // 创建对象
-                T t = clss.newInstance();
+                T t = cls.newInstance();
                 int fieldNum = 0;
                 String[] cellRefs = verifyBuilder.getCellRefs();
                 for (String index : cellRefs) {
@@ -501,7 +503,7 @@ public class ExcelUtils {
                         // 填充列值
                         FieldUtils.writeField(t, filed, cellValue, true);
                     } catch (PoiException e) {
-                        rowErrors.append("["+cellRef.formatAsString()+"]").append(e.getMessage()).append("\t");
+                        rowErrors.append("[" + cellRef.formatAsString() + "]").append(e.getMessage()).append("\t");
                     }
                     fieldNum++;
                 }
@@ -1000,6 +1002,9 @@ public class ExcelUtils {
                 break;
             case FORMULA:
                 obj = cell.getCellFormula();
+                break;
+            case BLANK:
+                obj = "";
                 break;
             default:
                 break;

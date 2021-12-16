@@ -1,4 +1,4 @@
-package com.github.stupdit1t.excel.verify.rule;
+package com.github.stupdit1t.excel.handle.rule;
 
 /**
  * 列校验实体
@@ -26,20 +26,6 @@ public class CellVerifyRule {
      * 列校验
      */
     private AbsCellVerifyRule cellVerify;
-
-    /**
-     * 构建列校验
-     *
-     * @param index     列坐标
-     * @param field     字段
-     * @param filedName 字段名称
-     */
-    public CellVerifyRule(String index, String field, String filedName) {
-        super();
-        this.field = field;
-        this.index = index;
-        this.fieldName = filedName;
-    }
 
     /**
      * 构建列校验
