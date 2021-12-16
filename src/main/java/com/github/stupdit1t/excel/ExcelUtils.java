@@ -290,7 +290,7 @@ public class ExcelUtils {
                     throw new IllegalArgumentException("时间校验表达式不正确,请填写如2015-08-09~2016-09-10的值!");
                 }
                 try {
-                    sheet.addValidationData(createDateValidation(sheet, split1[0], split1[1], info, j, maxRows));
+                    sheet.addValidationData(createDateValidation(sheet, column.getDatePattern(), split1[0], split1[1], info, j, maxRows));
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
@@ -382,7 +382,7 @@ public class ExcelUtils {
                 // 3.填充列值
                 Column customStyle = null;
                 if (callBack != null) {
-                    customStyle = Column.style();
+                    customStyle = Column.custom(fields[n]);
                     value = callBack.callback(fields[n].getField(), value, t, customStyle);
                 }
                 // 4.设置单元格值
@@ -428,15 +428,15 @@ public class ExcelUtils {
     /**
      * 解析Sheet
      *
-     * @param clss            结果bean
+     * @param cls             结果bean
      * @param verifyBuilder   校验器
      * @param sheet           解析的sheet
      * @param dataStartRow    开始行:从0开始计，表示excel第一行
      * @param dataEndRowCount 尾行非数据行数量，比如统计行2行，则写2
      * @return ImportRspInfo
      */
-    public static <T> ImportResult<T> parseSheet(Class<T> clss, Consumer<AbsSheetVerifyRule> verifyBuilder, Sheet sheet, int dataStartRow, int dataEndRowCount) {
-        return parseSheet(clss, verifyBuilder, sheet, dataStartRow, dataEndRowCount, null);
+    public static <T> ImportResult<T> parseSheet(Class<T> cls, Consumer<AbsSheetVerifyRule> verifyBuilder, Sheet sheet, int dataStartRow, int dataEndRowCount) {
+        return parseSheet(cls, verifyBuilder, sheet, dataStartRow, dataEndRowCount, null);
     }
 
     /**
@@ -509,7 +509,11 @@ public class ExcelUtils {
                 }
                 // 回调处理一下特殊逻辑
                 if (callback != null) {
-                    callback.callback(t, rowNum);
+                    try {
+                        callback.callback(t, rowNum);
+                    } catch (PoiException e) {
+                        rowErrors.append(e.getMessage()).append("\t");
+                    }
                 }
                 beans.add(t);
                 if (rowErrors.length() > 0) {
@@ -518,12 +522,7 @@ public class ExcelUtils {
                 }
             }
         } catch (Exception e) {
-            if (e instanceof PoiException) {
-                errors.append(new StringBuffer(e.getMessage()).append("\t"));
-            } else {
-                e.printStackTrace();
-            }
-
+            e.printStackTrace();
         } finally {
             // throw parse exception
             if (errors.length() > 0) {
@@ -900,18 +899,9 @@ public class ExcelUtils {
         } else if (value instanceof Integer) {
             cell.setCellValue((Integer) value);
         } else if (value instanceof Date) {
-            // 1.格式化为年月日时分
-            String pattern = PoiConstant.FMT_DATE_TIME;
-            // 2.判断时分秒是否为0，如果是格式化为年月日
+            // 1.格式化
+            String pattern = customer ? customColumn.getDatePattern() : sourceColumn.getDatePattern();
             Date date = (Date) value;
-            Calendar cal = Calendar.getInstance();
-            cal.setTime(date);
-            int hour = cal.get(Calendar.HOUR);
-            int minute = cal.get(Calendar.MINUTE);
-            int second = cal.get(Calendar.SECOND);
-            if ((hour - minute - second) == 0) {
-                pattern = PoiConstant.FMT_DATE;
-            }
             CellStyle style = subCellStyle.get(pattern);
             if (style == null) {
                 CellStyle sourceStyle = cell.getCellStyle();
@@ -1160,12 +1150,7 @@ public class ExcelUtils {
      * @param maxRow 表头占用几行
      * @return DataValidation
      */
-    private static DataValidation createDateValidation(Sheet sheet, String start, String end, String info, int col, int maxRow) throws Exception {
-        String pattern = PoiConstant.FMT_DATE_TIME;
-        // 0.格式判断
-        if (start.length() != 16) {
-            pattern = PoiConstant.FMT_DATE;
-        }
+    private static DataValidation createDateValidation(Sheet sheet, String pattern, String start, String end, String info, int col, int maxRow) throws Exception {
         // 1.设置验证
         CellRangeAddressList cellRangeAddressList = new CellRangeAddressList(maxRow, 65535, col, col);
         DataValidationHelper helper = sheet.getDataValidationHelper();
@@ -1331,7 +1316,7 @@ public class ExcelUtils {
                         charArray[i] = 'A';
                     } else {
                         if (over == 0) {
-                            charArray[i] = String.valueOf(maxRow - 1).charAt(0);
+                            charArray[i] = String.valueOf(maxRow - 2).charAt(0);
                         }
                     }
                 }

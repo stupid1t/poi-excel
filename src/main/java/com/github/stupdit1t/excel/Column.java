@@ -8,6 +8,7 @@ package com.github.stupdit1t.excel;
  */
 
 import com.github.stupdit1t.excel.common.PoiCommon;
+import com.github.stupdit1t.excel.common.PoiConstant;
 import org.apache.poi.ss.usermodel.HorizontalAlignment;
 import org.apache.poi.ss.usermodel.IndexedColors;
 import org.apache.poi.ss.usermodel.VerticalAlignment;
@@ -17,7 +18,7 @@ import org.apache.poi.ss.usermodel.VerticalAlignment;
  *
  * @author 625
  */
-public class Column {
+public class Column implements Cloneable {
 
     /**
      * 字段名称
@@ -97,12 +98,17 @@ public class Column {
     /**
      * 是否为回调样式模式
      */
-    private int style;
+    private int custom;
 
     /**
      * 判断用户是否重置样式
      */
     private int set;
+
+    /**
+     * 导出日期格式
+     */
+    private String datePattern = PoiConstant.FMT_DATE_TIME;
 
     private Column(String field) {
         this.field = field;
@@ -117,9 +123,14 @@ public class Column {
      *
      * @return Column
      */
-    public static Column style() {
-        Column column = new Column();
-        column.style = 1;
+    public static Column custom(Column sourceColumn) {
+        Column column = null;
+        try {
+            column = (Column) sourceColumn.clone();
+        } catch (CloneNotSupportedException e) {
+            e.printStackTrace();
+        }
+        column.custom = 1;
         return column;
     }
 
@@ -148,7 +159,7 @@ public class Column {
      * @return Column
      */
     public Column height(int height) {
-        if (style == 1) {
+        if (custom == 1) {
             set = 1;
         }
         this.height = PoiCommon.width(height);
@@ -170,8 +181,8 @@ public class Column {
      * @return Column
      */
     public Column width(int width) {
-        if (style == 1) {
-            throw new UnsupportedOperationException("仅允许定义color/backColor/align/valign ！");
+        if (custom == 1) {
+            throw new UnsupportedOperationException("仅允许定义color/backColor/align/valign/comment ！");
         }
         this.width = PoiCommon.width(width);
         return this;
@@ -184,7 +195,7 @@ public class Column {
      * @return Column
      */
     public Column align(HorizontalAlignment align) {
-        if (style == 1) {
+        if (custom == 1) {
             set = 1;
         }
         this.align = align;
@@ -202,7 +213,7 @@ public class Column {
      * @return Column
      */
     public Column color(IndexedColors color) {
-        if (style == 1) {
+        if (custom == 1) {
             set = 1;
         }
         this.color = color;
@@ -220,7 +231,7 @@ public class Column {
      * @return Column
      */
     public Column backColor(IndexedColors backColor) {
-        if (style == 1) {
+        if (custom == 1) {
             set = 1;
         }
         this.backColor = backColor;
@@ -228,13 +239,13 @@ public class Column {
     }
 
     /**
-     *  批注添加
+     * 批注添加
      *
      * @param comment 批注添加
      * @return Column
      */
     public Column comment(String comment) {
-        if (style == 1) {
+        if (custom == 1) {
             set = 1;
         }
         this.comment = comment;
@@ -256,14 +267,14 @@ public class Column {
      * @return Column
      */
     public Column valign(VerticalAlignment valign) {
-        if (style == 1) {
+        if (custom == 1) {
             set = 1;
         }
         this.valign = valign;
         return this;
     }
 
-    protected  String[] getDorpDown() {
+    protected String[] getDorpDown() {
         return dorpDown;
     }
 
@@ -274,8 +285,8 @@ public class Column {
      * @return Column
      */
     public Column dorpDown(String[] dorpDown) {
-        if (style == 1) {
-            throw new UnsupportedOperationException("仅允许定义color/backColor/align/valign ！");
+        if (custom == 1) {
+            throw new UnsupportedOperationException("仅允许定义color/backColor/align/valign/comment ！");
         }
         if (++verifyCount > 1) {
             throw new UnsupportedOperationException("同一列只能定义一个数据校验！");
@@ -296,8 +307,8 @@ public class Column {
      * @return Column
      */
     public Column verifyDate(String verifyDate, String... msgInfo) {
-        if (style == 1) {
-            throw new UnsupportedOperationException("仅允许定义color/backColor/align/valign ！");
+        if (custom == 1) {
+            throw new UnsupportedOperationException("仅允许定义color/backColor/align/valign/comment ！");
         }
         if (++verifyCount > 1) {
             throw new UnsupportedOperationException("同一列只能定义一个数据校验！");
@@ -323,8 +334,8 @@ public class Column {
      * @return Column
      */
     public Column verifyIntNum(String verifyIntNum, String... msgInfo) {
-        if (style == 1) {
-            throw new UnsupportedOperationException("仅允许定义color/backColor/align/valign ！");
+        if (custom == 1) {
+            throw new UnsupportedOperationException("仅允许定义color/backColor/align/valign/comment ！");
         }
         if (++verifyCount > 1) {
             throw new UnsupportedOperationException("同一列只能定义一个数据校验！");
@@ -345,8 +356,8 @@ public class Column {
      * @return Column
      */
     public Column verifyFloatNum(String verifyFloatNum, String... msgInfo) {
-        if (style == 1) {
-            throw new UnsupportedOperationException("仅允许定义color/backColor/align/valign ！");
+        if (custom == 1) {
+            throw new UnsupportedOperationException("仅允许定义color/backColor/align/valign/comment ！");
         }
         if (++verifyCount > 1) {
             throw new UnsupportedOperationException("同一列只能定义一个数据校验！");
@@ -363,7 +374,7 @@ public class Column {
         return verifyText;
     }
 
-    protected  String getVerifyCustom() {
+    protected String getVerifyCustom() {
         return verifyCustom;
     }
 
@@ -375,8 +386,8 @@ public class Column {
      * @return Column
      */
     public Column verifyCustom(String verifyCustom, String... msgInfo) {
-        if (style == 1) {
-            throw new UnsupportedOperationException("仅允许定义color/backColor/align/valign ！");
+        if (custom == 1) {
+            throw new UnsupportedOperationException("仅允许定义color/backColor/align/valign/comment ！");
         }
         if (++verifyCount > 1) {
             throw new UnsupportedOperationException("同一列只能定义一个数据校验！");
@@ -401,8 +412,8 @@ public class Column {
      * @return Column
      */
     public Column verifyText(String verifyText, String... msgInfo) {
-        if (style == 1) {
-            throw new UnsupportedOperationException("仅允许定义color/backColor/align/valign ！");
+        if (custom == 1) {
+            throw new UnsupportedOperationException("仅允许定义color/backColor/align/valign/comment ！");
         }
         if (++verifyCount > 1) {
             throw new UnsupportedOperationException("同一列只能定义一个数据校验！");
@@ -420,6 +431,14 @@ public class Column {
         return this.set;
     }
 
+    public String getDatePattern() {
+        return datePattern;
+    }
 
-
+    public void setDatePattern(String datePattern) {
+        if (custom == 1) {
+            throw new UnsupportedOperationException("仅允许定义color/backColor/align/valign/comment ！");
+        }
+        this.datePattern = datePattern;
+    }
 }

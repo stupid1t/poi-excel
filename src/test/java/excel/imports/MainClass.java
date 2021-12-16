@@ -29,7 +29,7 @@ public class MainClass {
 
     public static void parseSheet() throws Exception {
         // 1.获取源文件
-        Workbook wb = WorkbookFactory.create(new FileInputStream("C:\\Users\\damon.li\\Documents\\code\\self\\poi-excel\\src\\test\\java\\excel\\imports\\import.xls"));
+        Workbook wb = WorkbookFactory.create(new FileInputStream("src/test/java/excel/imports/import.xls"));
         // 2.获取sheet0导入
         Sheet sheet = wb.getSheetAt(0);
         // 3.生成VO实体

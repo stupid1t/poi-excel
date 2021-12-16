@@ -36,7 +36,7 @@ public class PoiConstant {
      * 格式化(24小时制)<br>
      * FORMAT_DateTime: 日期时间 yyyy-MM-dd HH:mm
      */
-    public static final String FMT_DATE_TIME = "yyyy-MM-dd HH:mm";
+    public static final String FMT_DATE_TIME = "yyyy-MM-dd HH:mm:ss";
 
     /**
      * 格式化(24小时制)<br>

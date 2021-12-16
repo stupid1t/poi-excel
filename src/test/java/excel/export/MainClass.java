@@ -43,14 +43,14 @@ public class MainClass {
             ProjectEvaluate obj = new ProjectEvaluate();
             obj.setProjectName("中青旅" + i);
             obj.setAreaName("华东长三角"+Math.random());
-            obj.setProvince("河北省"+i);
+            obj.setProvince("陕西省");
             obj.setCity("保定市"+i);
             obj.setPeople("张三" + i);
             obj.setLeader("李四" + i);
             obj.setScount((int) Math.random()*100);
             obj.setAvg(Math.random());
             obj.setCreateTime(new Date());
-            //obj.setImg(ImageParseBytes(new File("src/test/java/excel/export/1.png")));
+            obj.setImg(ImageParseBytes(new File("src/test/java/excel/export/1.png")));
             sheetData.add(obj);
         }
         // 2.map型数据填充
@@ -178,13 +178,13 @@ public class MainClass {
                 // 4.4 设置此列垂直居上
                 Column.field("people").valign(VerticalAlignment.TOP),
                 // 4.5 设置此列单元格 自定义校验 只能输入文本
-                Column.field("leader").width(4).verifyCustom("VALUE(F3:F500)", "我是提示"),
+                Column.field("leader").width(4).verifyCustom("LEN(G4)>2", "名字长度必须大于2位"),
                 // 4.6设置此列单元格 整数 数据校验 ，同时设置背景色为棕色
                 Column.field("scount").verifyIntNum("10~20").backColor(IndexedColors.BROWN),
                 // 4.7设置此列单元格 浮点数 数据校验， 同时设置字体颜色红色
                 Column.field("avg").verifyFloatNum("10.0~20.0").color(IndexedColors.RED),
                 // 4.8设置此列单元格 日期 数据校验 ，同时宽度为20、限制用户表格输入、水平居中、垂直居中、背景色、字体颜色
-                Column.field("createTime").width(20).verifyDate("2000-01-03 12:35~3000-05-06 23:23")
+                Column.field("createTime").width(20).verifyDate("2000-01-03 12:35:12~3000-05-06 23:23:13")
                         .align(HorizontalAlignment.LEFT).valign(VerticalAlignment.CENTER)
                         .backColor(IndexedColors.YELLOW).color(IndexedColors.GOLD),
                 // 4.9项目图片
@@ -194,7 +194,7 @@ public class MainClass {
         // 4.执行导出到工作簿
         Workbook bean = ExcelUtils.createWorkbook(
                 sheetData,
-                ExportRules.complexRule(column, headerRules).autoNum(true).footerRules(footerRules).sheetName("mysheet2").xlsx(false),
+                ExportRules.complexRule(column, headerRules).autoNum(true).footerRules(footerRules).sheetName("mysheet2").xlsx(true),
                 (fieldName, value, row, col) -> {
                     if ("projectName".equals(fieldName) && row.getProjectName().equals("中青旅23")) {
                         col.align(HorizontalAlignment.LEFT);
@@ -206,7 +206,7 @@ public class MainClass {
                     return value;
                 });
         // 5.写出文件
-        bean.write(new FileOutputStream("src/test/java/excel/export/export2.xls"));
+        bean.write(new FileOutputStream("src/test/java/excel/export/export2.xlsx"));
     }
 
     /**
