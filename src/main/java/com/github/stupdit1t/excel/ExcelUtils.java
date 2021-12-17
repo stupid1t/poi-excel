@@ -2,16 +2,12 @@ package com.github.stupdit1t.excel;
 
 import com.github.stupdit1t.excel.callback.InCallback;
 import com.github.stupdit1t.excel.callback.OutCallback;
-import com.github.stupdit1t.excel.common.ImportResult;
-import com.github.stupdit1t.excel.common.PoiCommon;
-import com.github.stupdit1t.excel.common.PoiConstant;
-import com.github.stupdit1t.excel.common.PoiException;
+import com.github.stupdit1t.excel.common.*;
 import com.github.stupdit1t.excel.handle.ImgHandler;
 import com.github.stupdit1t.excel.handle.rule.AbsCellVerifyRule;
 import com.github.stupdit1t.excel.handle.rule.AbsSheetVerifyRule;
 import com.github.stupdit1t.excel.handle.rule.CellVerifyRule;
 import com.github.stupdit1t.excel.style.CellPosition;
-import com.github.stupdit1t.excel.style.DefaultCellStyleEnum;
 import com.github.stupdit1t.excel.style.ICellStyle;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.reflect.FieldUtils;
@@ -27,7 +23,6 @@ import org.apache.poi.xssf.usermodel.*;
 import org.openxmlformats.schemas.drawingml.x2006.spreadsheetDrawing.CTMarker;
 
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.lang.reflect.Field;
@@ -64,8 +59,7 @@ public class ExcelUtils {
      * 默认后缀 xlsx
      */
     public static Workbook createBigWorkbook() {
-        Workbook wb = new SXSSFWorkbook();
-        return wb;
+        return new SXSSFWorkbook();
     }
 
     /**
@@ -77,8 +71,7 @@ public class ExcelUtils {
      * @param rowAccessWindowSize 在内存中的行数
      */
     public static Workbook createBigWorkbook(int rowAccessWindowSize) {
-        Workbook wb = new SXSSFWorkbook(rowAccessWindowSize);
-        return wb;
+        return new SXSSFWorkbook(rowAccessWindowSize);
     }
 
     /**
@@ -87,7 +80,7 @@ public class ExcelUtils {
      * @param xlsx 是否为xlsx格式
      */
     public static Workbook createEmptyWorkbook(boolean xlsx) {
-        Workbook wb = null;
+        Workbook wb;
         if (xlsx) {
             // 2007
             wb = new XSSFWorkbook();
@@ -101,14 +94,12 @@ public class ExcelUtils {
     /**
      * 导出
      *
-     * @param <T>
      * @param data        数据源
      * @param exportRules 导出规则
      * @return Workbook
      */
     public static <T> Workbook createWorkbook(List<T> data, ExportRules exportRules) {
-        Workbook work = createWorkbook(data, exportRules, null);
-        return work;
+        return createWorkbook(data, exportRules, null);
     }
 
     /**
@@ -145,9 +136,9 @@ public class ExcelUtils {
      * @param callBack    回调函数
      */
     public static <T> void fillBook(Workbook wb, List<T> data, ExportRules exportRules, OutCallback<T> callBack) {
-        boolean autoNum = exportRules.autoNum;
-        Column[] fields = exportRules.column;
-        ICellStyle[] gloablStyle = exportRules.globalStyle;
+        boolean autoNum = exportRules.isAutoNum();
+        Column[] fields = exportRules.getColumn();
+        ICellStyle[] gloablStyle = exportRules.getGlobalStyle();
 
         // 标题样式设置
         ICellStyle titleStyle = ICellStyle.getCellStyleByPosition(CellPosition.TITLE, gloablStyle);
@@ -167,8 +158,8 @@ public class ExcelUtils {
         Font cellFont = wb.createFont();
         cellStyle.handleStyle(cellFont, cellStyleSourece);
 
-        String sheetName = exportRules.sheetName;
-        Sheet sheet = null;
+        String sheetName = exportRules.getSheetName();
+        Sheet sheet;
         if (sheetName != null) {
             sheet = wb.createSheet(sheetName);
         } else {
@@ -177,8 +168,8 @@ public class ExcelUtils {
 
         ExcelUtils.printSetup(sheet);
         // -----------------------表头设置------------------------
-        int maxColumns = exportRules.maxColumns;
-        int maxRows = exportRules.maxRows;
+        int maxColumns = exportRules.getMaxColumns();
+        int maxRows = exportRules.getMaxRows();
 
         // 创建表头
         for (int i = 0; i < maxRows; i++) {
@@ -188,14 +179,13 @@ public class ExcelUtils {
             }
         }
         // 合并模式
-        if (exportRules.ifMerge) {
+        if (exportRules.isIfMerge()) {
             // 冻结表头
-            //sheet.createFreezePane(0, maxRows, 0, maxRows);
+            sheet.createFreezePane(0, maxRows, 0, maxRows);
             // header
-            Map<String, String> rules = exportRules.headerRules;
-            Iterator<Entry<String, String>> entries = rules.entrySet().iterator();
-            while (entries.hasNext()) {
-                Entry<String, String> entry = entries.next();
+            Map<String, String> rules = exportRules.getHeaderRules();
+            Set<Entry<String, String>> entries = rules.entrySet();
+            for (Entry<String, String> entry : entries) {
                 String key = entry.getKey();
                 String value = entry.getValue();
                 Object[] range = PoiCommon.coverRange(key);
@@ -220,20 +210,20 @@ public class ExcelUtils {
                 }
             }
         } else {// 非合并
-            if (exportRules.title == null) {
+            if (exportRules.getTitle() == null) {
                 // 冻结表头
                 sheet.createFreezePane(0, 1, 0, 1);
-                String[] hearder = exportRules.header;
+                String[] hearder = exportRules.getHeader();
                 for (int i = 0; i < hearder.length; i++) {
                     CellUtil.createCell(sheet.getRow(0), i, hearder[i], headerStyleSourece);
                 }
             } else {
                 // 冻结表头
                 sheet.createFreezePane(0, 2, 0, 2);
-                CellUtil.createCell(sheet.getRow(0), 0, exportRules.title, titleStyleSourece);
+                CellUtil.createCell(sheet.getRow(0), 0, exportRules.getTitle(), titleStyleSourece);
                 CellRangeAddress cra = new CellRangeAddress(0, 0, 0, maxColumns);
                 sheet.addMergedRegion(cra);
-                String[] hearder = exportRules.header;
+                String[] hearder = exportRules.getHeader();
                 for (int i = 0; i < hearder.length; i++) {
                     CellUtil.createCell(sheet.getRow(1), i, hearder[i], headerStyleSourece);
                 }
@@ -274,7 +264,7 @@ public class ExcelUtils {
             // 2.downDown设置
             String[] dorpDown = column.getDorpDown();
             if (dorpDown != null && dorpDown.length > 0) {
-                sheet.addValidationData(createDropDownValidation(sheet, dorpDown, j, maxRows));
+                sheet.addValidationData(createDropDownValidation(sheet, dorpDown, j, maxRows, maxRows + data.size() - 1));
             }
 
             // 3.时间校验
@@ -358,7 +348,7 @@ public class ExcelUtils {
         @SuppressWarnings("unchecked")
         Drawing<Picture> createDrawingPatriarch = (Drawing<Picture>) sheet.createDrawingPatriarch();
         // 存储类的字段信息
-        Map<Class<? extends Object>, Map<String, Field>> clsInfo = new HashMap<>();
+        Map<Class<?>, Map<String, Field>> clsInfo = new HashMap<>();
         // 存储单元格样式信息，此方式与因为POI的一个BUG
         Map<Object, CellStyle> subCellStyle = new HashMap<>();
         for (int i = 0; i < data.size(); i++) {
@@ -390,10 +380,10 @@ public class ExcelUtils {
             }
         }
         // ------------------------footer row-----------------------------
-        if (exportRules.ifFooter) {
-            Map<String, String> footerRules = exportRules.footerRules;
+        if (exportRules.isIfFooter()) {
+            Map<String, String> footerRules = exportRules.getFooterRules();
             // 构建尾行数字
-            int currRownum = exportRules.maxRows + data.size();
+            int currRownum = exportRules.getMaxRows() + data.size();
             int[] footerNum = getFooterNum(footerRules.entrySet().iterator(), currRownum);
             Iterator<Entry<String, String>> entries = footerRules.entrySet().iterator();
             for (int i = 0; i < footerNum.length; i++) {
@@ -490,7 +480,7 @@ public class ExcelUtils {
                     CellReference cellRef = new CellReference(rowNum, cellNum);
                     String filed = verifyBuilder.getFields()[fieldNum];
                     try {
-                        Object cellValue = null;
+                        Object cellValue;
                         if (imgField.size() > 0 && imgField.contains(filed)) {
                             String pictrueIndex = sheetIndex + "," + rowNum + "," + cellNum;
                             PictureData remove = pictures.remove(pictrueIndex);
@@ -577,8 +567,8 @@ public class ExcelUtils {
      * 读取规则excel数据内容为map
      *
      * @param sheet
-     * @param dataStartRow
-     * @param dataEndRowCount 尾部
+     * @param dataStartRow    起始行
+     * @param dataEndRowCount 尾部非数据行数量
      * @return
      */
     public static List<Map<String, Object>> readSheet(Sheet sheet, int dataStartRow, int dataEndRowCount) {
@@ -612,8 +602,6 @@ public class ExcelUtils {
         ) {
 
             return readExcelWrite(is, variable);
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -653,7 +641,7 @@ public class ExcelUtils {
                 short lastCellNum = row.getLastCellNum();
                 for (short k = 0; k < lastCellNum; k++) {
                     Object cellValue = getCellValue(row, k);
-                    if (cellValue != null && cellValue instanceof String) {
+                    if (cellValue instanceof String) {
                         String cellValueStr = (String) cellValue;
                         if (!cellValueStr.contains("$")) {
                             continue;
@@ -745,12 +733,12 @@ public class ExcelUtils {
      * @param clsInfo 类信息
      * @return Object
      */
-    private static Object readObjectFieldValue(Object t, String key, Map<Class<? extends Object>, Map<String, Field>> clsInfo) {
+    private static Object readObjectFieldValue(Object t, String key, Map<Class<?>, Map<String, Field>> clsInfo) {
         try {
             if (t instanceof Map) {
-                t = ((Map) t).get(key);
+                t = ((Map<?, ?>) t).get(key);
             } else {
-                Class<? extends Object> subCls = t.getClass();
+                Class<?> subCls = t.getClass();
                 Map<String, Field> subField = clsInfo.get(subCls);
                 if (subField == null) {
                     subField = PoiCommon.getAllFields(subCls);
@@ -866,17 +854,17 @@ public class ExcelUtils {
         if (StringUtils.isNotBlank(comment)) {
             // 表示需要用户添加批注
             Drawing<?> drawingPatriarch = cell.getSheet().createDrawingPatriarch();
-            ClientAnchor clientAnchor = null;
-            RichTextString richTextString = null;
+            ClientAnchor clientAnchor;
+            RichTextString richTextString;
             if (workbook instanceof XSSFWorkbook) {
                 clientAnchor = new XSSFClientAnchor();
-                richTextString = new XSSFRichTextString();
+                richTextString = new XSSFRichTextString(comment);
             } else if (workbook instanceof HSSFWorkbook) {
                 clientAnchor = new HSSFClientAnchor();
-                richTextString = new HSSFRichTextString();
+                richTextString = new HSSFRichTextString(comment);
             } else {
                 clientAnchor = new XSSFClientAnchor();
-                richTextString = new XSSFRichTextString();
+                richTextString = new XSSFRichTextString(comment);
             }
             Comment cellComment = drawingPatriarch.createCellComment(clientAnchor);
             cellComment.setString(richTextString);
@@ -919,16 +907,16 @@ public class ExcelUtils {
             short x = (short) cell.getColumnIndex();
             int y = cell.getRowIndex();
             // 5.2插入图片
-            ClientAnchor anchor = null;
-            int add1 = 0;
+            ClientAnchor anchor;
+            int add1;
             if (workbook instanceof XSSFWorkbook) {
                 anchor = new XSSFClientAnchor(10, 10, 10, 10, x, y, x + 1, y + 1);
                 add1 = workbook.addPicture(data, XSSFWorkbook.PICTURE_TYPE_PNG);
             } else if (workbook instanceof HSSFWorkbook) {
-                anchor = new HSSFClientAnchor(10, 10, 10, 10, (short) x, y, (short) (x + 1), y + 1);
+                anchor = new HSSFClientAnchor(10, 10, 10, 10, x, y, (short) (x + 1), y + 1);
                 add1 = workbook.addPicture(data, SXSSFWorkbook.PICTURE_TYPE_PNG);
             } else {
-                anchor = new XSSFClientAnchor(10, 10, 10, 10, (short) x, y, (short) (x + 1), y + 1);
+                anchor = new XSSFClientAnchor(10, 10, 10, 10, x, y, (short) (x + 1), y + 1);
                 add1 = workbook.addPicture(data, XSSFWorkbook.PICTURE_TYPE_PNG);
             }
             createDrawingPatriarch.createPicture(anchor, add1);
@@ -955,7 +943,7 @@ public class ExcelUtils {
             String key = entry.getKey();
             Object[] range = PoiCommon.coverRange(key);
             int a = (int) range[1];
-            row = a > row ? a : row;
+            row = Math.max(a, row);
         }
         int[] footerNum = new int[row];
         for (int i = 0; i < row; i++) {
@@ -1027,7 +1015,7 @@ public class ExcelUtils {
      * @return Map key:图片单元格索引（0-sheet下标,1-列号,1-行号）String，value:图片流PictureData
      */
     private static Map<String, PictureData> getSheetPictrues03(int sheetNum, HSSFSheet sheet) {
-        Map<String, PictureData> sheetIndexPicMap = new HashMap<String, PictureData>();
+        Map<String, PictureData> sheetIndexPicMap = new HashMap<>();
         List<HSSFPictureData> pictures = sheet.getWorkbook().getAllPictures();
         if (!pictures.isEmpty()) {
             HSSFPatriarch drawingPatriarch = sheet.getDrawingPatriarch();
@@ -1038,7 +1026,7 @@ public class ExcelUtils {
                         HSSFPicture pic = (HSSFPicture) shape;
                         int pictureIndex = pic.getPictureIndex() - 1;
                         HSSFPictureData picData = pictures.get(pictureIndex);
-                        String picIndex = String.valueOf(sheetNum) + "," + String.valueOf(anchor.getRow1()) + "," + String.valueOf(anchor.getCol1());
+                        String picIndex = sheetNum + "," + anchor.getRow1() + "," + anchor.getCol1();
                         sheetIndexPicMap.put(picIndex, picData);
                     }
                 }
@@ -1055,7 +1043,7 @@ public class ExcelUtils {
      * @return Map key:图片单元格索引（0,1,1）String，value:图片流PictureData
      */
     private static Map<String, PictureData> getSheetPictrues07(int sheetNum, XSSFSheet sheet) {
-        Map<String, PictureData> sheetIndexPicMap = new HashMap<String, PictureData>();
+        Map<String, PictureData> sheetIndexPicMap = new HashMap<>();
         for (POIXMLDocumentPart dr : sheet.getRelations()) {
             if (dr instanceof XSSFDrawing) {
                 XSSFDrawing drawing = (XSSFDrawing) dr;
@@ -1065,7 +1053,7 @@ public class ExcelUtils {
                         XSSFPicture pic = (XSSFPicture) shape;
                         XSSFClientAnchor anchor = pic.getPreferredSize();
                         CTMarker ctMarker = anchor.getFrom();
-                        String picIndex = String.valueOf(sheetNum) + "," + ctMarker.getRow() + "," + ctMarker.getCol();
+                        String picIndex = sheetNum + "," + ctMarker.getRow() + "," + ctMarker.getCol();
                         sheetIndexPicMap.put(picIndex, pic.getPictureData());
                     }
                 }
@@ -1080,13 +1068,14 @@ public class ExcelUtils {
      * @param sheet      哪个 sheet 页添加校验
      * @param dataSource 数据源数组
      * @param col        第几列校验（0开始）
-     * @param maxRow     表头占用几行
+     * @param firstRow   开始行
+     * @param lastRow    结束行
      * @return DataValidation
      */
-    private static DataValidation createDropDownValidation(Sheet sheet, String[] dataSource, int col, int maxRow) {
-        CellRangeAddressList cellRangeAddressList = new CellRangeAddressList(maxRow, 65535, col, col);
+    private static DataValidation createDropDownValidation(Sheet sheet, String[] dataSource, int col, int firstRow, int lastRow) {
+        CellRangeAddressList cellRangeAddressList = new CellRangeAddressList(firstRow, lastRow, col, col);
         DataValidationHelper helper = sheet.getDataValidationHelper();
-        DataValidationConstraint constraint = null;
+        DataValidationConstraint constraint;
         if (dataSource.length < 11) {
             constraint = helper.createExplicitListConstraint(dataSource);
         } else {
@@ -1107,7 +1096,7 @@ public class ExcelUtils {
             } else {
                 // 之前已经创建过
                 int createNum = dataLength - ++rowNum;
-                short lastCellNum = (short) (hidden.getRow(0).getLastCellNum());
+                short lastCellNum = hidden.getRow(0).getLastCellNum();
                 for (int i = 0; i < lastCellNum; i++) {
                     colLetter++;
                 }
@@ -1302,7 +1291,7 @@ public class ExcelUtils {
             int end = formula.indexOf(")");
             if (start != 1 && end != 0) {
                 String prev = formula.substring(0, start);
-                String sufix = formula.substring(end, formula.length());
+                String sufix = formula.substring(end);
                 String substring = formula.substring(start, end);
                 char[] charArray = substring.toCharArray();
                 int over = 0;
@@ -1344,234 +1333,5 @@ public class ExcelUtils {
         }
         dataValidation.createPromptBox("提示", msg);
         return dataValidation;
-    }
-
-    /**
-     * 导出规则
-     */
-    public static class ExportRules {
-
-        /**
-         * sheetName
-         */
-
-        private String sheetName;
-
-        /**
-         * 是否带序号
-         */
-
-        private boolean autoNum;
-
-        /**
-         * 列数据规则定义
-         */
-        private Column[] column;
-
-        /**
-         * 表头名
-         */
-        private String title;
-
-        /**
-         * 标题列
-         */
-        private String[] header;
-
-        /**
-         * excel头：合并规则及值，rules.put("1,1,A,G", "其它应扣"); 对应excel位置
-         */
-        private Map<String, String> headerRules;
-
-        /**
-         * excel尾 ： 合并规则及值，rules.put("1,1,A,G", 值); 对应excel位置
-         */
-        private Map<String, String> footerRules;
-
-        // --------------------无关设置字段-------------------------
-
-        /**
-         * 最大单元格列数
-         */
-        private int maxColumns = 0;
-
-        /**
-         * 表头最大行数
-         */
-        private int maxRows = 0;
-
-        /**
-         * 是否合并表头
-         */
-        private boolean ifMerge;
-
-        /**
-         * 是否有页脚
-         */
-        private boolean ifFooter;
-
-        /**
-         * 是否简单导出
-         */
-        private boolean simple;
-
-        /**
-         * 是否导出xlsx
-         */
-        private boolean xlsx = true;
-
-        /**
-         * 全局单元格样式
-         */
-        private ICellStyle[] globalStyle = DefaultCellStyleEnum.values();
-
-        /**
-         * 初始化规则，构建一个简单表头
-         *
-         * @param column
-         * @param header
-         */
-        public static ExportRules simpleRule(Column[] column, String[] header) {
-            return new ExportRules(column, header, true);
-        }
-
-        /**
-         * 初始化规则，构建一个复杂表头
-         *
-         * @param column
-         * @param headerRules
-         */
-        public static ExportRules complexRule(Column[] column, Map<String, String> headerRules) {
-            return new ExportRules(column, headerRules);
-        }
-
-        /**
-         * 常规一行表头构造,不带尾部
-         *
-         * @param column 列数据规则定义
-         * @param header 表头标题
-         * @param simple 简单表头
-         */
-        private ExportRules(Column[] column, String[] header, boolean simple) {
-            super();
-            this.column = column;
-            this.simple = simple;
-            setHeader(header);
-        }
-
-        /**
-         * 复杂表头构造
-         *
-         * @param column      列数据规则定义
-         * @param headerRules 表头设计
-         */
-        private ExportRules(Column[] column, Map<String, String> headerRules) {
-            super();
-            this.column = column;
-            setHeaderRules(headerRules);
-        }
-
-        private void setHeader(String[] header) {
-            this.header = header;
-            this.maxRows = this.maxRows + 1;
-            this.maxColumns = header.length - 1;
-        }
-
-        private void setHeaderRules(Map<String, String> headerRules) {
-            this.headerRules = headerRules;
-            // 解析rules，获取最大行和最大列
-            Iterator<Map.Entry<String, String>> entries = headerRules.entrySet().iterator();
-            int row = 0;
-            int col = 0;
-            while (entries.hasNext()) {
-                Map.Entry<String, String> entry = entries.next();
-                String key = entry.getKey();
-                Object[] range = PoiCommon.coverRange(key);
-                int a = (int) range[1];
-                int b = PoiConstant.cellRefNums.get(range[3]) + 1;
-                row = a > row ? a : row;
-                col = b > col ? b : col;
-            }
-            this.maxRows = row;
-            this.maxColumns = col;
-            this.ifMerge = true;
-        }
-
-        /**
-         * 尾行设计
-         *
-         * @param footerRules
-         */
-        public ExportRules footerRules(Map<String, String> footerRules) {
-            this.ifFooter = true;
-            this.footerRules = footerRules;
-            return this;
-        }
-
-
-        /**
-         * sheet名
-         *
-         * @param sheetName
-         */
-        public ExportRules sheetName(String sheetName) {
-            this.sheetName = sheetName;
-            return this;
-        }
-
-        /**
-         * 自动生成序号
-         * complexRule：需要自定义手动定义表头
-         * simpleRule：自动生成表头序号
-         *
-         * @param autoNum
-         */
-        public ExportRules autoNum(boolean autoNum) {
-            this.autoNum = autoNum;
-            if (autoNum && simple) {
-                String[] headerNew = new String[this.header.length + 1];
-                for (int i = 1; i < headerNew.length; i++) {
-                    headerNew[i] = this.header[i - 1];
-                }
-                headerNew[0] = "序号";
-                this.header = headerNew;
-                this.maxColumns = headerNew.length - 1;
-            }
-
-            return this;
-        }
-
-        /**
-         * 表头设置
-         *
-         * @param title
-         */
-        public ExportRules title(String title) {
-            if (this.headerRules != null) {
-                throw new UnsupportedOperationException("不能同时设置title和headerRules!请在headerRules设计excel标题");
-            }
-            this.title = title;
-            this.maxRows = this.maxRows + 1;
-            return this;
-        }
-
-        /**
-         * 全局单元格样式设置
-         *
-         * @param styles
-         */
-        public ExportRules globalStyle(ICellStyle... styles) {
-            this.globalStyle = styles;
-            return this;
-        }
-
-        public ExportRules xlsx(boolean xlsx) {
-            this.xlsx = xlsx;
-            return this;
-        }
-
-        public boolean isXlsx() {
-            return xlsx;
-        }
     }
 }

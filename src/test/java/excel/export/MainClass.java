@@ -2,7 +2,7 @@ package excel.export;
 
 import com.github.stupdit1t.excel.Column;
 import com.github.stupdit1t.excel.ExcelUtils;
-import com.github.stupdit1t.excel.ExcelUtils.ExportRules;
+import com.github.stupdit1t.excel.common.ExportRules;
 import com.github.stupdit1t.excel.style.CellPosition;
 import com.github.stupdit1t.excel.style.ICellStyle;
 import org.apache.poi.ss.usermodel.*;
@@ -47,7 +47,7 @@ public class MainClass {
             obj.setCity("保定市"+i);
             obj.setPeople("张三" + i);
             obj.setLeader("李四" + i);
-            obj.setScount((int) Math.random()*100);
+            obj.setScount((int) (Math.random()*1000));
             obj.setAvg(Math.random());
             obj.setCreateTime(new Date());
             obj.setImg(ImageParseBytes(new File("src/test/java/excel/export/1.png")));
@@ -180,9 +180,9 @@ public class MainClass {
                 // 4.5 设置此列单元格 自定义校验 只能输入文本
                 Column.field("leader").width(4).verifyCustom("LEN(G4)>2", "名字长度必须大于2位"),
                 // 4.6设置此列单元格 整数 数据校验 ，同时设置背景色为棕色
-                Column.field("scount").verifyIntNum("10~20").backColor(IndexedColors.BROWN),
+                Column.field("scount").verifyIntNum("10~2000").backColor(IndexedColors.BROWN),
                 // 4.7设置此列单元格 浮点数 数据校验， 同时设置字体颜色红色
-                Column.field("avg").verifyFloatNum("10.0~20.0").color(IndexedColors.RED),
+                Column.field("avg").verifyFloatNum("0.0~20.0").color(IndexedColors.RED),
                 // 4.8设置此列单元格 日期 数据校验 ，同时宽度为20、限制用户表格输入、水平居中、垂直居中、背景色、字体颜色
                 Column.field("createTime").width(20).verifyDate("2000-01-03 12:35:12~3000-05-06 23:23:13")
                         .align(HorizontalAlignment.LEFT).valign(VerticalAlignment.CENTER)
