@@ -3,6 +3,7 @@ package excel.export;
 import com.github.stupdit1t.excel.Column;
 import com.github.stupdit1t.excel.ExcelUtils;
 import com.github.stupdit1t.excel.common.ExportRules;
+import com.github.stupdit1t.excel.common.PoiConstant;
 import com.github.stupdit1t.excel.style.CellPosition;
 import com.github.stupdit1t.excel.style.ICellStyle;
 import org.apache.poi.ss.usermodel.*;
@@ -185,7 +186,7 @@ public class MainClass {
                 Column.field("avg").verifyFloatNum("0.0~20.0").color(IndexedColors.RED),
                 // 4.8设置此列单元格 日期 数据校验 ，同时宽度为20、限制用户表格输入、水平居中、垂直居中、背景色、字体颜色
                 Column.field("createTime").width(20).verifyDate("2000-01-03 12:35:12~3000-05-06 23:23:13")
-                        .datePattern("yyyy-MM-dd")
+                        .datePattern(PoiConstant.FMT_DATE_TIME)
                         .align(HorizontalAlignment.LEFT).valign(VerticalAlignment.CENTER)
                         .backColor(IndexedColors.YELLOW).color(IndexedColors.GOLD),
                 // 4.9项目图片
