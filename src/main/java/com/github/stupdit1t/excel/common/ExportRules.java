@@ -4,7 +4,6 @@ import com.github.stupdit1t.excel.Column;
 import com.github.stupdit1t.excel.style.DefaultCellStyleEnum;
 import com.github.stupdit1t.excel.style.ICellStyle;
 
-import java.util.Iterator;
 import java.util.Map;
 
 public class ExportRules {
@@ -57,6 +56,11 @@ public class ExportRules {
      * 表头最大行数
      */
     private int maxRows = 0;
+
+    /**
+     * 尾部数据行数
+     */
+    private int footerRows = 0;
 
     /**
      * 是否合并表头
@@ -137,21 +141,9 @@ public class ExportRules {
 
     private void setHeaderRules(Map<String, String> headerRules) {
         this.headerRules = headerRules;
-        // 解析rules，获取最大行和最大列
-        Iterator<Map.Entry<String, String>> entries = headerRules.entrySet().iterator();
-        int row = 0;
-        int col = 0;
-        while (entries.hasNext()) {
-            Map.Entry<String, String> entry = entries.next();
-            String key = entry.getKey();
-            Object[] range = PoiCommon.coverRange(key);
-            int a = (int) range[1];
-            int b = PoiConstant.cellRefNums.get(range[3]) + 1;
-            row = a > row ? a : row;
-            col = b > col ? b : col;
-        }
-        this.maxRows = row;
-        this.maxColumns = col;
+        int[] mapRowColNum = PoiCommon.getMapRowColNum(headerRules);
+        this.maxRows = mapRowColNum[0];
+        this.maxColumns = mapRowColNum[1];
         this.ifMerge = true;
     }
 
@@ -161,8 +153,10 @@ public class ExportRules {
      * @param footerRules
      */
     public ExportRules footerRules(Map<String, String> footerRules) {
-        this.ifFooter = true;
+        int[] mapRowColNum = PoiCommon.getMapRowColNum(headerRules);
         this.footerRules = footerRules;
+        this.footerRows = mapRowColNum[0];
+        this.ifFooter = true;
         return this;
     }
 
@@ -280,7 +274,8 @@ public class ExportRules {
         return ifFooter;
     }
 
-    public boolean isSimple() {
-        return simple;
+
+    public int getFooterRows() {
+        return footerRows;
     }
 }

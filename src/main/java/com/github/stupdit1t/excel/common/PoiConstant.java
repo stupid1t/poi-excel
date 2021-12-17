@@ -44,6 +44,10 @@ public class PoiConstant {
      */
     public static final String FMT_DATE = "yyyy-MM-dd";
 
+    /**
+     * 生成模板时, 最大填充下拉框数量
+     */
+    public static final int MAX_FILL_COL = 5000;
 
     /**
      * 默认填充2列

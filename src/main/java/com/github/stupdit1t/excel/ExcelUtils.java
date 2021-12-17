@@ -262,9 +262,11 @@ public class ExcelUtils {
                 }
             }
             // 2.downDown设置
+            int lastRow = (maxRows - 1) + data.size();
+            lastRow = lastRow == (maxRows - 1) ? PoiConstant.MAX_FILL_COL : lastRow;
             String[] dorpDown = column.getDorpDown();
             if (dorpDown != null && dorpDown.length > 0) {
-                sheet.addValidationData(createDropDownValidation(sheet, dorpDown, j, maxRows, maxRows + data.size() - 1));
+                sheet.addValidationData(createDropDownValidation(sheet, dorpDown, j, maxRows, lastRow));
             }
 
             // 3.时间校验
@@ -280,7 +282,7 @@ public class ExcelUtils {
                     throw new IllegalArgumentException("时间校验表达式不正确,请填写如2015-08-09~2016-09-10的值!");
                 }
                 try {
-                    sheet.addValidationData(createDateValidation(sheet, column.getDatePattern(), split1[0], split1[1], info, j, maxRows));
+                    sheet.addValidationData(createDateValidation(sheet, column.getDatePattern(), split1[0], split1[1], info, j, maxRows, lastRow));
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
@@ -298,7 +300,7 @@ public class ExcelUtils {
                 if (split1.length < 2) {
                     throw new IllegalArgumentException("数字表达式不正确,请填写如10~30的值!");
                 }
-                sheet.addValidationData(createNumValidation(sheet, split1[0], split1[1], info, j, maxRows));
+                sheet.addValidationData(createNumValidation(sheet, split1[0], split1[1], info, j, maxRows, lastRow));
             }
 
             // 4.浮点数字校验
@@ -313,7 +315,7 @@ public class ExcelUtils {
                 if (split1.length < 2) {
                     throw new IllegalArgumentException("数字表达式不正确,请填写如10.0~30.0的值!");
                 }
-                sheet.addValidationData(createFloatValidation(sheet, split1[0], split1[1], info, j, maxRows));
+                sheet.addValidationData(createFloatValidation(sheet, split1[0], split1[1], info, j, maxRows, lastRow));
             }
 
             // 5.自定义校验
@@ -324,7 +326,7 @@ public class ExcelUtils {
                 if (split.length == 2) {
                     info = split[1];
                 }
-                sheet.addValidationData(createCustomValidation(sheet, split[0], info, j, maxRows));
+                sheet.addValidationData(createCustomValidation(sheet, split[0], info, j, maxRows, lastRow));
             }
 
             // 6.文本长度校验
@@ -339,7 +341,7 @@ public class ExcelUtils {
                 if (split2.length < 2) {
                     throw new IllegalArgumentException("文本长度校验格式不正确，请设置如3~10格式!");
                 }
-                sheet.addValidationData(createTextLengthValidation(sheet, split2[0], split2[1], info, j, maxRows));
+                sheet.addValidationData(createTextLengthValidation(sheet, split2[0], split2[1], info, j, maxRows, lastRow));
             }
         }
 
@@ -1139,9 +1141,9 @@ public class ExcelUtils {
      * @param maxRow 表头占用几行
      * @return DataValidation
      */
-    private static DataValidation createDateValidation(Sheet sheet, String pattern, String start, String end, String info, int col, int maxRow) throws Exception {
+    private static DataValidation createDateValidation(Sheet sheet, String pattern, String start, String end, String info, int col, int maxRow, int lastRow) throws Exception {
         // 1.设置验证
-        CellRangeAddressList cellRangeAddressList = new CellRangeAddressList(maxRow, 65535, col, col);
+        CellRangeAddressList cellRangeAddressList = new CellRangeAddressList(maxRow, lastRow, col, col);
         DataValidationHelper helper = sheet.getDataValidationHelper();
         Calendar cal = Calendar.getInstance();
         Date startDate = DateUtils.parseDate(start, pattern);
@@ -1185,9 +1187,9 @@ public class ExcelUtils {
      * @param maxRow 表头占用几行
      * @return DataValidation
      */
-    private static DataValidation createNumValidation(Sheet sheet, String minNum, String maxNum, String info, int col, int maxRow) {
+    private static DataValidation createNumValidation(Sheet sheet, String minNum, String maxNum, String info, int col, int maxRow, int lastRow) {
         // 1.设置验证
-        CellRangeAddressList cellRangeAddressList = new CellRangeAddressList(maxRow, 65535, col, col);
+        CellRangeAddressList cellRangeAddressList = new CellRangeAddressList(maxRow, lastRow, col, col);
         DataValidationHelper helper = sheet.getDataValidationHelper();
         DataValidationConstraint constraint = helper.createIntegerConstraint(OperatorType.BETWEEN, minNum, maxNum);
         DataValidation dataValidation = helper.createValidation(constraint, cellRangeAddressList);
@@ -1217,9 +1219,9 @@ public class ExcelUtils {
      * @param maxRow 表头占用几行
      * @return DataValidation
      */
-    private static DataValidation createFloatValidation(Sheet sheet, String minNum, String maxNum, String info, int col, int maxRow) {
+    private static DataValidation createFloatValidation(Sheet sheet, String minNum, String maxNum, String info, int col, int maxRow, int lastRow) {
         // 1.设置验证
-        CellRangeAddressList cellRangeAddressList = new CellRangeAddressList(maxRow, 65535, col, col);
+        CellRangeAddressList cellRangeAddressList = new CellRangeAddressList(maxRow, lastRow, col, col);
         DataValidationHelper helper = sheet.getDataValidationHelper();
         DataValidationConstraint constraint = helper.createDecimalConstraint(OperatorType.BETWEEN, minNum, maxNum);
         DataValidation dataValidation = helper.createValidation(constraint, cellRangeAddressList);
@@ -1250,9 +1252,9 @@ public class ExcelUtils {
      * @param maxRow 表头占用几行
      * @return DataValidation
      */
-    private static DataValidation createTextLengthValidation(Sheet sheet, String minNum, String maxNum, String info, int col, int maxRow) {
+    private static DataValidation createTextLengthValidation(Sheet sheet, String minNum, String maxNum, String info, int col, int maxRow, int lastRow) {
         // 1.设置验证
-        CellRangeAddressList cellRangeAddressList = new CellRangeAddressList(maxRow, 65535, col, col);
+        CellRangeAddressList cellRangeAddressList = new CellRangeAddressList(maxRow, lastRow, col, col);
         DataValidationHelper helper = sheet.getDataValidationHelper();
         DataValidationConstraint constraint = helper.createTextLengthConstraint(OperatorType.BETWEEN, minNum, maxNum);
         DataValidation dataValidation = helper.createValidation(constraint, cellRangeAddressList);
@@ -1281,7 +1283,7 @@ public class ExcelUtils {
      * @param maxRow  表头占用几行
      * @return DataValidation
      */
-    private static DataValidation createCustomValidation(Sheet sheet, String formula, String info, int col, int maxRow) {
+    private static DataValidation createCustomValidation(Sheet sheet, String formula, String info, int col, int maxRow, int lastRow) {
         String msg = "请输入正确的值！";
         // 0.修正xls表达式不正确定位的问题,只修正了开始，如F3:F2000,修正了F3变为A0,F2000变为A2000
         Workbook workbook = sheet.getWorkbook();
@@ -1314,7 +1316,7 @@ public class ExcelUtils {
 
         }
         // 1.设置验证
-        CellRangeAddressList cellRangeAddressList = new CellRangeAddressList(maxRow, 65535, col, col);
+        CellRangeAddressList cellRangeAddressList = new CellRangeAddressList(maxRow, lastRow, col, col);
         DataValidationHelper helper = sheet.getDataValidationHelper();
         DataValidationConstraint constraint = helper.createCustomConstraint(formula);
         DataValidation dataValidation = helper.createValidation(constraint, cellRangeAddressList);

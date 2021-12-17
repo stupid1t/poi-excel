@@ -5,6 +5,7 @@ import org.apache.commons.lang3.reflect.FieldUtils;
 
 import java.lang.reflect.Field;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
@@ -100,7 +101,6 @@ public class PoiCommon {
     }
 
 
-
     /**
      * 转换数字为坐标
      *
@@ -135,5 +135,27 @@ public class PoiCommon {
             cellRefNums.put(index, columnIndex);
             numsRefCell.put(columnIndex, index);
         }
+    }
+
+    /**
+     * 获取map规则最大列和行数
+     * @param rules
+     * @return
+     */
+    public static int[] getMapRowColNum(Map<String, String> rules) {
+        // 解析rules，获取最大行和最大列
+        Iterator<Map.Entry<String, String>> entries = rules.entrySet().iterator();
+        int row = 0;
+        int col = 0;
+        while (entries.hasNext()) {
+            Map.Entry<String, String> entry = entries.next();
+            String key = entry.getKey();
+            Object[] range = coverRange(key);
+            int a = (int) range[1];
+            int b = PoiConstant.cellRefNums.get(range[3]) + 1;
+            row = a > row ? a : row;
+            col = b > col ? b : col;
+        }
+        return new int[]{row, col};
     }
 }

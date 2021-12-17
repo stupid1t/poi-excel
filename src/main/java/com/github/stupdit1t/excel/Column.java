@@ -435,10 +435,11 @@ public class Column implements Cloneable {
         return datePattern;
     }
 
-    public void setDatePattern(String datePattern) {
+    public Column datePattern(String datePattern) {
         if (custom == 1) {
             throw new UnsupportedOperationException("仅允许定义color/backColor/align/valign/comment ！");
         }
         this.datePattern = datePattern;
+        return this;
     }
 }
