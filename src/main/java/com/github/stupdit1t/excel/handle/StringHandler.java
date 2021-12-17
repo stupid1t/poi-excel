@@ -60,7 +60,7 @@ public class StringHandler extends AbsCellVerifyRule<String> {
     public String doHandle(String fieldName, Object cellValue) throws Exception {
         String value = String.valueOf(cellValue);
         if (pattern != null && !Pattern.matches(pattern, value)) {
-            throw PoiException.error("格式不正确");
+            throw PoiException.error(fieldName + "格式不正确");
         }
         return value;
     }

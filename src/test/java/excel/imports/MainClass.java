@@ -34,7 +34,7 @@ public class MainClass {
         Sheet sheet = wb.getSheetAt(0);
         // 3.生成VO实体
         Consumer<AbsSheetVerifyRule> importRule = (rule) -> {
-            rule.addRule("C", "bigDecimalHandler", "bigDecimalHandler", new BigDecimalHandler(true));
+            rule.addRule("C", "bigDecimalHandler", "名字", new BigDecimalHandler(false));
             rule.addRule("E", "booleanHandler", "booleanHandler", new BooleanHandler(true));
             rule.addRule("G", "charHandler", "charHandler", new CharHandler(true));
             rule.addRule("I", "dateHandler", "dateHandler", new DateHandler("yyyy-MM-dd HH:mm:ss", true));
@@ -51,7 +51,7 @@ public class MainClass {
             rule.addRule("U", "shortHandler", "图片", new ShortHandler(true));
             rule.addRule("Y", "stringHandler", "图片", new StringHandler(true));
         };
-        ImportResult<DemoData> list = ExcelUtils.parseSheet(DemoData.class, importRule, sheet, 3, 1, (row, rowNum) -> {
+        ImportResult<DemoData> list = ExcelUtils.readSheet(sheet, DemoData.class, importRule, 3, 1, (row, rowNum) -> {
             // 其他逻辑处理
             System.out.println("当前行数据为:" + row);
         });

@@ -42,6 +42,6 @@ public class FloatHandler extends AbsCellVerifyRule<Float> {
 		} else if (NumberUtils.isNumber(value)) {
 			return new BigDecimal(value).floatValue();
 		}
-		throw PoiException.error("格式不支持");
+		throw PoiException.error(fieldName+"格式不正确");
 	}
 }

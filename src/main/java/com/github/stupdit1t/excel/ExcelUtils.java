@@ -350,8 +350,7 @@ public class ExcelUtils {
 
         // ------------------body row-----------------
         // 画图器
-        @SuppressWarnings("unchecked")
-        Drawing<Picture> createDrawingPatriarch = (Drawing<Picture>) sheet.createDrawingPatriarch();
+        @SuppressWarnings("unchecked") Drawing<Picture> createDrawingPatriarch = (Drawing<Picture>) sheet.createDrawingPatriarch();
         // 存储类的字段信息
         Map<Class<?>, Map<String, Field>> clsInfo = new HashMap<>();
         // 存储单元格样式信息，此方式与因为POI的一个BUG
@@ -423,20 +422,6 @@ public class ExcelUtils {
     /**
      * 解析Sheet
      *
-     * @param cls             结果bean
-     * @param verifyBuilder   校验器
-     * @param sheet           解析的sheet
-     * @param dataStartRow    开始行:从0开始计，表示excel第一行
-     * @param dataEndRowCount 尾行非数据行数量，比如统计行2行，则写2
-     * @return ImportRspInfo
-     */
-    public static <T> ImportResult<T> parseSheet(Class<T> cls, Consumer<AbsSheetVerifyRule> verifyBuilder, Sheet sheet, int dataStartRow, int dataEndRowCount) {
-        return parseSheet(cls, verifyBuilder, sheet, dataStartRow, dataEndRowCount, null);
-    }
-
-    /**
-     * 解析Sheet
-     *
      * @param cls                结果bean
      * @param absSheetVerifyRule 校验器
      * @param sheet              解析的sheet
@@ -445,7 +430,7 @@ public class ExcelUtils {
      * @param callback           加入回调逻辑
      * @return ImportRspInfo
      */
-    public static <T> ImportResult<T> parseSheet(Class<T> cls, Consumer<AbsSheetVerifyRule> absSheetVerifyRule, Sheet sheet, int dataStartRow, int dataEndRowCount, InCallback<T> callback) {
+    public static <T> ImportResult<T> readSheet(Sheet sheet, Class<T> cls, Consumer<AbsSheetVerifyRule> absSheetVerifyRule, int dataStartRow, int dataEndRowCount, InCallback<T> callback) {
         AbsSheetVerifyRule verifyBuilder = AbsSheetVerifyRule.buildRule(absSheetVerifyRule);
         // 规则初始化
         verifyBuilder.init();
@@ -537,7 +522,7 @@ public class ExcelUtils {
      * @param sheetNum        表格号
      * @param dataStartRow    开始读取行
      * @param dataEndRowCount 尾部
-     * @return List<Map<String, Object>>
+     * @return List<Map < String, Object>>
      */
     public static List<Map<String, Object>> readSheet(String filePath, int sheetNum, int dataStartRow, int dataEndRowCount) {
         try (InputStream is = new FileInputStream(filePath)) {
@@ -554,12 +539,10 @@ public class ExcelUtils {
      * @param is              文件流
      * @param dataStartRow    数据起始行
      * @param dataEndRowCount 尾部非数据行数量
-     * @return List<Map<String, Object>>
+     * @return List<Map < String, Object>>
      */
     public static List<Map<String, Object>> readSheet(InputStream is, int sheetNum, int dataStartRow, int dataEndRowCount) {
-        try (
-                Workbook wb = WorkbookFactory.create(is);
-        ) {
+        try (Workbook wb = WorkbookFactory.create(is);) {
             Sheet sheet = wb.getSheetAt(sheetNum);
             return readSheet(sheet, dataStartRow, dataEndRowCount);
         } catch (Exception e) {
@@ -571,10 +554,80 @@ public class ExcelUtils {
     /**
      * 读取规则excel数据内容为map
      *
+     * @param filePath        文件
+     * @param dataStartRow    数据起始行
+     * @param dataEndRowCount 尾部非数据行数量
+     * @return List<Map < String, Object>>
+     */
+    public static <T> ImportResult<T> readSheet(String filePath, Class<T> cls, Consumer<AbsSheetVerifyRule> absSheetVerifyRule, int sheetNum, int dataStartRow, int dataEndRowCount, InCallback<T> callback) {
+        try (InputStream is = new FileInputStream(filePath)) {
+            return readSheet(is, cls, absSheetVerifyRule, sheetNum, dataStartRow, dataEndRowCount, callback);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
+    /**
+     * 读取规则excel数据内容为map
+     *
+     * @param is              文件流
+     * @param dataStartRow    数据起始行
+     * @param dataEndRowCount 尾部非数据行数量
+     * @return List<Map < String, Object>>
+     */
+    public static <T> ImportResult<T> readSheet(InputStream is, Class<T> cls, Consumer<AbsSheetVerifyRule> absSheetVerifyRule, int sheetNum, int dataStartRow, int dataEndRowCount, InCallback<T> callback) {
+        try (Workbook wb = WorkbookFactory.create(is);) {
+            Sheet sheet = wb.getSheetAt(sheetNum);
+            return readSheet(sheet, cls, absSheetVerifyRule, dataStartRow, dataEndRowCount, callback);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
+    /**
+     * 读取规则excel数据内容为map
+     *
+     * @param filePath        文件
+     * @param dataStartRow    数据起始行
+     * @param dataEndRowCount 尾部非数据行数量
+     * @return List<Map < String, Object>>
+     */
+    public static <T> ImportResult<T> readSheet(String filePath, Class<T> cls, Consumer<AbsSheetVerifyRule> absSheetVerifyRule, int sheetNum, int dataStartRow, int dataEndRowCount) {
+        try (InputStream is = new FileInputStream(filePath)) {
+            return readSheet(is, cls, absSheetVerifyRule, sheetNum, dataStartRow, dataEndRowCount);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
+    /**
+     * 读取规则excel数据内容为map
+     *
+     * @param is              文件流
+     * @param dataStartRow    数据起始行
+     * @param dataEndRowCount 尾部非数据行数量
+     * @return List<Map < String, Object>>
+     */
+    public static <T> ImportResult<T> readSheet(InputStream is, Class<T> cls, Consumer<AbsSheetVerifyRule> absSheetVerifyRule, int sheetNum, int dataStartRow, int dataEndRowCount) {
+        try (Workbook wb = WorkbookFactory.create(is);) {
+            Sheet sheet = wb.getSheetAt(sheetNum);
+            return readSheet(sheet, cls, absSheetVerifyRule, dataStartRow, dataEndRowCount, null);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
+    /**
+     * 读取规则excel数据内容为map
+     *
      * @param sheet
      * @param dataStartRow    起始行
      * @param dataEndRowCount 尾部非数据行数量
-     * @return List<Map<String, Object>>
+     * @return List<Map < String, Object>>
      */
     public static List<Map<String, Object>> readSheet(Sheet sheet, int dataStartRow, int dataEndRowCount) {
         List<Map<String, Object>> sheetData = new ArrayList<>();
@@ -602,9 +655,7 @@ public class ExcelUtils {
      * @param variable 内置变量
      */
     public static Workbook readExcelWrite(String filePath, Map<String, String> variable) {
-        try (
-                FileInputStream is = new FileInputStream(filePath)
-        ) {
+        try (FileInputStream is = new FileInputStream(filePath)) {
 
             return readExcelWrite(is, variable);
         } catch (IOException e) {

@@ -58,7 +58,7 @@ public class DateHandler extends AbsCellVerifyRule<Date> {
             String value = (String) cellValue;
             return DateUtils.parseDate(value, pattern);
         }
-        throw PoiException.error("格式不支持");
+        throw PoiException.error(fieldName+"格式不正确");
     }
 
 }
