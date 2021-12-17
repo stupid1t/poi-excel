@@ -14,7 +14,6 @@ import java.util.*;
 public class MainClass {
 
 
-
     /**
      * 单sheet数据
      */
@@ -28,7 +27,7 @@ public class MainClass {
     /**
      * 复杂对象数据
      */
-    private  static List<Student> complexData = new ArrayList<>();
+    private static List<Student> complexData = new ArrayList<>();
 
 
     /**
@@ -43,12 +42,12 @@ public class MainClass {
         for (int i = 0; i < 10; i++) {
             ProjectEvaluate obj = new ProjectEvaluate();
             obj.setProjectName("中青旅" + i);
-            obj.setAreaName("华东长三角"+Math.random());
+            obj.setAreaName("华东长三角" + Math.random());
             obj.setProvince("陕西省");
-            obj.setCity("保定市"+i);
+            obj.setCity("保定市" + i);
             obj.setPeople("张三" + i);
             obj.setLeader("李四" + i);
-            obj.setScount((int) (Math.random()*1000));
+            obj.setScount((int) (Math.random() * 1000));
             obj.setAvg(Math.random());
             obj.setCreateTime(new Date());
             obj.setImg(ImageParseBytes(new File("src/test/java/excel/export/1.png")));
@@ -83,12 +82,13 @@ public class MainClass {
     public static void main(String[] args) throws IOException {
         try {
             long s = System.currentTimeMillis();
+            export1();
             export2();
-            //export7();
-            //export3();
-            //export4();
-            //export5();
-            //export6();
+            export3();
+            export4();
+            export5();
+            export6();
+            export7();
             System.out.println("耗时:" + (System.currentTimeMillis() - s));
         } catch (Exception e) {
             // TODO Auto-generated catch block
@@ -103,7 +103,7 @@ public class MainClass {
      */
     public static void export1() throws Exception {
         // 1.导出的hearder设置
-        String[] hearder = { "项目名称", "所属区域", "省份", "市", "项目所属人", "项目领导人", "得分", "平均分", "创建时间"};
+        String[] hearder = {"项目名称", "所属区域", "省份", "市", "项目所属人", "项目领导人", "得分", "平均分", "创建时间"};
         // 2.导出hearder对应的字段设置
         Column[] column = {Column.field("projectName"), Column.field("areaName").width(30), Column.field("province"),
                 Column.field("city"), Column.field("people"), Column.field("leader"), Column.field("scount"),
@@ -131,12 +131,12 @@ public class MainClass {
             }
         };
         Workbook bigWorkbook = ExcelUtils.createBigWorkbook(500);
-        ExcelUtils.fillBook(bigWorkbook,sheetData, ExportRules.simpleRule(column, hearder)
+        ExcelUtils.fillBook(bigWorkbook, sheetData, ExportRules.simpleRule(column, hearder)
                 .title("项目资源统计")
                 .autoNum(true)
                 .sheetName("mysheet1")
                 .globalStyle(titleStyle)
-                );
+        );
         // 4.写出文件
         bigWorkbook.write(new FileOutputStream("src/test/java/excel/export/export1.xlsx"));
     }
@@ -194,7 +194,8 @@ public class MainClass {
 
         };
         // 4.执行导出到工作簿
-        Workbook bean = ExcelUtils.createWorkbook(
+        ExcelUtils.export(
+                "src/test/java/excel/export/export2.xlsx",
                 sheetData,
                 ExportRules.complexRule(column, headerRules).autoNum(true).footerRules(footerRules).sheetName("mysheet2").xlsx(true),
                 (fieldName, value, row, col) -> {
@@ -207,8 +208,7 @@ public class MainClass {
                     }
                     return value;
                 });
-        // 5.写出文件
-        bean.write(new FileOutputStream("src/test/java/excel/export/export2.xlsx"));
+
     }
 
     /**
@@ -223,9 +223,7 @@ public class MainClass {
         Column[] column = {Column.field("name"), Column.field("classRoom.name"), Column.field("classRoom.school.name"),
                 Column.field("moreInfo.parent.age"),};
         // 3.执行导出到工作簿
-        Workbook bean = ExcelUtils.createWorkbook(complexData, ExportRules.simpleRule(column, hearder).title("學生基本信息"));
-        // 4.写出文件
-        bean.write(new FileOutputStream("src/test/java/excel/export/export3.xlsx"));
+        ExcelUtils.export("src/test/java/excel/export/export3.xlsx", sheetData, ExportRules.simpleRule(column, hearder).title("學生基本信息"));
     }
 
     /**
@@ -241,9 +239,8 @@ public class MainClass {
                 Column.field("age"),
         };
         // 3.执行导出到工作簿
-        Workbook bean = ExcelUtils.createWorkbook(mapData, ExportRules.simpleRule(column, hearder));
-        // 4.写出文件
-        bean.write(new FileOutputStream("src/test/java/excel/export/export4.xlsx"));
+        ExcelUtils.export("src/test/java/excel/export/export4.xlsx", mapData, ExportRules.simpleRule(column, hearder));
+
     }
 
     /**
@@ -258,7 +255,7 @@ public class MainClass {
         // 2.导出hearder对应的字段设置，列宽设置
         Column[] column = {Column.field("宝宝姓名"), Column.field("宝宝昵称"), Column.field("家长姓名"),
                 Column.field("手机号码").verifyText("11~11", "请输入11位的手机号码！"),
-                Column.field("宝宝生日").verifyDate("2000-01-01~3000-12-31"),
+                Column.field("宝宝生日").datePattern("yyyy-MM-dd").verifyDate("2000-01-01~3000-12-31"),
                 Column.field("月龄").width(4).verifyCustom("VALUE(F3:F6000)", "月齡格式：如1年2个月则输入14"),
                 Column.field("宝宝性别").dorpDown(new String[]{"男", "女"}),
                 Column.field("来源渠道").width(12).dorpDown(new String[]{"品推", "市场"}),
@@ -267,9 +264,7 @@ public class MainClass {
                 Column.field("客服顾问").width(6).dorpDown(new String[]{"大唐", "银泰"}),
                 Column.field("分配校区").width(6).dorpDown(new String[]{"大唐", "银泰"}), Column.field("备注")};
         // 3.执行导出到工作簿
-        Workbook bean = ExcelUtils.createWorkbook(Collections.emptyList(), ExportRules.simpleRule(column, hearder));
-        // 4.写出文件
-        bean.write(new FileOutputStream("src/test/java/excel/export/export5.xlsx"));
+        ExcelUtils.export("src/test/java/excel/export/export5.xlsx", Collections.emptyList(), ExportRules.simpleRule(column, hearder));
     }
 
     /**
@@ -353,7 +348,7 @@ public class MainClass {
                 // 4.7设置此列单元格 浮点数 数据校验， 同时设置字体颜色红色
                 Column.field("avg").verifyFloatNum("10.0~20.0").color(IndexedColors.RED),
                 // 4.8设置此列单元格 日期 数据校验 ，同时宽度为20、限制用户表格输入、水平居中、垂直居中、背景色、字体颜色
-                Column.field("createTime").width(20).verifyDate("2000-01-03 12:35~3000-05-06 23:23")
+                Column.field("createTime").width(20).datePattern("yyyy-MM-dd HH:mm").verifyDate("2000-01-03 12:35~3000-05-06 23:23")
                         .align(HorizontalAlignment.LEFT).valign(VerticalAlignment.CENTER)
                         .backColor(IndexedColors.YELLOW).color(IndexedColors.GOLD),
                 // 4.9项目图片
@@ -361,7 +356,8 @@ public class MainClass {
 
         };
         // 4.执行导出到工作簿
-        Workbook bean = ExcelUtils.createWorkbook(
+        ExcelUtils.export(
+                "src/test/java/excel/export/export7.xls",
                 sheetData,
                 ExportRules.complexRule(column, headerRules).autoNum(true).sheetName("mysheet2").xlsx(false),
                 (fieldName, value, row, col) -> {
@@ -374,8 +370,6 @@ public class MainClass {
                     }
                     return value;
                 });
-        // 5.写出文件
-        bean.write(new FileOutputStream("src/test/java/excel/export/export7.xls"));
     }
 
     /**
