@@ -2,10 +2,14 @@ package excel.export;
 
 import com.github.stupdit1t.excel.Column;
 import com.github.stupdit1t.excel.ExcelUtils;
-import com.github.stupdit1t.excel.common.ExportRules;
+import com.github.stupdit1t.excel.ExportRules;
 import com.github.stupdit1t.excel.common.PoiConstant;
 import com.github.stupdit1t.excel.style.CellPosition;
 import com.github.stupdit1t.excel.style.ICellStyle;
+import excel.export.data.ClassRoom;
+import excel.export.data.Parent;
+import excel.export.data.ProjectEvaluate;
+import excel.export.data.Student;
 import org.apache.poi.ss.usermodel.*;
 
 import java.io.*;
@@ -17,7 +21,7 @@ public class MainClass {
     /**
      * 单sheet数据
      */
-    private static List<ProjectEvaluate> sheetData = new ArrayList<>();
+    private static List<ProjectEvaluate> data = new ArrayList<>();
 
     /**
      * map型数据
@@ -42,16 +46,16 @@ public class MainClass {
         for (int i = 0; i < 10; i++) {
             ProjectEvaluate obj = new ProjectEvaluate();
             obj.setProjectName("中青旅" + i);
-            obj.setAreaName("华东长三角" + Math.random());
+            obj.setAreaName("华东长三角");
             obj.setProvince("陕西省");
-            obj.setCity("保定市" + i);
-            obj.setPeople("张三" + i);
-            obj.setLeader("李四" + i);
+            obj.setCity("保定市");
+            obj.setPeople("张三");
+            obj.setLeader("李四");
             obj.setScount((int) (Math.random() * 1000));
             obj.setAvg(Math.random());
             obj.setCreateTime(new Date());
-            obj.setImg(ImageParseBytes(new File("src/test/java/excel/export/1.png")));
-            sheetData.add(obj);
+            obj.setImg(ImageParseBytes(new File("src/test/java/excel/export/data/1.png")));
+            data.add(obj);
         }
         // 2.map型数据填充
         for (int i = 0; i < 15; i++) {
@@ -74,26 +78,25 @@ public class MainClass {
             complexData.add(stu);
         }
         // 4.多sheet数据填充
-        moreSheetData.add(sheetData);
+        moreSheetData.add(data);
         moreSheetData.add(mapData);
         moreSheetData.add(complexData);
     }
 
     public static void main(String[] args) throws IOException {
-        try {
-            long s = System.currentTimeMillis();
-            export1();
-            export2();
-            export3();
-            export4();
-            export5();
-            export6();
-            export7();
-            System.out.println("耗时:" + (System.currentTimeMillis() - s));
-        } catch (Exception e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
-        }
+
+        long s = System.currentTimeMillis();
+        // 简单导出
+        simpleExport();
+        simpleExport2();
+        //export2();
+        //export3();
+        //export4();
+        //export5();
+        //export6();
+        //export7();
+        System.out.println("耗时:" + (System.currentTimeMillis() - s));
+
     }
 
     /**
@@ -101,44 +104,108 @@ public class MainClass {
      *
      * @throws Exception
      */
-    public static void export1() throws Exception {
-        // 1.导出的hearder设置
-        String[] hearder = {"项目名称", "所属区域", "省份", "市", "项目所属人", "项目领导人", "得分", "平均分", "创建时间"};
-        // 2.导出hearder对应的字段设置
-        Column[] column = {Column.field("projectName"), Column.field("areaName").width(30), Column.field("province"),
-                Column.field("city"), Column.field("people"), Column.field("leader"), Column.field("scount"),
-                Column.field("avg"), Column.field("createTime")
+    public static void simpleExport() {
+        // 1.导出的header标题设置
+        String[] headers = {"项目名称", "项目图", "所属区域", "省份", "市", "项目所属人", "项目领导人", "得分", "平均分", "创建时间"};
+        // 2.导出header对应的字段设置
+        Column[] columns = {
+                Column.field("projectName"),
+                Column.field("img"),
+                Column.field("areaName"),
+                Column.field("province"),
+                Column.field("city").width(3),
+                Column.field("people"),
+                Column.field("leader"),
+                Column.field("scount"),
+                Column.field("avg"),
+                Column.field("createTime").datePattern("yyyy-MM-dd")
         };
-        // 3.执行导出到工作簿
-        ICellStyle titleStyle = new ICellStyle() {
+        // 3.执行导出
+        ExcelUtils.export("src/test/java/excel/export/simpleExport.xlsx", data, ExportRules.simpleRule(columns, headers));
+    }
+
+    /**
+     * 简单导出2
+     *
+     * @throws Exception
+     */
+    public static void simpleExport2() {
+        // 1.导出的header标题设置
+        String[] headers = {"项目名称", "项目图", "所属区域", "省份", "市", "项目所属人", "项目领导人", "得分", "平均分", "创建时间"};
+        // 2.导出header对应的字段设置
+        Column[] columns = {
+                Column.field("projectName"),
+                Column.field("img"),
+                Column.field("areaName"),
+                Column.field("province"),
+                Column.field("city").width(3),
+                Column.field("people"),
+                Column.field("leader"),
+                Column.field("scount"),
+                Column.field("avg"),
+                Column.field("createTime").datePattern("yyyy-MM-dd")
+        };
+        // 3.尾部合计行设计
+        Map<String, String> footerRules = new HashMap<>();
+        footerRules.put("1,1,A,H", "合计");
+        footerRules.put("1,1,I,I", String.format("=SUM(I3:I%s)", 2 + data.size()));
+        footerRules.put("1,1,J,J", String.format("=AVERAGE(J3:I%s)", 2 + data.size()));
+        footerRules.put("1,1,K,K", "作者:625");
+
+        // 4.自定义header样式
+        ICellStyle headerStyle = new ICellStyle() {
             @Override
             public CellPosition getPosition() {
-                return CellPosition.CELL;
+                return CellPosition.HEADER;
             }
 
             @Override
-            public void handleStyle(Font font, CellStyle style) {
-                font.setFontHeightInPoints((short) 15);
-                font.setColor(IndexedColors.RED.getIndex());
+            public void handleStyle(Font font, CellStyle cellStyle) {
+                // 加粗
                 font.setBold(true);
-                // 左右居中
-                style.setAlignment(HorizontalAlignment.CENTER);
-                // 上下居中
-                style.setVerticalAlignment(VerticalAlignment.CENTER);
-                style.setFont(font);
-                //折行显示
-                style.setWrapText(true);
+                // 黑体
+                font.setFontName("黑体");
+                // 字号12
+                font.setFontHeightInPoints((short) 12);
+                // 字体红色
+                font.setColor(IndexedColors.RED.getIndex());
+                // 背绿色
+                cellStyle.setFillForegroundColor(IndexedColors.LIGHT_GREEN.getIndex());
+                // 边框
+                cellStyle.setBorderRight(BorderStyle.THIN);
+                cellStyle.setRightBorderColor(IndexedColors.BLACK.getIndex());
+                cellStyle.setBorderLeft(BorderStyle.THIN);
+                cellStyle.setLeftBorderColor(IndexedColors.BLACK.getIndex());
+                cellStyle.setBorderTop(BorderStyle.THIN);
+                cellStyle.setTopBorderColor(IndexedColors.BLACK.getIndex());
+                cellStyle.setBorderBottom(BorderStyle.THIN);
+                cellStyle.setBottomBorderColor(IndexedColors.BLACK.getIndex());
+                // 居中
+                cellStyle.setAlignment(HorizontalAlignment.CENTER);
+                cellStyle.setVerticalAlignment(VerticalAlignment.CENTER);
+                cellStyle.setFillPattern(FillPatternType.SOLID_FOREGROUND);
+                // 折行
+                cellStyle.setWrapText(true);
             }
         };
-        Workbook bigWorkbook = ExcelUtils.createBigWorkbook(500);
-        ExcelUtils.fillBook(bigWorkbook, sheetData, ExportRules.simpleRule(column, hearder)
-                .title("项目资源统计")
-                .autoNum(true)
-                .sheetName("mysheet1")
-                .globalStyle(titleStyle)
+
+        // 5.执行导出
+        ExcelUtils.export("src/test/java/excel/export/simpleExport2.xls", data,
+                ExportRules.simpleRule(columns, headers)
+                        // 大标题
+                        .title("简单导出")
+                        // 自动序号
+                        .autoNum(true)
+                        // sheet名称
+                        .sheetName("简单导出")
+                        // 尾部合计行设计
+                        .footerRules(footerRules)
+                        // 导出格式定义
+                        .xlsx(false)
+                        // 自定义全局样式
+                        .globalStyle(headerStyle)
+
         );
-        // 4.写出文件
-        bigWorkbook.write(new FileOutputStream("src/test/java/excel/export/export1.xlsx"));
     }
 
     /**
@@ -196,7 +263,7 @@ public class MainClass {
         // 4.执行导出到工作簿
         ExcelUtils.export(
                 "src/test/java/excel/export/export2.xlsx",
-                sheetData,
+                data,
                 ExportRules.complexRule(column, headerRules).autoNum(true).footerRules(footerRules).sheetName("mysheet2").xlsx(true),
                 (fieldName, value, row, col) -> {
                     if ("projectName".equals(fieldName) && row.getProjectName().equals("中青旅23")) {
@@ -223,7 +290,7 @@ public class MainClass {
         Column[] column = {Column.field("name"), Column.field("classRoom.name"), Column.field("classRoom.school.name"),
                 Column.field("moreInfo.parent.age"),};
         // 3.执行导出到工作簿
-        ExcelUtils.export("src/test/java/excel/export/export3.xlsx", sheetData, ExportRules.simpleRule(column, hearder).title("學生基本信息"));
+        ExcelUtils.export("src/test/java/excel/export/export3.xlsx", data, ExportRules.simpleRule(column, hearder).title("學生基本信息"));
     }
 
     /**
@@ -358,7 +425,7 @@ public class MainClass {
         // 4.执行导出到工作簿
         ExcelUtils.export(
                 "src/test/java/excel/export/export7.xls",
-                sheetData,
+                data,
                 ExportRules.complexRule(column, headerRules).autoNum(true).sheetName("mysheet2").xlsx(false),
                 (fieldName, value, row, col) -> {
                     if ("projectName".equals(fieldName) && row.getProjectName().equals("中青旅23")) {

@@ -2,7 +2,10 @@ package com.github.stupdit1t.excel;
 
 import com.github.stupdit1t.excel.callback.InCallback;
 import com.github.stupdit1t.excel.callback.OutCallback;
-import com.github.stupdit1t.excel.common.*;
+import com.github.stupdit1t.excel.common.PoiCommon;
+import com.github.stupdit1t.excel.common.PoiConstant;
+import com.github.stupdit1t.excel.common.PoiException;
+import com.github.stupdit1t.excel.common.PoiResult;
 import com.github.stupdit1t.excel.handle.ImgHandler;
 import com.github.stupdit1t.excel.handle.rule.AbsCellVerifyRule;
 import com.github.stupdit1t.excel.handle.rule.AbsSheetVerifyRule;
@@ -183,21 +186,24 @@ public class ExcelUtils {
 
         // 标题样式设置
         ICellStyle titleStyle = ICellStyle.getCellStyleByPosition(CellPosition.TITLE, gloablStyle);
-        CellStyle titleStyleSourece = wb.createCellStyle();
+        CellStyle titleStyleSource = wb.createCellStyle();
         Font titleFont = wb.createFont();
-        titleStyle.handleStyle(titleFont, titleStyleSourece);
+        titleStyleSource.setFont(titleFont);
+        titleStyle.handleStyle(titleFont, titleStyleSource);
 
         // 小标题样式
         ICellStyle headerStyle = ICellStyle.getCellStyleByPosition(CellPosition.HEADER, gloablStyle);
-        CellStyle headerStyleSourece = wb.createCellStyle();
+        CellStyle headerStyleSource = wb.createCellStyle();
         Font headerFont = wb.createFont();
-        headerStyle.handleStyle(headerFont, headerStyleSourece);
+        headerStyleSource.setFont(headerFont);
+        headerStyle.handleStyle(headerFont, headerStyleSource);
 
         // 单元格样式
         ICellStyle cellStyle = ICellStyle.getCellStyleByPosition(CellPosition.CELL, gloablStyle);
-        CellStyle cellStyleSourece = wb.createCellStyle();
+        CellStyle cellStyleSource = wb.createCellStyle();
         Font cellFont = wb.createFont();
-        cellStyle.handleStyle(cellFont, cellStyleSourece);
+        cellStyleSource.setFont(cellFont);
+        cellStyle.handleStyle(cellFont, cellStyleSource);
 
         String sheetName = exportRules.getSheetName();
         Sheet sheet;
@@ -237,9 +243,9 @@ public class ExcelUtils {
                 int lastCol = PoiConstant.cellRefNums.get(range[3]);
                 if ((maxColumns - 1) == lastCol - firstCol) {
                     // 占满全格，则为表头
-                    CellUtil.createCell(sheet.getRow(firstRow), firstCol, value, titleStyleSourece);
+                    CellUtil.createCell(sheet.getRow(firstRow), firstCol, value, titleStyleSource);
                 } else {
-                    CellUtil.createCell(sheet.getRow(firstRow), firstCol, value, headerStyleSourece);
+                    CellUtil.createCell(sheet.getRow(firstRow), firstCol, value, headerStyleSource);
                 }
                 if ((lastRow - firstRow) != 0 || (lastCol - firstCol) != 0) {
                     CellRangeAddress cra = new CellRangeAddress(firstRow, lastRow, firstCol, lastCol);
@@ -256,17 +262,17 @@ public class ExcelUtils {
                 sheet.createFreezePane(0, 1, 0, 1);
                 String[] hearder = exportRules.getHeader();
                 for (int i = 0; i < hearder.length; i++) {
-                    CellUtil.createCell(sheet.getRow(0), i, hearder[i], headerStyleSourece);
+                    CellUtil.createCell(sheet.getRow(0), i, hearder[i], headerStyleSource);
                 }
             } else {
                 // 冻结表头
                 sheet.createFreezePane(0, 2, 0, 2);
-                CellUtil.createCell(sheet.getRow(0), 0, exportRules.getTitle(), titleStyleSourece);
+                CellUtil.createCell(sheet.getRow(0), 0, exportRules.getTitle(), titleStyleSource);
                 CellRangeAddress cra = new CellRangeAddress(0, 0, 0, maxColumns);
                 sheet.addMergedRegion(cra);
                 String[] hearder = exportRules.getHeader();
                 for (int i = 0; i < hearder.length; i++) {
-                    CellUtil.createCell(sheet.getRow(1), i, hearder[i], headerStyleSourece);
+                    CellUtil.createCell(sheet.getRow(1), i, hearder[i], headerStyleSource);
                 }
             }
 
@@ -400,7 +406,7 @@ public class ExcelUtils {
             T t = data.get(i);
             for (int j = 0, n = 0; n < fields.length; j++, n++) {
                 Cell cell = row.createCell(j);
-                cell.setCellStyle(cellStyleSourece);
+                cell.setCellStyle(cellStyleSource);
                 // 1.序号设置
                 if (autoNum && j == 0) {
                     cell.setCellValue(i + 1);
@@ -442,7 +448,7 @@ public class ExcelUtils {
                 int lastRow = (int) range[1] + currRownum - 1;
                 int firstCol = PoiConstant.cellRefNums.get(range[2]);
                 int lastCol = PoiConstant.cellRefNums.get(range[3]);
-                Cell cell = CellUtil.createCell(sheet.getRow(firstRow), firstCol, value, cellStyleSourece);
+                Cell cell = CellUtil.createCell(sheet.getRow(firstRow), firstCol, value, cellStyleSource);
                 if (value.startsWith("=")) {
                     cell.setCellFormula(value.substring(1));
                 }
