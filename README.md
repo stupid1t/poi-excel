@@ -377,6 +377,7 @@ emptyWorkbook.write(new FileOutputStream(outPath));
 ```
 * 导出示例
 
+![image](https://user-images.githubusercontent.com/29246805/146565288-e711bff8-5f2f-4cda-98fc-3dfad2ba9baa.png)
 
 
 ##### 7. 支持大数据内存导出，防止OOM
