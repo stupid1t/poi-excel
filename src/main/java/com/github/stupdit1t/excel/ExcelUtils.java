@@ -22,9 +22,7 @@ import org.apache.poi.xssf.streaming.SXSSFWorkbook;
 import org.apache.poi.xssf.usermodel.*;
 import org.openxmlformats.schemas.drawingml.x2006.spreadsheetDrawing.CTMarker;
 
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.io.InputStream;
+import java.io.*;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.math.BigDecimal;
@@ -95,26 +93,66 @@ public class ExcelUtils {
     /**
      * 导出
      *
+     * @param
      * @param data        数据源
      * @param exportRules 导出规则
      * @return Workbook
      */
-    public static <T> Workbook createWorkbook(List<T> data, ExportRules exportRules) {
-        return createWorkbook(data, exportRules, null);
+    public static <T> void export(String file, List<T> data, ExportRules exportRules) {
+        export(file, data, exportRules, null);
     }
 
     /**
-     * 导出方法
+     * 导出
      *
+     * @param
      * @param data        数据源
      * @param exportRules 导出规则
-     * @param callBack    回调处理
      * @return Workbook
      */
-    public static <T> Workbook createWorkbook(List<T> data, ExportRules exportRules, OutCallback<T> callBack) {
-        Workbook emptyWorkbook = createEmptyWorkbook(exportRules.isXlsx());
-        fillBook(emptyWorkbook, data, exportRules, callBack);
-        return emptyWorkbook;
+    public static <T> void export(OutputStream out, List<T> data, ExportRules exportRules) {
+        export(out, data, exportRules, null);
+    }
+
+
+    /**
+     * 导出
+     *
+     * @param
+     * @param data        数据源
+     * @param exportRules 导出规则
+     * @return Workbook
+     */
+    public static <T> void export(String file, List<T> data, ExportRules exportRules, OutCallback<T> callBack) {
+        try (
+                OutputStream temp = new FileOutputStream(file);
+                Workbook workbook = createEmptyWorkbook(exportRules.isXlsx());
+        ) {
+            fillBook(workbook, data, exportRules, callBack);
+            workbook.write(temp);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    /**
+     * 导出
+     *
+     * @param
+     * @param data        数据源
+     * @param exportRules 导出规则
+     * @return Workbook
+     */
+    public static <T> void export(OutputStream out, List<T> data, ExportRules exportRules, OutCallback<T> callBack) {
+        try (
+                OutputStream temp = out;
+                Workbook workbook = createEmptyWorkbook(exportRules.isXlsx());
+        ) {
+            fillBook(workbook, data, exportRules, callBack);
+            workbook.write(temp);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     /**
