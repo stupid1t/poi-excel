@@ -99,7 +99,6 @@ public class ExcelUtils {
      * @param file        导出地址
      * @param data        数据源
      * @param exportRules 导出规则
-     * @return Workbook
      */
     public static <T> void export(String file, List<T> data, ExportRules exportRules) {
         export(file, data, exportRules, null);
@@ -111,7 +110,6 @@ public class ExcelUtils {
      * @param out         导出流
      * @param data        数据源
      * @param exportRules 导出规则
-     * @return Workbook
      */
     public static <T> void export(OutputStream out, List<T> data, ExportRules exportRules) {
         export(out, data, exportRules, null);
@@ -125,7 +123,6 @@ public class ExcelUtils {
      * @param data        数据源
      * @param exportRules 导出规则
      * @param callBack    回调处理
-     * @return Workbook
      */
     public static <T> void export(String file, List<T> data, ExportRules exportRules, OutCallback<T> callBack) {
         try (
@@ -146,7 +143,6 @@ public class ExcelUtils {
      * @param data        数据源
      * @param exportRules 导出规则
      * @param callBack    回调
-     * @return Workbook
      */
     public static <T> void export(OutputStream out, List<T> data, ExportRules exportRules, OutCallback<T> callBack) {
         try (

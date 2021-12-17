@@ -74,16 +74,17 @@ public abstract class AbsCellVerifyRule<T> {
             return null;
         }
         T endVal;
-        if (null != customVerify) {
-            endVal = customVerify.apply(cellValue);
-        } else {
-            try {
+        try {
+            if (null != customVerify) {
+                endVal = customVerify.apply(cellValue);
+            } else {
                 endVal = doHandle(fieldName, cellValue);
-            } catch (PoiException e) {
-                throw e;
-            } catch (Exception e) {
-                throw PoiException.error(fieldName + "格式不正确");
             }
+        } catch (PoiException e) {
+            throw e;
+        } catch (Exception e) {
+            e.printStackTrace();
+            throw PoiException.error(fieldName + "格式不正确");
         }
         return endVal;
     }
