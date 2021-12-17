@@ -1,11 +1,11 @@
 # maven使用方式
 
-```java
+```xml
 <!-- excel导入导出 -->
 <dependency>
-    <groupId>com.github.stupdit1t</groupId>
-    <artifactId>poi-excel</artifactId>
-    <version>2.0.1</version>
+  <groupId>com.github.stupdit1t</groupId>
+  <artifactId>poi-excel</artifactId>
+  <version>2.0.1</version>
 </dependency>
 ```
 
