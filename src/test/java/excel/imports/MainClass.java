@@ -4,11 +4,8 @@ import com.github.stupdit1t.excel.ExcelUtils;
 import com.github.stupdit1t.excel.common.PoiResult;
 import com.github.stupdit1t.excel.handle.*;
 import com.github.stupdit1t.excel.handle.rule.AbsSheetVerifyRule;
-import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
-import org.apache.poi.ss.usermodel.WorkbookFactory;
 
-import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.util.HashMap;
 import java.util.List;
@@ -28,10 +25,6 @@ public class MainClass {
     }
 
     public static void parseSheet() throws Exception {
-        // 1.获取源文件
-        Workbook wb = WorkbookFactory.create(new FileInputStream("src/test/java/excel/imports/import.xls"));
-        // 2.获取sheet0导入
-        Sheet sheet = wb.getSheetAt(0);
         // 3.生成VO实体
         Consumer<AbsSheetVerifyRule> importRule = (rule) -> {
             rule.addRule("C", "bigDecimalHandler", "名字", new BigDecimalHandler(false));
@@ -51,7 +44,7 @@ public class MainClass {
             rule.addRule("U", "shortHandler", "图片", new ShortHandler(true));
             rule.addRule("Y", "stringHandler", "图片", new StringHandler(true));
         };
-        PoiResult<DemoData> list = ExcelUtils.readSheet(sheet, DemoData.class, importRule, 3, 1, (row, rowNum) -> {
+        PoiResult<DemoData> list = ExcelUtils.readSheet("src/test/java/excel/imports/import.xls", DemoData.class, importRule, 0, 3, 1, (row, rowNum) -> {
             // 其他逻辑处理
             System.out.println("当前行数据为:" + row);
         });
