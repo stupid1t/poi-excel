@@ -4,7 +4,7 @@
 <dependency>
     <groupId>com.github.stupdit1t</groupId>
     <artifactId>poi-excel</artifactId>
-    <version>1.8.2</version>
+    <version>2.0.1</version>
 </dependency>
 ```
 ## 一. 项目优势
@@ -16,7 +16,7 @@
 ## 二. 更新记录
 >  有需求才有进步，这个轮子本身就是从0开始因为需求慢慢叠加起来的。有新需求提出来,我觉得合适会更新. 如有疑问可加群帮解答: 811606008
 
-### v2.0.1 (不兼容老版本)
+### v2.0.1 (不兼容1.x)
 1. 修复数字转列字符, 列字符转数字不正确的BUG
 2. 导入代码优化结构调整,其他代码优化
 
