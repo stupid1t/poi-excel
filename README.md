@@ -394,7 +394,8 @@ emptyWorkbook.write(new FileOutputStream(outPath));
 ```
 
 ##### 8. 读模板替换变量导出
-
+![image](https://user-images.githubusercontent.com/29246805/146565796-5fec5955-6356-49d6-b505-e6ed71e61127.png)
+        
 * 代码示例
 
 ```java
@@ -419,6 +420,9 @@ public static void readExport(){
 ```
 
 * 导出结果
+
+![image](https://user-images.githubusercontent.com/29246805/146565886-0eea48f3-481a-4cc5-a3a2-afa230c50ff6.png)
+
 
 ## 五. 导入
 ##### 1. 支持严格的单元格校验,可以定位到单元格坐标校验
