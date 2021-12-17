@@ -1,7 +1,7 @@
 package excel.imports;
 
 import com.github.stupdit1t.excel.ExcelUtils;
-import com.github.stupdit1t.excel.common.ImportResult;
+import com.github.stupdit1t.excel.common.PoiResult;
 import com.github.stupdit1t.excel.handle.*;
 import com.github.stupdit1t.excel.handle.rule.AbsSheetVerifyRule;
 import org.apache.poi.ss.usermodel.Sheet;
@@ -51,7 +51,7 @@ public class MainClass {
             rule.addRule("U", "shortHandler", "图片", new ShortHandler(true));
             rule.addRule("Y", "stringHandler", "图片", new StringHandler(true));
         };
-        ImportResult<DemoData> list = ExcelUtils.readSheet(sheet, DemoData.class, importRule, 3, 1, (row, rowNum) -> {
+        PoiResult<DemoData> list = ExcelUtils.readSheet(sheet, DemoData.class, importRule, 3, 1, (row, rowNum) -> {
             // 其他逻辑处理
             System.out.println("当前行数据为:" + row);
         });

@@ -468,11 +468,11 @@ public class ExcelUtils {
      * @param callback           加入回调逻辑
      * @return ImportRspInfo
      */
-    public static <T> ImportResult<T> readSheet(Sheet sheet, Class<T> cls, Consumer<AbsSheetVerifyRule> absSheetVerifyRule, int dataStartRow, int dataEndRowCount, InCallback<T> callback) {
+    public static <T> PoiResult<T> readSheet(Sheet sheet, Class<T> cls, Consumer<AbsSheetVerifyRule> absSheetVerifyRule, int dataStartRow, int dataEndRowCount, InCallback<T> callback) {
         AbsSheetVerifyRule verifyBuilder = AbsSheetVerifyRule.buildRule(absSheetVerifyRule);
         // 规则初始化
         verifyBuilder.init();
-        ImportResult<T> rsp = new ImportResult<T>();
+        PoiResult<T> rsp = new PoiResult<T>();
         List<T> beans = new ArrayList<>();
         // 获取excel中所有图片
         List<String> imgField = new ArrayList<>();
@@ -597,13 +597,13 @@ public class ExcelUtils {
      * @param dataEndRowCount 尾部非数据行数量
      * @return List<Map < String, Object>>
      */
-    public static <T> ImportResult<T> readSheet(String filePath, Class<T> cls, Consumer<AbsSheetVerifyRule> absSheetVerifyRule, int sheetNum, int dataStartRow, int dataEndRowCount, InCallback<T> callback) {
+    public static <T> PoiResult<T> readSheet(String filePath, Class<T> cls, Consumer<AbsSheetVerifyRule> absSheetVerifyRule, int sheetNum, int dataStartRow, int dataEndRowCount, InCallback<T> callback) {
         try (InputStream is = new FileInputStream(filePath)) {
             return readSheet(is, cls, absSheetVerifyRule, sheetNum, dataStartRow, dataEndRowCount, callback);
         } catch (IOException e) {
             e.printStackTrace();
         }
-        return null;
+        return PoiResult.fail();
     }
 
     /**
@@ -614,14 +614,14 @@ public class ExcelUtils {
      * @param dataEndRowCount 尾部非数据行数量
      * @return List<Map < String, Object>>
      */
-    public static <T> ImportResult<T> readSheet(InputStream is, Class<T> cls, Consumer<AbsSheetVerifyRule> absSheetVerifyRule, int sheetNum, int dataStartRow, int dataEndRowCount, InCallback<T> callback) {
+    public static <T> PoiResult<T> readSheet(InputStream is, Class<T> cls, Consumer<AbsSheetVerifyRule> absSheetVerifyRule, int sheetNum, int dataStartRow, int dataEndRowCount, InCallback<T> callback) {
         try (Workbook wb = WorkbookFactory.create(is);) {
             Sheet sheet = wb.getSheetAt(sheetNum);
             return readSheet(sheet, cls, absSheetVerifyRule, dataStartRow, dataEndRowCount, callback);
         } catch (Exception e) {
             e.printStackTrace();
         }
-        return null;
+        return PoiResult.fail();
     }
 
     /**
@@ -632,13 +632,13 @@ public class ExcelUtils {
      * @param dataEndRowCount 尾部非数据行数量
      * @return List<Map < String, Object>>
      */
-    public static <T> ImportResult<T> readSheet(String filePath, Class<T> cls, Consumer<AbsSheetVerifyRule> absSheetVerifyRule, int sheetNum, int dataStartRow, int dataEndRowCount) {
+    public static <T> PoiResult<T> readSheet(String filePath, Class<T> cls, Consumer<AbsSheetVerifyRule> absSheetVerifyRule, int sheetNum, int dataStartRow, int dataEndRowCount) {
         try (InputStream is = new FileInputStream(filePath)) {
             return readSheet(is, cls, absSheetVerifyRule, sheetNum, dataStartRow, dataEndRowCount);
         } catch (IOException e) {
             e.printStackTrace();
         }
-        return null;
+        return PoiResult.fail();
     }
 
     /**
@@ -649,14 +649,14 @@ public class ExcelUtils {
      * @param dataEndRowCount 尾部非数据行数量
      * @return List<Map < String, Object>>
      */
-    public static <T> ImportResult<T> readSheet(InputStream is, Class<T> cls, Consumer<AbsSheetVerifyRule> absSheetVerifyRule, int sheetNum, int dataStartRow, int dataEndRowCount) {
+    public static <T> PoiResult<T> readSheet(InputStream is, Class<T> cls, Consumer<AbsSheetVerifyRule> absSheetVerifyRule, int sheetNum, int dataStartRow, int dataEndRowCount) {
         try (Workbook wb = WorkbookFactory.create(is);) {
             Sheet sheet = wb.getSheetAt(sheetNum);
             return readSheet(sheet, cls, absSheetVerifyRule, dataStartRow, dataEndRowCount, null);
         } catch (Exception e) {
             e.printStackTrace();
         }
-        return null;
+        return PoiResult.fail();
     }
 
     /**
