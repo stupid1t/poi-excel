@@ -18,7 +18,8 @@ public class MainClass {
     public static void main(String[] args) {
         try {
             parseSheet();
-            //readExcelWrite();
+            readSheet();
+            readExcelWrite();
         } catch (Exception e) {
             // TODO Auto-generated catch block
             e.printStackTrace();
