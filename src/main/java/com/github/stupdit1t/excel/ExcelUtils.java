@@ -28,6 +28,7 @@ import java.io.InputStream;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.math.BigDecimal;
+import java.text.ParseException;
 import java.util.*;
 import java.util.Map.Entry;
 import java.util.function.Consumer;
@@ -279,10 +280,12 @@ public class ExcelUtils {
                 }
                 String[] split1 = split[0].split("~");
                 if (split1.length < 2) {
-                    throw new IllegalArgumentException("时间校验表达式不正确,请填写如2015-08-09~2016-09-10的值!");
+                    throw new IllegalArgumentException("时间校验表达式不正确,请填写如" + column.getDatePattern() + "的值!");
                 }
                 try {
                     sheet.addValidationData(createDateValidation(sheet, column.getDatePattern(), split1[0], split1[1], info, j, maxRows, lastRow));
+                } catch (ParseException e) {
+                    throw new IllegalArgumentException("时间校验表达式不正确,请填写如" + column.getDatePattern() + "的值!");
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
