@@ -77,7 +77,7 @@ public abstract class AbsSheetVerifyRule {
         if (columnVerifyRule.containsKey(filed)) {
             CellVerifyRule cellVerifyRule = columnVerifyRule.get(filed);
             if (cellVerifyRule.getCellVerify() != null) {
-                return cellVerifyRule.getCellVerify().handle(cellVerifyRule.getField(), cellVerifyRule.getFieldName(), fileValue);
+                return cellVerifyRule.getCellVerify().handle(cellVerifyRule.getFieldName(), fileValue);
             }
         }
         return fileValue;

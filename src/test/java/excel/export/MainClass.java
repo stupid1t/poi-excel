@@ -93,6 +93,7 @@ public class MainClass {
         mapExport();
         templateExport();
         mulSheet();
+        readExport();
         System.out.println("耗时:" + (System.currentTimeMillis() - s));
 
     }
@@ -316,7 +317,6 @@ public class MainClass {
         };
         // 3.执行导出到工作簿
         ExcelUtils.export("src/test/java/excel/export/mapExport.xlsx", mapData, ExportRules.simpleRule(column, header));
-
     }
 
     /**
@@ -346,7 +346,7 @@ public class MainClass {
     }
 
     /**
-     * 多sheet导出,并携带回调
+     * 多sheet导出
      *
      * @throws Exception
      */
@@ -407,6 +407,25 @@ public class MainClass {
         // 4.写出文件
         try {
             emptyWorkbook.write(new FileOutputStream("src/test/java/excel/export/mulSheet.xlsx"));
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    /**
+     * 读模板替换变量导出
+     *
+     * @throws Exception
+     */
+    public static void readExport() {
+        Map<String, String> params = new HashMap<>();
+        params.put("author", "625");
+        params.put("text", "合计");
+        params.put("area", "西安市");
+        params.put("prov", "陕西省");
+        Workbook workbook = ExcelUtils.readExcelWrite("src/test/java/excel/export/readExport.xlsx", params);
+        try {
+            workbook.write(new FileOutputStream("src/test/java/excel/export/readExport_OUT.xlsx"));
         } catch (IOException e) {
             e.printStackTrace();
         }
