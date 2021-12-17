@@ -70,7 +70,7 @@ public abstract class AbsSheetVerifyRule {
      *
      * @param filed
      * @param fileValue
-     * @return
+     * @return Object
      * @throws Exception
      */
     public Object verify(String filed, Object fileValue) throws Exception {
@@ -107,7 +107,7 @@ public abstract class AbsSheetVerifyRule {
     /**
      * 匿名抽象类规则
      * @param absSheetVerifyRuleConsumer
-     * @return
+     * @return AbsSheetVerifyRule
      */
     public static AbsSheetVerifyRule buildRule(Consumer<AbsSheetVerifyRule> absSheetVerifyRuleConsumer){
         AbsSheetVerifyRule absSheetVerifyRule = new AbsSheetVerifyRule() {

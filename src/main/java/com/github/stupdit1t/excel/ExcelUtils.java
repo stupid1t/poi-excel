@@ -537,7 +537,7 @@ public class ExcelUtils {
      * @param sheetNum        表格号
      * @param dataStartRow    开始读取行
      * @param dataEndRowCount 尾部
-     * @return
+     * @return List<Map<String, Object>>
      */
     public static List<Map<String, Object>> readSheet(String filePath, int sheetNum, int dataStartRow, int dataEndRowCount) {
         try (InputStream is = new FileInputStream(filePath)) {
@@ -554,7 +554,7 @@ public class ExcelUtils {
      * @param is              文件流
      * @param dataStartRow    数据起始行
      * @param dataEndRowCount 尾部非数据行数量
-     * @return
+     * @return List<Map<String, Object>>
      */
     public static List<Map<String, Object>> readSheet(InputStream is, int sheetNum, int dataStartRow, int dataEndRowCount) {
         try (
@@ -574,7 +574,7 @@ public class ExcelUtils {
      * @param sheet
      * @param dataStartRow    起始行
      * @param dataEndRowCount 尾部非数据行数量
-     * @return
+     * @return List<Map<String, Object>>
      */
     public static List<Map<String, Object>> readSheet(Sheet sheet, int dataStartRow, int dataEndRowCount) {
         List<Map<String, Object>> sheetData = new ArrayList<>();

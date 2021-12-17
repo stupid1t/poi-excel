@@ -140,7 +140,7 @@ public class PoiCommon {
     /**
      * 获取map规则最大列和行数
      * @param rules
-     * @return
+     * @return int[]
      */
     public static int[] getMapRowColNum(Map<String, String> rules) {
         // 解析rules，获取最大行和最大列
