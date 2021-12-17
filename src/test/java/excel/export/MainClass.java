@@ -3,7 +3,6 @@ package excel.export;
 import com.github.stupdit1t.excel.Column;
 import com.github.stupdit1t.excel.ExcelUtils;
 import com.github.stupdit1t.excel.ExportRules;
-import com.github.stupdit1t.excel.common.PoiConstant;
 import com.github.stupdit1t.excel.style.CellPosition;
 import com.github.stupdit1t.excel.style.ICellStyle;
 import excel.export.data.ClassRoom;
@@ -65,7 +64,7 @@ public class MainClass {
             mapData.add(obj);
         }
         // 3.复杂对象数据
-        for (int i = 0; i < 20; i++) {
+        for (int i = 0; i < 5; i++) {
             // 學生
             Student stu = new Student();
             // 學生所在的班級，用對象
@@ -89,12 +88,11 @@ public class MainClass {
         // 简单导出
         simpleExport();
         simpleExport2();
-        //export2();
-        //export3();
-        //export4();
-        //export5();
-        //export6();
-        //export7();
+        complexExport();
+        complexExport2();
+        mapExport();
+        templateExport();
+        mulSheet();
         System.out.println("耗时:" + (System.currentTimeMillis() - s));
 
     }
@@ -134,16 +132,39 @@ public class MainClass {
         String[] headers = {"项目名称", "项目图", "所属区域", "省份", "市", "项目所属人", "项目领导人", "得分", "平均分", "创建时间"};
         // 2.导出header对应的字段设置
         Column[] columns = {
+                // 不设置宽度自适应
                 Column.field("projectName"),
+                // 4.9项目图片
                 Column.field("img"),
-                Column.field("areaName"),
-                Column.field("province"),
-                Column.field("city").width(3),
-                Column.field("people"),
-                Column.field("leader"),
-                Column.field("scount"),
-                Column.field("avg"),
-                Column.field("createTime").datePattern("yyyy-MM-dd")
+                // 4.1设置此列宽度为10, 添加注释
+                Column.field("areaName").width(10).comment("你好吗"),
+                // 4.2设置此列下拉框数据
+                Column.field("province").dorpDown(new String[]{"陕西省", "山西省", "辽宁省"}),
+                // 4.3设置此列水平居右
+                Column.field("city").align(HorizontalAlignment.RIGHT),
+                // 4.4 设置此列垂直居上
+                Column.field("people").valign(VerticalAlignment.TOP),
+                // 4.5 设置此列单元格 自定义校验 只能输入文本
+                Column.field("leader")
+                        .width(4),
+                //.verifyCustom("LEN(G4)>2", "名字长度必须大于2位"),
+                // 4.6设置此列单元格 整数 数据校验 ，同时设置背景色为棕色
+                Column.field("scount")
+                        .verifyIntNum("10~2000")
+                        .backColor(IndexedColors.BROWN),
+                // 4.7设置此列单元格 浮点数 数据校验， 同时设置字体颜色红色
+                Column.field("avg").
+                        verifyFloatNum("0.0~20.0")
+                        .color(IndexedColors.RED),
+                // 4.8设置此列单元格 日期 数据校验 ，同时宽度为20、限制用户表格输入、水平居中、垂直居中、背景色、字体颜色
+                Column.field("createTime")
+                        .datePattern("yyyy-MM-dd")
+                        .verifyDate("2000-01-01~2020-12-12")
+                        .align(HorizontalAlignment.LEFT)
+                        .valign(VerticalAlignment.CENTER)
+                        .backColor(IndexedColors.YELLOW)
+                        .color(IndexedColors.GOLD),
+
         };
         // 3.尾部合计行设计
         Map<String, String> footerRules = new HashMap<>();
@@ -188,23 +209,28 @@ public class MainClass {
                 cellStyle.setWrapText(true);
             }
         };
-
+        ExportRules exportRules = ExportRules.simpleRule(columns, headers)
+                // 大标题
+                .title("简单导出")
+                // 自动序号
+                .autoNum(true)
+                // sheet名称
+                .sheetName("简单导出")
+                // 尾部合计行设计
+                .footerRules(footerRules)
+                // 导出格式定义
+                .xlsx(true)
+                // 自定义全局样式
+                .globalStyle(headerStyle);
         // 5.执行导出
-        ExcelUtils.export("src/test/java/excel/export/simpleExport2.xls", data,
-                ExportRules.simpleRule(columns, headers)
-                        // 大标题
-                        .title("简单导出")
-                        // 自动序号
-                        .autoNum(true)
-                        // sheet名称
-                        .sheetName("简单导出")
-                        // 尾部合计行设计
-                        .footerRules(footerRules)
-                        // 导出格式定义
-                        .xlsx(false)
-                        // 自定义全局样式
-                        .globalStyle(headerStyle)
-
+        ExcelUtils.export("src/test/java/excel/export/simpleExport2.xlsx", data, exportRules, (fieldName, value, row, col) -> {
+                    System.out.print("[打印] 字段:" + fieldName);
+                    System.out.print(" 字段值:" + value);
+                    System.out.print(" 行数据:" + row);
+                    System.out.println(" 单元格样式:" + col);
+                    // 设置当前单元格值
+                    return value;
+                }
         );
     }
 
@@ -213,7 +239,7 @@ public class MainClass {
      *
      * @throws Exception
      */
-    public static void export2() throws Exception {
+    public static void complexExport() {
         // 1.表头设置,可以对应excel设计表头，一看就懂
         HashMap<String, String> headerRules = new HashMap<>();
         headerRules.put("1,1,A,K", "项目资源统计");
@@ -234,47 +260,25 @@ public class MainClass {
         HashMap<String, String> footerRules = new HashMap<>();
         footerRules.put("1,2,A,C", "合计:");
         footerRules.put("1,2,D,K", "=SUM(H4:H13)");
-        // 3.导出hearder对应的字段设置
+        // 3.导出header对应的字段设置
         Column[] column = {
                 Column.field("projectName"),
-                // 4.1设置此列宽度为10
-                Column.field("areaName").width(10).comment("你好吗"),
-                // 4.2设置此列下拉框数据
-                Column.field("province").width(5).dorpDown(new String[]{"陕西省", "山西省", "辽宁省"}),
-                // 4.3设置此列水平居右
-                Column.field("city").align(HorizontalAlignment.RIGHT),
-                // 4.4 设置此列垂直居上
-                Column.field("people").valign(VerticalAlignment.TOP),
-                // 4.5 设置此列单元格 自定义校验 只能输入文本
-                Column.field("leader").width(4).verifyCustom("LEN(G4)>2", "名字长度必须大于2位"),
-                // 4.6设置此列单元格 整数 数据校验 ，同时设置背景色为棕色
-                Column.field("scount").verifyIntNum("10~2000").backColor(IndexedColors.BROWN),
-                // 4.7设置此列单元格 浮点数 数据校验， 同时设置字体颜色红色
-                Column.field("avg").verifyFloatNum("0.0~20.0").color(IndexedColors.RED),
-                // 4.8设置此列单元格 日期 数据校验 ，同时宽度为20、限制用户表格输入、水平居中、垂直居中、背景色、字体颜色
-                Column.field("createTime").width(20).verifyDate("2000-01-03 12:35:12~3000-05-06 23:23:13")
-                        .datePattern(PoiConstant.FMT_DATE_TIME)
-                        .align(HorizontalAlignment.LEFT).valign(VerticalAlignment.CENTER)
-                        .backColor(IndexedColors.YELLOW).color(IndexedColors.GOLD),
-                // 4.9项目图片
+                Column.field("areaName"),
+                Column.field("province"),
+                Column.field("city"),
+                Column.field("people"),
+                Column.field("leader"),
+                Column.field("scount"),
+                Column.field("avg"),
+                Column.field("createTime"),
                 Column.field("img")
 
         };
         // 4.执行导出到工作簿
-        ExcelUtils.export(
-                "src/test/java/excel/export/export2.xlsx",
-                data,
-                ExportRules.complexRule(column, headerRules).autoNum(true).footerRules(footerRules).sheetName("mysheet2").xlsx(true),
-                (fieldName, value, row, col) -> {
-                    if ("projectName".equals(fieldName) && row.getProjectName().equals("中青旅23")) {
-                        col.align(HorizontalAlignment.LEFT);
-                        col.valign(VerticalAlignment.CENTER);
-                        col.height(2);
-                        col.backColor(IndexedColors.RED);
-                        col.color(IndexedColors.YELLOW);
-                    }
-                    return value;
-                });
+        ExportRules exportRules = ExportRules.complexRule(column, headerRules)
+                .footerRules(footerRules)
+                .autoNum(true);
+        ExcelUtils.export("src/test/java/excel/export/complexExport.xlsx", data, exportRules);
 
     }
 
@@ -283,14 +287,18 @@ public class MainClass {
      *
      * @throws Exception
      */
-    public static void export3() throws Exception {
-        // 1.导出的hearder设置
-        String[] hearder = {"學生姓名", "所在班級", "所在學校", "更多父母姓名"};
-        // 2.导出hearder对应的字段设置，列宽设置
-        Column[] column = {Column.field("name"), Column.field("classRoom.name"), Column.field("classRoom.school.name"),
-                Column.field("moreInfo.parent.age"),};
+    public static void complexExport2() {
+        // 1.导出的header设置
+        String[] header = {"學生姓名", "所在班級", "所在學校", "更多父母姓名"};
+        // 2.导出header对应的字段设置，列宽设置
+        Column[] column = {
+                Column.field("name"),
+                Column.field("classRoom.name"),
+                Column.field("classRoom.school.name"),
+                Column.field("moreInfo.parent.age"),
+        };
         // 3.执行导出到工作簿
-        ExcelUtils.export("src/test/java/excel/export/export3.xlsx", data, ExportRules.simpleRule(column, hearder).title("學生基本信息"));
+        ExcelUtils.export("src/test/java/excel/export/complexExport2.xlsx", complexData, ExportRules.simpleRule(column, header));
     }
 
     /**
@@ -298,15 +306,16 @@ public class MainClass {
      *
      * @throws Exception
      */
-    public static void export4() throws Exception {
-        // 1.导出的hearder设置
-        String[] hearder = {"姓名", "年龄"};
-        // 2.导出hearder对应的字段设置，列宽设置
-        Column[] column = {Column.field("name"),
+    public static void mapExport() {
+        // 1.导出的header设置
+        String[] header = {"姓名", "年龄"};
+        // 2.导出header对应的字段设置，列宽设置
+        Column[] column = {
+                Column.field("name"),
                 Column.field("age"),
         };
         // 3.执行导出到工作簿
-        ExcelUtils.export("src/test/java/excel/export/export4.xlsx", mapData, ExportRules.simpleRule(column, hearder));
+        ExcelUtils.export("src/test/java/excel/export/mapExport.xlsx", mapData, ExportRules.simpleRule(column, header));
 
     }
 
@@ -315,12 +324,12 @@ public class MainClass {
      *
      * @throws Exception
      */
-    public static void export5() throws Exception {
-        // 1.导出的hearder设置
-        String[] hearder = {"宝宝姓名", "宝宝昵称", "家长姓名", "手机号码", "宝宝生日", "月龄", "宝宝性别", "来源渠道", "市场人员", "咨询顾问", "客服顾问",
-                "分配校区", "备注"};
-        // 2.导出hearder对应的字段设置，列宽设置
-        Column[] column = {Column.field("宝宝姓名"), Column.field("宝宝昵称"), Column.field("家长姓名"),
+    public static void templateExport() {
+        // 1.导出的header设置
+        String[] header = {"宝宝姓名", "宝宝昵称", "家长姓名", "手机号码", "宝宝生日", "月龄", "宝宝性别", "来源渠道", "市场人员", "咨询顾问", "客服顾问", "分配校区", "备注"};
+        // 2.导出header对应的字段设置，列宽设置
+        Column[] column = {Column.field("宝宝姓名"), Column.field("宝宝昵称"),
+                Column.field("家长姓名"),
                 Column.field("手机号码").verifyText("11~11", "请输入11位的手机号码！"),
                 Column.field("宝宝生日").datePattern("yyyy-MM-dd").verifyDate("2000-01-01~3000-12-31"),
                 Column.field("月龄").width(4).verifyCustom("VALUE(F3:F6000)", "月齡格式：如1年2个月则输入14"),
@@ -329,9 +338,11 @@ public class MainClass {
                 Column.field("市场人员").width(6).dorpDown(new String[]{"张三", "李四"}),
                 Column.field("咨询顾问").width(6).dorpDown(new String[]{"张三", "李四"}),
                 Column.field("客服顾问").width(6).dorpDown(new String[]{"大唐", "银泰"}),
-                Column.field("分配校区").width(6).dorpDown(new String[]{"大唐", "银泰"}), Column.field("备注")};
+                Column.field("分配校区").width(6).dorpDown(new String[]{"大唐", "银泰"}),
+                Column.field("备注")
+        };
         // 3.执行导出到工作簿
-        ExcelUtils.export("src/test/java/excel/export/export5.xlsx", Collections.emptyList(), ExportRules.simpleRule(column, hearder));
+        ExcelUtils.export("src/test/java/excel/export/templateExport.xlsx", Collections.emptyList(), ExportRules.simpleRule(column, header));
     }
 
     /**
@@ -339,104 +350,66 @@ public class MainClass {
      *
      * @throws Exception
      */
-    public static void export6() throws Exception {
-        // 1.导出的hearder设置
+    public static void mulSheet() {
+        // 1.导出的header设置
         Workbook emptyWorkbook = ExcelUtils.createEmptyWorkbook(true);
         // 2.执行导出到工作簿.1.项目数据2.map数据3.复杂对象数据
         for (int i = 0; i < moreSheetData.size(); i++) {
             if (i == 0) {
                 List<ProjectEvaluate> data1 = (ArrayList<ProjectEvaluate>) moreSheetData.get(i);
-                // 1.导出的hearder设置
-                String[] hearder = {"项目名称", "所属区域", "省份", "市", "项目所属人", "项目领导人", "得分", "平均分", "创建时间", "项目图片"};
-                // 2.导出hearder对应的字段设置
-                Column[] column = {Column.field("projectName"), Column.field("areaName"), Column.field("province"),
-                        Column.field("city"), Column.field("people"), Column.field("leader"), Column.field("scount"),
-                        Column.field("avg"), Column.field("createTime"),
+                // 1.导出的header设置
+                String[] header = {"项目名称", "所属区域", "省份", "市", "项目所属人", "项目领导人", "得分", "平均分", "创建时间", "项目图片"};
+                // 2.导出header对应的字段设置
+                Column[] column = {
+                        Column.field("projectName"),
+                        Column.field("areaName"),
+                        Column.field("province"),
+                        Column.field("city"),
+                        Column.field("people"),
+                        Column.field("leader"),
+                        Column.field("scount"),
+                        Column.field("avg"),
+                        Column.field("createTime"),
                         // 项目图片
                         Column.field("img")
 
                 };
-                ExcelUtils.fillBook(emptyWorkbook, data1, ExportRules.simpleRule(column, hearder).title("项目资源统计").sheetName("mysheet1").autoNum(true));
+                ExcelUtils.fillBook(emptyWorkbook, data1, ExportRules.simpleRule(column, header).title("项目资源统计").sheetName("mysheet1").autoNum(true));
             }
             if (i == 1) {
                 List<Map<String, Object>> data2 = (ArrayList<Map<String, Object>>) moreSheetData.get(i);
-                // 1.导出的hearder设置
-                String[] hearder = {"姓名", "年龄"};
-                // 2.导出hearder对应的字段设置，列宽设置
-                Column[] column = {Column.field("name"),
+                // 1.导出的header设置
+                String[] header = {"姓名", "年龄"};
+                // 2.导出header对应的字段设置，列宽设置
+                Column[] column = {
+                        Column.field("name"),
                         Column.field("age"),
                 };
-                ExcelUtils.fillBook(emptyWorkbook, data2, ExportRules.simpleRule(column, hearder).sheetName("mysheet2"));
+                ExcelUtils.fillBook(emptyWorkbook, data2, ExportRules.simpleRule(column, header).sheetName("mysheet2"));
             }
 
             if (i == 2) {
                 List<Student> data3 = (ArrayList<Student>) moreSheetData.get(i);
-                // 1.导出的hearder设置
-                String[] hearder = {"學生姓名", "所在班級", "所在學校", "更多父母姓名"};
-                // 2.导出hearder对应的字段设置，列宽设置
-                Column[] column = {Column.field("name"), Column.field("classRoom.name"), Column.field("classRoom.school.name"),
-                        Column.field("moreInfo.parent.name"),};
+                // 1.导出的header设置
+                String[] header = {"學生姓名", "所在班級", "所在學校", "更多父母姓名"};
+                // 2.导出header对应的字段设置，列宽设置
+                Column[] column = {
+                        Column.field("name"),
+                        Column.field("classRoom.name"),
+                        Column.field("classRoom.school.name"),
+                        Column.field("moreInfo.parent.name"),
+                };
                 // 3.执行导出到工作簿
-                ExcelUtils.fillBook(emptyWorkbook, data3, ExportRules.simpleRule(column, hearder).title("學生基本信息"));
+                ExcelUtils.fillBook(emptyWorkbook, data3, ExportRules.simpleRule(column, header).title("學生基本信息"));
             }
 
         }
         // 4.写出文件
-        emptyWorkbook.write(new FileOutputStream("src/test/java/excel/export/export6.xlsx"));
-    }
-
-    /**
-     * 复杂导出
-     *
-     * @throws Exception
-     */
-    public static void export7() throws Exception {
-        // 1.表头设置,可以对应excel设计表头，一看就懂
-        HashMap<String, String> headerRules = new HashMap<>();
-        headerRules.put("1,1,A,K", "项目资源统计");
-        headerRules.put("2,2,A,K", "序号");
-        headerRules.put("3,3,A,K", "序号2");
-        headerRules.put("4,4,A,K", "序号2");
-        // 3.导出hearder对应的字段设置
-        Column[] column = {
-                Column.field("projectName"),
-                // 4.1设置此列宽度为10
-                Column.field("areaName").width(10).comment("你好吗"),
-                // 4.2设置此列下拉框数据
-                Column.field("province").width(5).dorpDown(new String[]{"陕西省", "山西省", "辽宁省"}),
-                // 4.3设置此列水平居右
-                Column.field("city").align(HorizontalAlignment.RIGHT),
-                // 4.4 设置此列垂直居上
-                Column.field("people").valign(VerticalAlignment.TOP),
-                // 4.5 设置此列单元格 自定义校验 只能输入文本
-                Column.field("leader").width(4).verifyCustom("VALUE(F3:F500)", "我是提示"),
-                // 4.6设置此列单元格 整数 数据校验 ，同时设置背景色为棕色
-                Column.field("scount").verifyIntNum("10~20").backColor(IndexedColors.BROWN),
-                // 4.7设置此列单元格 浮点数 数据校验， 同时设置字体颜色红色
-                Column.field("avg").verifyFloatNum("10.0~20.0").color(IndexedColors.RED),
-                // 4.8设置此列单元格 日期 数据校验 ，同时宽度为20、限制用户表格输入、水平居中、垂直居中、背景色、字体颜色
-                Column.field("createTime").width(20).datePattern("yyyy-MM-dd HH:mm").verifyDate("2000-01-03 12:35~3000-05-06 23:23")
-                        .align(HorizontalAlignment.LEFT).valign(VerticalAlignment.CENTER)
-                        .backColor(IndexedColors.YELLOW).color(IndexedColors.GOLD),
-                // 4.9项目图片
-                Column.field("img")
-
-        };
-        // 4.执行导出到工作簿
-        ExcelUtils.export(
-                "src/test/java/excel/export/export7.xls",
-                data,
-                ExportRules.complexRule(column, headerRules).autoNum(true).sheetName("mysheet2").xlsx(false),
-                (fieldName, value, row, col) -> {
-                    if ("projectName".equals(fieldName) && row.getProjectName().equals("中青旅23")) {
-                        col.align(HorizontalAlignment.LEFT);
-                        col.valign(VerticalAlignment.CENTER);
-                        col.height(2);
-                        col.backColor(IndexedColors.RED);
-                        col.color(IndexedColors.YELLOW);
-                    }
-                    return value;
-                });
+        try {
+            emptyWorkbook.write(new FileOutputStream("src/test/java/excel/export/mulSheet.xlsx"));
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     /**

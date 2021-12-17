@@ -190,4 +190,12 @@ public class ProjectEvaluate {
 		this.leader = leader;
 	}
 
+	@Override
+	public String toString() {
+		return "ProjectEvaluate{" +
+				"id=" + id +
+				", projectId=" + projectId +
+				", projectName='" + projectName + '\'' +
+				'}';
+	}
 }

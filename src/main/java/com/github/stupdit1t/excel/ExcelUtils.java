@@ -969,6 +969,7 @@ public class ExcelUtils {
                 richTextString = new XSSFRichTextString(comment);
             }
             Comment cellComment = drawingPatriarch.createCellComment(clientAnchor);
+            cellComment.setAddress(cell.getAddress());
             cellComment.setString(richTextString);
             cell.setCellComment(cellComment);
         }
