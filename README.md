@@ -63,9 +63,9 @@
  */
 public static void simpleExport(){
         // 1.导出的header标题设置
-        String[]headers={"项目名称","项目图","所属区域","省份","市","项目所属人","项目领导人","得分","平均分","创建时间"};
-        // 2.导出header对应的字段设置
-        Column[]columns={
+    String[]headers={"项目名称","项目图","所属区域","省份","市","项目所属人","项目领导人","得分","平均分","创建时间"};
+    // 2.导出header对应的字段设置
+    Column[]columns={
         Column.field("projectName"),
         Column.field("img"),
         Column.field("areaName"),
@@ -76,10 +76,10 @@ public static void simpleExport(){
         Column.field("scount"),
         Column.field("avg"),
         Column.field("createTime").datePattern("yyyy-MM-dd")
-        };
-        // 3.执行导出
-        ExcelUtils.export(outPath,data,ExportRules.simpleRule(columns,headers));
-        }
+    };
+    // 3.执行导出
+    ExcelUtils.export(outPath,data,ExportRules.simpleRule(columns,headers));
+}
 ```
 
 * 导出结果
@@ -97,10 +97,10 @@ public static void simpleExport(){
  * @throws Exception
  */
 public static void simpleExport2(){
-        // 1.导出的header标题设置
-        String[]headers={"项目名称","项目图","所属区域","省份","市","项目所属人","项目领导人","得分","平均分","创建时间"};
-        // 2.导出header对应的字段设置
-        Column[]columns={
+    // 1.导出的header标题设置
+    String[]headers={"项目名称","项目图","所属区域","省份","市","项目所属人","项目领导人","得分","平均分","创建时间"};
+    // 2.导出header对应的字段设置
+    Column[]columns={
         // 不设置宽度自适应
         Column.field("projectName"),
         // 4.9项目图片
@@ -133,75 +133,74 @@ public static void simpleExport2(){
         .valign(VerticalAlignment.CENTER)
         .backColor(IndexedColors.YELLOW)
         .color(IndexedColors.GOLD),
+    };
+    // 3.尾部合计行设计
+    Map<String, String> footerRules=new HashMap<>();
+    footerRules.put("1,1,A,H","合计");
+    footerRules.put("1,1,I,I",String.format("=SUM(I3:I%s)",2+data.size()));
+    footerRules.put("1,1,J,J",String.format("=AVERAGE(J3:I%s)",2+data.size()));
+    footerRules.put("1,1,K,K","作者:625");
 
-        };
-        // 3.尾部合计行设计
-        Map<String, String> footerRules=new HashMap<>();
-        footerRules.put("1,1,A,H","合计");
-        footerRules.put("1,1,I,I",String.format("=SUM(I3:I%s)",2+data.size()));
-        footerRules.put("1,1,J,J",String.format("=AVERAGE(J3:I%s)",2+data.size()));
-        footerRules.put("1,1,K,K","作者:625");
-
-        // 4.自定义header样式
-        ICellStyle headerStyle=new ICellStyle(){
-@Override
-public CellPosition getPosition(){
-        return CellPosition.HEADER;
+    // 4.自定义header样式
+    ICellStyle headerStyle=new ICellStyle(){
+        @Override
+        public CellPosition getPosition(){
+                return CellPosition.HEADER;
         }
 
-@Override
-public void handleStyle(Font font,CellStyle cellStyle){
-        // 加粗
-        font.setBold(true);
-        // 黑体
-        font.setFontName("黑体");
-        // 字号12
-        font.setFontHeightInPoints((short)12);
-        // 字体红色
-        font.setColor(IndexedColors.RED.getIndex());
-        // 背绿色
-        cellStyle.setFillForegroundColor(IndexedColors.LIGHT_GREEN.getIndex());
-        // 边框
-        cellStyle.setBorderRight(BorderStyle.THIN);
-        cellStyle.setRightBorderColor(IndexedColors.BLACK.getIndex());
-        cellStyle.setBorderLeft(BorderStyle.THIN);
-        cellStyle.setLeftBorderColor(IndexedColors.BLACK.getIndex());
-        cellStyle.setBorderTop(BorderStyle.THIN);
-        cellStyle.setTopBorderColor(IndexedColors.BLACK.getIndex());
-        cellStyle.setBorderBottom(BorderStyle.THIN);
-        cellStyle.setBottomBorderColor(IndexedColors.BLACK.getIndex());
-        // 居中
-        cellStyle.setAlignment(HorizontalAlignment.CENTER);
-        cellStyle.setVerticalAlignment(VerticalAlignment.CENTER);
-        cellStyle.setFillPattern(FillPatternType.SOLID_FOREGROUND);
-        // 折行
-        cellStyle.setWrapText(true);
+        @Override
+        public void handleStyle(Font font,CellStyle cellStyle){
+            // 加粗
+            font.setBold(true);
+            // 黑体
+            font.setFontName("黑体");
+            // 字号12
+            font.setFontHeightInPoints((short)12);
+            // 字体红色
+            font.setColor(IndexedColors.RED.getIndex());
+            // 背绿色
+            cellStyle.setFillForegroundColor(IndexedColors.LIGHT_GREEN.getIndex());
+            // 边框
+            cellStyle.setBorderRight(BorderStyle.THIN);
+            cellStyle.setRightBorderColor(IndexedColors.BLACK.getIndex());
+            cellStyle.setBorderLeft(BorderStyle.THIN);
+            cellStyle.setLeftBorderColor(IndexedColors.BLACK.getIndex());
+            cellStyle.setBorderTop(BorderStyle.THIN);
+            cellStyle.setTopBorderColor(IndexedColors.BLACK.getIndex());
+            cellStyle.setBorderBottom(BorderStyle.THIN);
+            cellStyle.setBottomBorderColor(IndexedColors.BLACK.getIndex());
+            // 居中
+            cellStyle.setAlignment(HorizontalAlignment.CENTER);
+            cellStyle.setVerticalAlignment(VerticalAlignment.CENTER);
+            cellStyle.setFillPattern(FillPatternType.SOLID_FOREGROUND);
+            // 折行
+            cellStyle.setWrapText(true);
         }
-        };
-        ExportRules exportRules=ExportRules.simpleRule(columns,headers)
-        // 大标题
-        .title("简单导出")
-        // 自动序号
-        .autoNum(true)
-        // sheet名称
-        .sheetName("简单导出")
-        // 尾部合计行设计
-        .footerRules(footerRules)
-        // 导出格式定义
-        .xlsx(true)
-        // 自定义全局样式
-        .globalStyle(headerStyle);
-        // 5.执行导出
-        ExcelUtils.export(outPath,data,exportRules,(fieldName,value,row,col)->{
-        System.out.print("[打印] 字段:"+fieldName);
-        System.out.print(" 字段值:"+value);
-        System.out.print(" 行数据:"+row);
-        System.out.println(" 单元格样式:"+col);
-        // 设置当前单元格值
-        return value;
+    };
+    ExportRules exportRules=ExportRules.simpleRule(columns,headers)
+    // 大标题
+    .title("简单导出")
+    // 自动序号
+    .autoNum(true)
+    // sheet名称
+    .sheetName("简单导出")
+    // 尾部合计行设计
+    .footerRules(footerRules)
+    // 导出格式定义
+    .xlsx(true)
+    // 自定义全局样式
+    .globalStyle(headerStyle);
+    // 5.执行导出
+    ExcelUtils.export(outPath,data,exportRules,(fieldName,value,row,col)->{
+            System.out.print("[打印] 字段:"+fieldName);
+            System.out.print(" 字段值:"+value);
+            System.out.print(" 行数据:"+row);
+            System.out.println(" 单元格样式:"+col);
+            // 设置当前单元格值
+            return value;
         }
-        );
-        }
+    );
+}
 ```
 
 * 导出结果
@@ -220,47 +219,46 @@ public void handleStyle(Font font,CellStyle cellStyle){
  * @throws Exception
  */
 public static void complexExport(){
-        // 1.表头设置,可以对应excel设计表头，一看就懂
-        HashMap<String, String> headerRules=new HashMap<>();
-        headerRules.put("1,1,A,K","项目资源统计");
-        headerRules.put("2,3,A,A","序号");
-        headerRules.put("2,2,B,E","基本信息");
-        headerRules.put("3,3,B,B","项目名称");
-        headerRules.put("3,3,C,C","所属区域");
-        headerRules.put("3,3,D,D","省份");
-        headerRules.put("3,3,E,E","市");
-        headerRules.put("2,3,F,F","项目所属人");
-        headerRules.put("2,3,G,G","市项目领导人");
-        headerRules.put("2,2,H,I","分值");
-        headerRules.put("3,3,H,H","得分");
-        headerRules.put("3,3,I,I","平均分");
-        headerRules.put("2,3,J,J","创建时间");
-        headerRules.put("2,3,K,K","项目图片");
-        // 2.尾部设置，一般可以用来设计合计栏
-        HashMap<String, String> footerRules=new HashMap<>();
-        footerRules.put("1,2,A,C","合计:");
-        footerRules.put("1,2,D,K","=SUM(H4:H13)");
-        // 3.导出header对应的字段设置
-        Column[]column={
-        Column.field("projectName"),
-        Column.field("areaName"),
-        Column.field("province"),
-        Column.field("city"),
-        Column.field("people"),
-        Column.field("leader"),
-        Column.field("scount"),
-        Column.field("avg"),
-        Column.field("createTime"),
-        Column.field("img")
+    // 1.表头设置,可以对应excel设计表头，一看就懂
+    HashMap<String, String> headerRules=new HashMap<>();
+    headerRules.put("1,1,A,K","项目资源统计");
+    headerRules.put("2,3,A,A","序号");
+    headerRules.put("2,2,B,E","基本信息");
+    headerRules.put("3,3,B,B","项目名称");
+    headerRules.put("3,3,C,C","所属区域");
+    headerRules.put("3,3,D,D","省份");
+    headerRules.put("3,3,E,E","市");
+    headerRules.put("2,3,F,F","项目所属人");
+    headerRules.put("2,3,G,G","市项目领导人");
+    headerRules.put("2,2,H,I","分值");
+    headerRules.put("3,3,H,H","得分");
+    headerRules.put("3,3,I,I","平均分");
+    headerRules.put("2,3,J,J","创建时间");
+    headerRules.put("2,3,K,K","项目图片");
+    // 2.尾部设置，一般可以用来设计合计栏
+    HashMap<String, String> footerRules=new HashMap<>();
+    footerRules.put("1,2,A,C","合计:");
+    footerRules.put("1,2,D,K","=SUM(H4:H13)");
+    // 3.导出header对应的字段设置
+    Column[]column={
+    Column.field("projectName"),
+    Column.field("areaName"),
+    Column.field("province"),
+    Column.field("city"),
+    Column.field("people"),
+    Column.field("leader"),
+    Column.field("scount"),
+    Column.field("avg"),
+    Column.field("createTime"),
+    Column.field("img")
 
-        };
-        // 4.执行导出到工作簿
-        ExportRules exportRules=ExportRules.complexRule(column,headerRules)
-        .footerRules(footerRules)
-        .autoNum(true);
-        ExcelUtils.export(outPath,data,exportRules);
-
-        }
+    };
+    // 4.执行导出到工作簿
+    ExportRules exportRules=ExportRules.complexRule(column,headerRules)
+    .footerRules(footerRules)
+    .autoNum(true);
+    ExcelUtils.export(outPath,data,exportRules);
+}
 ```
 
 * 导出结果
@@ -281,17 +279,17 @@ public static void complexExport(){
  */
 public static void complexExport2(){
         // 1.导出的header设置
-        String[]header={"學生姓名","所在班級","所在學校","更多父母姓名"};
+    String[]header={"學生姓名","所在班級","所在學校","更多父母姓名"};
         // 2.导出header对应的字段设置，列宽设置
-        Column[]column={
+    Column[]column={
         Column.field("name"),
         Column.field("classRoom.name"),
         Column.field("classRoom.school.name"),
         Column.field("moreInfo.parent.age"),
-        };
-        // 3.执行导出到工作簿
-        ExcelUtils.export(outPath,complexData,ExportRules.simpleRule(column,header));
-        }
+    };
+    // 3.执行导出到工作簿
+    ExcelUtils.export(outPath,complexData,ExportRules.simpleRule(column,header));
+}
 ```
 
 * 导出结果
@@ -308,16 +306,16 @@ public static void complexExport2(){
  * @throws Exception
  */
 public static void mapExport(){
-        // 1.导出的header设置
-        String[]header={"姓名","年龄"};
-        // 2.导出header对应的字段设置，列宽设置
+    // 1.导出的header设置
+    String[]header={"姓名","年龄"};
+    // 2.导出header对应的字段设置，列宽设置
         Column[]column={
         Column.field("name"),
         Column.field("age"),
-        };
-        // 3.执行导出到工作簿
-        ExcelUtils.export(outPath,mapData,ExportRules.simpleRule(column,header));
-        }
+    };
+    // 3.执行导出到工作簿
+    ExcelUtils.export(outPath,mapData,ExportRules.simpleRule(column,header));
+}
 ```
 
 * 导出结果
@@ -336,25 +334,25 @@ public static void mapExport(){
  * @throws Exception
  */
 public static void templateExport(){
-        // 1.导出的header设置
-        String[]header={"宝宝姓名","宝宝昵称","家长姓名","手机号码","宝宝生日","月龄","宝宝性别","来源渠道","市场人员","咨询顾问","客服顾问","分配校区","备注"};
-        // 2.导出header对应的字段设置，列宽设置
-        Column[]column={Column.field("宝宝姓名"),Column.field("宝宝昵称"),
-        Column.field("家长姓名"),
-        Column.field("手机号码").verifyText("11~11","请输入11位的手机号码！"),
-        Column.field("宝宝生日").datePattern("yyyy-MM-dd").verifyDate("2000-01-01~3000-12-31"),
-        Column.field("月龄").width(4).verifyCustom("VALUE(F3:F6000)","月齡格式：如1年2个月则输入14"),
-        Column.field("宝宝性别").dorpDown(new String[]{"男","女"}),
-        Column.field("来源渠道").width(12).dorpDown(new String[]{"品推","市场"}),
-        Column.field("市场人员").width(6).dorpDown(new String[]{"张三","李四"}),
-        Column.field("咨询顾问").width(6).dorpDown(new String[]{"张三","李四"}),
-        Column.field("客服顾问").width(6).dorpDown(new String[]{"大唐","银泰"}),
-        Column.field("分配校区").width(6).dorpDown(new String[]{"大唐","银泰"}),
-        Column.field("备注")
-        };
-        // 3.执行导出到工作簿
-        ExcelUtils.export(outPath,Collections.emptyList(),ExportRules.simpleRule(column,header));
-        }
+    // 1.导出的header设置
+    String[]header={"宝宝姓名","宝宝昵称","家长姓名","手机号码","宝宝生日","月龄","宝宝性别","来源渠道","市场人员","咨询顾问","客服顾问","分配校区","备注"};
+    // 2.导出header对应的字段设置，列宽设置
+    Column[]column={Column.field("宝宝姓名"),Column.field("宝宝昵称"),
+    Column.field("家长姓名"),
+    Column.field("手机号码").verifyText("11~11","请输入11位的手机号码！"),
+    Column.field("宝宝生日").datePattern("yyyy-MM-dd").verifyDate("2000-01-01~3000-12-31"),
+    Column.field("月龄").width(4).verifyCustom("VALUE(F3:F6000)","月齡格式：如1年2个月则输入14"),
+    Column.field("宝宝性别").dorpDown(new String[]{"男","女"}),
+    Column.field("来源渠道").width(12).dorpDown(new String[]{"品推","市场"}),
+    Column.field("市场人员").width(6).dorpDown(new String[]{"张三","李四"}),
+    Column.field("咨询顾问").width(6).dorpDown(new String[]{"张三","李四"}),
+    Column.field("客服顾问").width(6).dorpDown(new String[]{"大唐","银泰"}),
+    Column.field("分配校区").width(6).dorpDown(new String[]{"大唐","银泰"}),
+    Column.field("备注")
+    };
+    // 3.执行导出到工作簿
+    ExcelUtils.export(outPath,Collections.emptyList(),ExportRules.simpleRule(column,header));
+}
 ```
 
 * 导出结果
@@ -370,13 +368,16 @@ public static void templateExport(){
 // 1.创建空workbook
 Workbook emptyWorkbook=ExcelUtils.createEmptyWorkbook(true);
 // 2.填充3个sheet数据
-        ExcelUtils.fillBook(emptyWorkbook,data1,ExportRules.simpleRule(column1,header1).sheetName("sheet1"));
-        ExcelUtils.fillBook(emptyWorkbook,data2,ExportRules.simpleRule(column2,header2).sheetName("sheet2"));
-        ExcelUtils.fillBook(emptyWorkbook,data3,ExportRules.simpleRule(column3,header3).sheetName("sheet3"));
+ExcelUtils.fillBook(emptyWorkbook,data1,ExportRules.simpleRule(column1,header1).sheetName("sheet1"));
+ExcelUtils.fillBook(emptyWorkbook,data2,ExportRules.simpleRule(column2,header2).sheetName("sheet2"));
+ExcelUtils.fillBook(emptyWorkbook,data3,ExportRules.simpleRule(column3,header3).sheetName("sheet3"));
 // 3.导出
-        emptyWorkbook.write(new FileOutputStream(outPath));
+emptyWorkbook.write(new FileOutputStream(outPath));
 
 ```
+* 导出示例
+
+
 
 ##### 7. 支持大数据内存导出，防止OOM
 
@@ -386,9 +387,9 @@ Workbook emptyWorkbook=ExcelUtils.createEmptyWorkbook(true);
 // 1.声明大数据内存导出
 Workbook emptyWorkbook=ExcelUtils.createBigWorkbook();
 // 2.填充数据
-        ExcelUtils.fillBook(emptyWorkbook,data,ExportRules.simpleRule(column,header));
+ExcelUtils.fillBook(emptyWorkbook,data,ExportRules.simpleRule(column,header));
 // 3.导出
-        emptyWorkbook.write(new FileOutputStream(outPath));
+emptyWorkbook.write(new FileOutputStream(outPath));
 ```
 
 ##### 8. 读模板替换变量导出
@@ -402,18 +403,18 @@ Workbook emptyWorkbook=ExcelUtils.createBigWorkbook();
  * @throws Exception
  */
 public static void readExport(){
-        Map<String, String> params=new HashMap<>();
-        params.put("author","625");
-        params.put("text","合计");
-        params.put("area","西安市");
-        params.put("prov","陕西省");
-        Workbook workbook=ExcelUtils.readExcelWrite(templatePath,params);
-        try{
+    Map<String, String> params=new HashMap<>();
+    params.put("author","625");
+    params.put("text","合计");
+    params.put("area","西安市");
+    params.put("prov","陕西省");
+    Workbook workbook=ExcelUtils.readExcelWrite(templatePath,params);
+    try{
         workbook.write(new FileOutputStream(outPath));
-        }catch(IOException e){
+    }catch(IOException e){
         e.printStackTrace();
-        }
-        }
+    }
+}
 ```
 
 * 导出结果
@@ -521,11 +522,11 @@ public class MainClass {
 
 ```xhtml
 [G4]long宝格式不正确
-        [G6]long宝格式不正确
-        [G7]long宝格式不正确
-        [C8]名字格式不正确    [I8]日期宝格式不正确    [K8]double宝格式不正确    [M8]float宝格式不正确    [O8]integer宝格式不正确    [G8]long宝格式不正确    [U8]short宝格式不正确
-        [C9]名字不能为空
-        [C10]名字不能为空    
+[G6]long宝格式不正确
+[G7]long宝格式不正确
+[C8]名字格式不正确    [I8]日期宝格式不正确    [K8]double宝格式不正确    [M8]float宝格式不正确    [O8]integer宝格式不正确    [G8]long宝格式不正确    [U8]short宝格式不正确
+[C9]名字不能为空
+[C10]名字不能为空    
 ```
 
 ## 五. 便捷快速读Excel
@@ -534,24 +535,24 @@ public class MainClass {
 * 代码示例
 
 ```java
- public static void readSheet(){
-        List<Map<String, Object>>lists=ExcelUtils.readSheet("src/test/java/excel/export/readExport_OUT.xlsx",0,3,1);
-        for(Map<String, Object> list:lists){
+public static void readSheet(){
+    List<Map<String, Object>>lists=ExcelUtils.readSheet("src/test/java/excel/export/readExport_OUT.xlsx",0,3,1);
+    for(Map<String, Object> list:lists){
         System.out.println(list);
-        }
-        }
+    }
+}
 ```
 
 * 输出
 
 ```xhtml
 {A=2.0, B=中青旅1, C=, D=华东长三角, E=陕西省, F=保定市, G=张三, H=李四, I=239.0, J=0.33438526939871205, K=Fri Dec 17 17:38:17 CST 2021}
-        {A=3.0, B=中青旅2, C=, D=华东长三角, E=陕西省, F=保定市, G=张三, H=李四, I=734.0, J=0.046917323921557674, K=Fri Dec 17 17:38:17 CST 2021}
-        {A=4.0, B=中青旅3, C=, D=华东长三角, E=陕西省, F=保定市, G=张三, H=李四, I=235.0, J=0.8870974305330224, K=Fri Dec 17 17:38:17 CST 2021}
-        {A=5.0, B=中青旅4, C=, D=西安市, E=陕西省, F=保定市, G=张三, H=李四, I=484.0, J=0.3290520137271864, K=Fri Dec 17 17:38:17 CST 2021}
-        {A=6.0, B=中青旅5, C=, D=华东长三角, E=陕西省, F=保定市, G=张三, H=李四, I=18.0, J=0.28227006573210534, K=Fri Dec 17 17:38:17 CST 2021}
-        {A=7.0, B=中青旅6, C=, D=华东长三角, E=陕西省, F=保定市, G=张三, H=李四, I=233.0, J=0.43438315036948694, K=Fri Dec 17 17:38:17 CST 2021}
-        {A=8.0, B=中青旅7, C=, D=华东长三角, E=陕西省, F=保定市, G=张三, H=李四, I=984.0, J=0.11953560849002731, K=Fri Dec 17 17:38:17 CST 2021}
-        {A=9.0, B=中青旅8, C=, D=华东长三角, E=陕西省, F=保定市, G=张三, H=李四, I=710.0, J=0.35917838863116225, K=Fri Dec 17 17:38:17 CST 2021}
-        {A=10.0, B=中青旅9, C=, D=华东长三角, E=陕西省, F=保定市, G=张三, H=李四, I=429.0, J=0.2535268079402, K=Fri Dec 17 17:38:17 CST 2021}
+{A=3.0, B=中青旅2, C=, D=华东长三角, E=陕西省, F=保定市, G=张三, H=李四, I=734.0, J=0.046917323921557674, K=Fri Dec 17 17:38:17 CST 2021}
+{A=4.0, B=中青旅3, C=, D=华东长三角, E=陕西省, F=保定市, G=张三, H=李四, I=235.0, J=0.8870974305330224, K=Fri Dec 17 17:38:17 CST 2021}
+{A=5.0, B=中青旅4, C=, D=西安市, E=陕西省, F=保定市, G=张三, H=李四, I=484.0, J=0.3290520137271864, K=Fri Dec 17 17:38:17 CST 2021}
+{A=6.0, B=中青旅5, C=, D=华东长三角, E=陕西省, F=保定市, G=张三, H=李四, I=18.0, J=0.28227006573210534, K=Fri Dec 17 17:38:17 CST 2021}
+{A=7.0, B=中青旅6, C=, D=华东长三角, E=陕西省, F=保定市, G=张三, H=李四, I=233.0, J=0.43438315036948694, K=Fri Dec 17 17:38:17 CST 2021}
+{A=8.0, B=中青旅7, C=, D=华东长三角, E=陕西省, F=保定市, G=张三, H=李四, I=984.0, J=0.11953560849002731, K=Fri Dec 17 17:38:17 CST 2021}
+{A=9.0, B=中青旅8, C=, D=华东长三角, E=陕西省, F=保定市, G=张三, H=李四, I=710.0, J=0.35917838863116225, K=Fri Dec 17 17:38:17 CST 2021}
+{A=10.0, B=中青旅9, C=, D=华东长三角, E=陕西省, F=保定市, G=张三, H=李四, I=429.0, J=0.2535268079402, K=Fri Dec 17 17:38:17 CST 2021}
 ```
