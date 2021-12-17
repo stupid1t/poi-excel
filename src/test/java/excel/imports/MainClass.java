@@ -25,6 +25,7 @@ public class MainClass {
         Consumer<AbsSheetVerifyRule> columnRule = (rule) -> {
             // 表示C列数据提取到字段bigDecimalHandler,字段为BigDecimal类型, 并且列不能为空
             rule.addRule("C", "bigDecimalHandler", "名字", new BigDecimalHandler(false, value -> {
+                // 自定义处理, 名字不能是1.2345
                 if (new BigDecimal(String.valueOf(value)).equals(new BigDecimal("1.2345"))) {
                     throw PoiException.error("不能是1.2345");
                 }
