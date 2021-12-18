@@ -56,30 +56,32 @@
 * 代码示例
 
 ```java
-/**
- * 简单导出
- *
- * @throws Exception
- */
-public static void simpleExport(){
+class a {
+    /**
+     * 简单导出
+     *
+     * @throws Exception
+     */
+    public static void simpleExport() {
         // 1.导出的header标题设置
-        String[]headers={"项目名称","项目图","所属区域","省份","市","项目所属人","项目领导人","得分","平均分","创建时间"};
+        String[] headers = {"项目名称", "项目图", "所属区域", "省份", "市", "项目所属人", "项目领导人", "得分", "平均分", "创建时间"};
         // 2.导出header对应的字段设置
-        Column[]columns={
-        Column.field("projectName"),
-        Column.field("img"),
-        Column.field("areaName"),
-        Column.field("province"),
-        Column.field("city").width(3),
-        Column.field("people"),
-        Column.field("leader"),
-        Column.field("scount"),
-        Column.field("avg"),
-        // 格式化日期
-        Column.field("createTime").datePattern("yyyy-MM-dd")
-    };
-    // 3.执行导出
-    ExcelUtils.export(outPath,data,ExportRules.simpleRule(columns,headers));
+        Column[] columns = {
+                Column.field("projectName"),
+                Column.field("img"),
+                Column.field("areaName"),
+                Column.field("province"),
+                Column.field("city").width(3),
+                Column.field("people"),
+                Column.field("leader"),
+                Column.field("scount"),
+                Column.field("avg"),
+                // 格式化日期
+                Column.field("createTime").datePattern("yyyy-MM-dd")
+        };
+        // 3.执行导出
+        ExcelUtils.export(outPath, data, ExportRules.simpleRule(columns, headers));
+    }
 }
 ```
 
