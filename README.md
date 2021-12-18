@@ -432,6 +432,9 @@ public static void readExport(){
 
 * 导入文件示例图
 
+![image](https://user-images.githubusercontent.com/29246805/146621557-0732b698-dc2a-49c7-9ce4-fd4a6ce7bb36.png)
+
+
 * 数据要转换的Java对象
 
 ```java
@@ -537,6 +540,10 @@ public class MainClass {
 ## 五. 便捷快速读Excel
 
 * 示例图
+
+![image](https://user-images.githubusercontent.com/29246805/146621587-f9a0f779-84a0-463d-885b-a0d3a16afb3c.png)
+
+
 * 代码示例
 
 ```java
