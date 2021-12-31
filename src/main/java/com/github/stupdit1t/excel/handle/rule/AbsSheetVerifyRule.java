@@ -16,7 +16,7 @@ public abstract class AbsSheetVerifyRule {
     /**
      * 字段校验集
      */
-    private List<CellVerifyRule> cellVerifyRules = new ArrayList<>();
+    private final List<CellVerifyRule> cellVerifyRules = new ArrayList<>();
 
     /**
      * 字段名称
@@ -36,10 +36,10 @@ public abstract class AbsSheetVerifyRule {
     /**
      * 添加规则
      *
-     * @param index
-     * @param field
-     * @param filedName
-     * @param cellVerify
+     * @param index      单元格坐标
+     * @param field      字段
+     * @param filedName  字段名
+     * @param cellVerify 自定义验证
      */
     public void addRule(String index, String field, String filedName, AbsCellVerifyRule cellVerify) {
         CellVerifyRule cellVerifyRule = new CellVerifyRule(index, field, filedName, cellVerify);
@@ -55,7 +55,7 @@ public abstract class AbsSheetVerifyRule {
         fields = new String[cellVerifyRules.size()];
         // 2、初始化cellRefs
         cellRefs = new String[cellVerifyRules.size()];
-        // 3、初始化verifys
+        // 3、初始化verifies
         columnVerifyRule = new HashMap<>(cellVerifyRules.size());
         for (int i = 0; i < cellVerifyRules.size(); i++) {
             CellVerifyRule item = cellVerifyRules.get(i);
@@ -68,12 +68,10 @@ public abstract class AbsSheetVerifyRule {
     /**
      * 校验
      *
-     * @param filed
-     * @param fileValue
-     * @return Object
-     * @throws Exception
+     * @param filed     字段
+     * @param fileValue 字段值
      */
-    public Object verify(String filed, Object fileValue) throws Exception {
+    public Object verify(String filed, Object fileValue) {
         if (columnVerifyRule.containsKey(filed)) {
             CellVerifyRule cellVerifyRule = columnVerifyRule.get(filed);
             if (cellVerifyRule.getCellVerify() != null) {
@@ -81,10 +79,6 @@ public abstract class AbsSheetVerifyRule {
             }
         }
         return fileValue;
-    }
-
-    public List<CellVerifyRule> getCellVerifyRules() {
-        return cellVerifyRules;
     }
 
     public String[] getFields() {
@@ -106,16 +100,15 @@ public abstract class AbsSheetVerifyRule {
 
     /**
      * 匿名抽象类规则
-     * @param absSheetVerifyRuleConsumer
+     * @param absSheetVerifyRuleConsumer 构建验证规则
      * @return AbsSheetVerifyRule
      */
-    public static AbsSheetVerifyRule buildRule(Consumer<AbsSheetVerifyRule> absSheetVerifyRuleConsumer){
-        AbsSheetVerifyRule absSheetVerifyRule = new AbsSheetVerifyRule() {
+    public static AbsSheetVerifyRule buildRule(Consumer<AbsSheetVerifyRule> absSheetVerifyRuleConsumer) {
+        return new AbsSheetVerifyRule() {
             @Override
             protected void buildRule() {
                 absSheetVerifyRuleConsumer.accept(this);
             }
         };
-        return absSheetVerifyRule;
     }
 }

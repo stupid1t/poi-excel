@@ -51,7 +51,6 @@ public abstract class AbsCellVerifyRule<T> {
      *
      * @param fieldName 列名称
      * @param value     列值
-     * @throws PoiException
      */
     public Object handleNull(String fieldName, Object value) throws PoiException {
         if (value == null || StringUtils.isBlank(String.valueOf(value))) {
@@ -69,7 +68,6 @@ public abstract class AbsCellVerifyRule<T> {
      *
      * @param fieldName 列名称
      * @param cellValue 列值
-     * @throws Exception
      */
     public T handle(String fieldName, Object cellValue) throws PoiException {
         // 空值处理
@@ -98,7 +96,6 @@ public abstract class AbsCellVerifyRule<T> {
      *
      * @param fieldName 列名称
      * @param cellValue 列值
-     * @throws Exception
      */
     public abstract T doHandle(String fieldName, Object cellValue) throws Exception;
 }

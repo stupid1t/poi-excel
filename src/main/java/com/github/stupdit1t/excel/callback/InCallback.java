@@ -13,7 +13,6 @@ public interface InCallback<T> {
 	 * 
 	 * @param t 当前行数据
 	 * @param rowNum 当前行号
-	 * @throws Exception
 	 */
 	void callback(T t, int rowNum) throws Exception;
 }

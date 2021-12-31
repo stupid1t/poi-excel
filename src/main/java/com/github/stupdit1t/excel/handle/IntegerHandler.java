@@ -38,7 +38,7 @@ public class IntegerHandler extends AbsCellVerifyRule<Integer> {
         String value = String.valueOf(cellValue);
         if (cellValue instanceof Integer) {
             return (Integer) cellValue;
-        } else if (NumberUtils.isNumber(value)) {
+        } else if (NumberUtils.isCreatable(value)) {
             return new BigDecimal(value).intValue();
         }
         throw PoiException.error(fieldName+"格式不正确");

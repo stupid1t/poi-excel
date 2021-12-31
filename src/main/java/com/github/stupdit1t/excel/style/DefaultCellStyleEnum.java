@@ -1,12 +1,6 @@
 package com.github.stupdit1t.excel.style;
 
-import org.apache.poi.ss.usermodel.BorderStyle;
-import org.apache.poi.ss.usermodel.CellStyle;
-import org.apache.poi.ss.usermodel.FillPatternType;
-import org.apache.poi.ss.usermodel.Font;
-import org.apache.poi.ss.usermodel.HorizontalAlignment;
-import org.apache.poi.ss.usermodel.IndexedColors;
-import org.apache.poi.ss.usermodel.VerticalAlignment;
+import org.apache.poi.ss.usermodel.*;
 
 import java.util.function.BiConsumer;
 
@@ -74,12 +68,12 @@ public enum DefaultCellStyleEnum  implements ICellStyle {
 	/**
 	 * 位置
 	 */
-	private CellPosition position;
+	private final CellPosition position;
 
 	/**
 	 * 处理样式
 	 */
-	private BiConsumer<Font, CellStyle> customizeStyle;
+	private final BiConsumer<Font, CellStyle> customizeStyle;
 
 	DefaultCellStyleEnum(CellPosition position, BiConsumer<Font, CellStyle> customizeStyle) {
 		this.position = position;

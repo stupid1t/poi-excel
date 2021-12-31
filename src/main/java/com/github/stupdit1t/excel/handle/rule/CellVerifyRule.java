@@ -10,29 +10,30 @@ public class CellVerifyRule {
     /**
      * 列坐标
      */
-    private String index;
+    private final String index;
 
     /**
      * 列名
      */
-    private String field;
+    private final String field;
 
     /**
      * 列名称
      */
-    private String fieldName;
+    private final String fieldName;
 
     /**
      * 列校验
      */
-    private AbsCellVerifyRule cellVerify;
+    private final AbsCellVerifyRule cellVerify;
 
     /**
      * 构建列校验
      *
-     * @param index     列坐标
-     * @param field     字段
-     * @param filedName 字段名称
+     * @param index      列坐标
+     * @param field      字段
+     * @param filedName  字段描述
+     * @param cellVerify 验证器
      */
     public CellVerifyRule(String index, String field, String filedName, AbsCellVerifyRule cellVerify) {
         super();
@@ -46,31 +47,15 @@ public class CellVerifyRule {
         return index;
     }
 
-    public void setIndex(String index) {
-        this.index = index;
-    }
-
     public String getField() {
         return field;
-    }
-
-    public void setField(String field) {
-        this.field = field;
     }
 
     public String getFieldName() {
         return fieldName;
     }
 
-    public void setFieldName(String fieldName) {
-        this.fieldName = fieldName;
-    }
-
     public AbsCellVerifyRule getCellVerify() {
         return cellVerify;
-    }
-
-    public void setCellVerify(AbsCellVerifyRule cellVerify) {
-        this.cellVerify = cellVerify;
     }
 }

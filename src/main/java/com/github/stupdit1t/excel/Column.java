@@ -2,8 +2,6 @@ package com.github.stupdit1t.excel;
 
 import com.github.stupdit1t.excel.common.PoiCommon;
 import com.github.stupdit1t.excel.common.PoiConstant;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 import org.apache.poi.ss.usermodel.HorizontalAlignment;
 import org.apache.poi.ss.usermodel.IndexedColors;
 import org.apache.poi.ss.usermodel.VerticalAlignment;
@@ -15,12 +13,10 @@ import org.apache.poi.ss.usermodel.VerticalAlignment;
  */
 public class Column implements Cloneable {
 
-    private static final Logger LOG = LogManager.getLogger(Column.class);
-
     /**
      * 字段名称
      */
-    private String field;
+    private final String field;
 
     /**
      * 宽度，不设置默认自动
@@ -55,7 +51,7 @@ public class Column implements Cloneable {
     /**
      * 下拉列表数据
      */
-    private String[] dorpDown;
+    private String[] dropdown;
 
     /**
      * 日期校验,请填写例如2018-08-09~2019-08-09
@@ -111,22 +107,13 @@ public class Column implements Cloneable {
         this.field = field;
     }
 
-    private Column() {
-
-    }
-
     /**
      * 字段名称
      *
      * @return Column
      */
     public static Column custom(Column sourceColumn) {
-        Column column = null;
-        try {
-            column = (Column) sourceColumn.clone();
-        } catch (CloneNotSupportedException e) {
-            LOG.error(e);
-        }
+        Column column = sourceColumn.clone();
         column.custom = 1;
         return column;
     }
@@ -224,7 +211,7 @@ public class Column implements Cloneable {
     /**
      * 设置背景色
      *
-     * @param backColor
+     * @param backColor 背景色
      * @return Column
      */
     public Column backColor(IndexedColors backColor) {
@@ -271,24 +258,24 @@ public class Column implements Cloneable {
         return this;
     }
 
-    protected String[] getDorpDown() {
-        return dorpDown;
+    protected String[] getDropdown() {
+        return dropdown;
     }
 
     /**
      * 下拉列表数据
      *
-     * @param dorpDown 下拉列表数据
+     * @param dropDown 下拉列表数据
      * @return Column
      */
-    public Column dorpDown(String[] dorpDown) {
+    public Column dropdown(String[] dropDown) {
         if (custom == 1) {
             throw new UnsupportedOperationException("仅允许定义color/backColor/align/valign/comment ！");
         }
         if (++verifyCount > 1) {
             throw new UnsupportedOperationException("同一列只能定义一个数据校验！");
         }
-        this.dorpDown = dorpDown;
+        this.dropdown = dropDown;
         return this;
     }
 
@@ -438,5 +425,14 @@ public class Column implements Cloneable {
         }
         this.datePattern = datePattern;
         return this;
+    }
+
+    @Override
+    public Column clone() {
+        try {
+            return (Column) super.clone();
+        } catch (CloneNotSupportedException e) {
+            throw new AssertionError();
+        }
     }
 }

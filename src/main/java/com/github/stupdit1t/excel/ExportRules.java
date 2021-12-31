@@ -23,7 +23,7 @@ public class ExportRules {
     /**
      * 列数据规则定义
      */
-    private Column[] column;
+    private final Column[] column;
 
     /**
      * 表头名
@@ -58,11 +58,6 @@ public class ExportRules {
     private int maxRows = 0;
 
     /**
-     * 尾部数据行数
-     */
-    private int footerRows = 0;
-
-    /**
      * 是否合并表头
      */
     private boolean ifMerge;
@@ -90,8 +85,8 @@ public class ExportRules {
     /**
      * 初始化规则，构建一个简单表头
      *
-     * @param column
-     * @param header
+     * @param column 定义导出列字段
+     * @param header 表头设计
      */
     public static ExportRules simpleRule(Column[] column, String[] header) {
         return new ExportRules(column, header, true);
@@ -100,8 +95,8 @@ public class ExportRules {
     /**
      * 初始化规则，构建一个复杂表头
      *
-     * @param column
-     * @param headerRules
+     * @param column      定义导出列字段
+     * @param headerRules 表头设计
      */
     public static ExportRules complexRule(Column[] column, Map<String, String> headerRules) {
         return new ExportRules(column, headerRules);
@@ -150,12 +145,10 @@ public class ExportRules {
     /**
      * 尾行设计
      *
-     * @param footerRules
+     * @param footerRules 尾部合计行设计
      */
     public ExportRules footerRules(Map<String, String> footerRules) {
-        int[] mapRowColNum = PoiCommon.getMapRowColNum(footerRules);
         this.footerRules = footerRules;
-        this.footerRows = mapRowColNum[0];
         this.ifFooter = true;
         return this;
     }
@@ -164,7 +157,7 @@ public class ExportRules {
     /**
      * sheet名
      *
-     * @param sheetName
+     * @param sheetName sheet名字
      */
     public ExportRules sheetName(String sheetName) {
         this.sheetName = sheetName;
@@ -176,15 +169,13 @@ public class ExportRules {
      * complexRule：需要自定义手动定义表头
      * simpleRule：自动生成表头序号
      *
-     * @param autoNum
+     * @param autoNum 自动生成序号
      */
     public ExportRules autoNum(boolean autoNum) {
         this.autoNum = autoNum;
         if (autoNum && simple) {
             String[] headerNew = new String[this.header.length + 1];
-            for (int i = 1; i < headerNew.length; i++) {
-                headerNew[i] = this.header[i - 1];
-            }
+            System.arraycopy(this.header, 0, headerNew, 1, headerNew.length - 1);
             headerNew[0] = "序号";
             this.header = headerNew;
             this.maxColumns = headerNew.length - 1;
@@ -196,7 +187,7 @@ public class ExportRules {
     /**
      * 表头设置
      *
-     * @param title
+     * @param title 表头标题
      */
     public ExportRules title(String title) {
         if (this.headerRules != null) {
@@ -210,7 +201,7 @@ public class ExportRules {
     /**
      * 全局单元格样式设置
      *
-     * @param styles
+     * @param styles 全局样式设置,传数组,不需要全部覆盖
      */
     public ExportRules globalStyle(ICellStyle... styles) {
         this.globalStyle = styles;
@@ -274,7 +265,4 @@ public class ExportRules {
         return ifFooter;
     }
 
-    int getFooterRows() {
-        return footerRows;
-    }
 }

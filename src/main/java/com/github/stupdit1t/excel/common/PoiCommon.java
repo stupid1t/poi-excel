@@ -4,10 +4,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.reflect.FieldUtils;
 
 import java.lang.reflect.Field;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * 一些公用的方法
@@ -37,13 +34,13 @@ public class PoiCommon {
     /**
      * 获取实体的所有字段
      *
-     * @param t
+     * @param t 类
      * @return Map<String, Field>
      */
     public static Map<String, Field> getAllFields(Class<?> t) {
         Map<String, Field> field = new HashMap<>();
         List<Field> allFieldsList = FieldUtils.getAllFieldsList(t);
-        allFieldsList.stream().forEach(n -> {
+        allFieldsList.forEach(n -> {
             n.setAccessible(true);
             field.put(n.getName(), n);
         });
@@ -53,7 +50,7 @@ public class PoiCommon {
     /**
      * 字母相加
      *
-     * @param charStr
+     * @param charStr 被自增的字符
      */
     public static String charAdd(String charStr) {
         char[] chars = charStr.toCharArray();
@@ -65,9 +62,7 @@ public class PoiCommon {
             // 位数满了, 需要增加位数
             if (i == 0 && chars[i] == 90) {
                 chars = new char[chars.length + 1];
-                for (int j = 0; j < chars.length; j++) {
-                    chars[j] = 'A';
-                }
+                Arrays.fill(chars, 'A');
                 break;
             }
             chars[i] = (char) (chars[i] + 1);
@@ -114,7 +109,7 @@ public class PoiCommon {
     /**
      * 填充几位字母的列, 如3 就是填充 A~ZZZ
      *
-     * @param times
+     * @param times 填充多少列
      */
     public static void fillCellRefNums(int times) {
         if (times > PoiConstant.CHAR_MAX + 1) {
@@ -129,7 +124,7 @@ public class PoiCommon {
         int columnIndex = 0;
         cellRefNums.put(index, columnIndex);
         numsRefCell.put(columnIndex, index);
-        while (true && !index.equals(stopIndex)) {
+        while (!index.equals(stopIndex)) {
             columnIndex++;
             index = PoiCommon.charAdd(index);
             cellRefNums.put(index, columnIndex);
@@ -139,7 +134,8 @@ public class PoiCommon {
 
     /**
      * 获取map规则最大列和行数
-     * @param rules
+     *
+     * @param rules 规则
      * @return int[]
      */
     public static int[] getMapRowColNum(Map<String, String> rules) {
@@ -153,8 +149,8 @@ public class PoiCommon {
             Object[] range = coverRange(key);
             int a = (int) range[1];
             int b = PoiConstant.cellRefNums.get(range[3]) + 1;
-            row = a > row ? a : row;
-            col = b > col ? b : col;
+            row = Math.max(a, row);
+            col = Math.max(b, col);
         }
         return new int[]{row, col};
     }

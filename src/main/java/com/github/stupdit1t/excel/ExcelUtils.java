@@ -47,7 +47,7 @@ public class ExcelUtils {
     /**
      * 设置打印方向
      *
-     * @param sheet
+     * @param sheet sheet页
      */
     private static void printSetup(Sheet sheet) {
         PrintSetup printSetup = sheet.getPrintSetup();
@@ -130,7 +130,7 @@ public class ExcelUtils {
     public static <T> void export(String file, List<T> data, ExportRules exportRules, OutCallback<T> callBack) {
         try (
                 OutputStream temp = new FileOutputStream(file);
-                Workbook workbook = createEmptyWorkbook(exportRules.isXlsx());
+                Workbook workbook = createEmptyWorkbook(exportRules.isXlsx())
         ) {
             fillBook(workbook, data, exportRules, callBack);
             workbook.write(temp);
@@ -150,7 +150,7 @@ public class ExcelUtils {
     public static <T> void export(OutputStream out, List<T> data, ExportRules exportRules, OutCallback<T> callBack) {
         try (
                 OutputStream temp = out;
-                Workbook workbook = createEmptyWorkbook(exportRules.isXlsx());
+                Workbook workbook = createEmptyWorkbook(exportRules.isXlsx())
         ) {
             fillBook(workbook, data, exportRules, callBack);
             workbook.write(temp);
@@ -181,24 +181,24 @@ public class ExcelUtils {
     public static <T> void fillBook(Workbook wb, List<T> data, ExportRules exportRules, OutCallback<T> callBack) {
         boolean autoNum = exportRules.isAutoNum();
         Column[] fields = exportRules.getColumn();
-        ICellStyle[] gloablStyle = exportRules.getGlobalStyle();
+        ICellStyle[] globalStyle = exportRules.getGlobalStyle();
 
         // 标题样式设置
-        ICellStyle titleStyle = ICellStyle.getCellStyleByPosition(CellPosition.TITLE, gloablStyle);
+        ICellStyle titleStyle = ICellStyle.getCellStyleByPosition(CellPosition.TITLE, globalStyle);
         CellStyle titleStyleSource = wb.createCellStyle();
         Font titleFont = wb.createFont();
         titleStyleSource.setFont(titleFont);
         titleStyle.handleStyle(titleFont, titleStyleSource);
 
         // 小标题样式
-        ICellStyle headerStyle = ICellStyle.getCellStyleByPosition(CellPosition.HEADER, gloablStyle);
+        ICellStyle headerStyle = ICellStyle.getCellStyleByPosition(CellPosition.HEADER, globalStyle);
         CellStyle headerStyleSource = wb.createCellStyle();
         Font headerFont = wb.createFont();
         headerStyleSource.setFont(headerFont);
         headerStyle.handleStyle(headerFont, headerStyleSource);
 
         // 单元格样式
-        ICellStyle cellStyle = ICellStyle.getCellStyleByPosition(CellPosition.CELL, gloablStyle);
+        ICellStyle cellStyle = ICellStyle.getCellStyleByPosition(CellPosition.CELL, globalStyle);
         CellStyle cellStyleSource = wb.createCellStyle();
         Font cellFont = wb.createFont();
         cellStyleSource.setFont(cellFont);
@@ -310,9 +310,9 @@ public class ExcelUtils {
             // 2.downDown设置
             int lastRow = (maxRows - 1) + data.size();
             lastRow = lastRow == (maxRows - 1) ? PoiConstant.MAX_FILL_COL : lastRow;
-            String[] dorpDown = column.getDorpDown();
-            if (dorpDown != null && dorpDown.length > 0) {
-                sheet.addValidationData(createDropDownValidation(sheet, dorpDown, j, maxRows, lastRow));
+            String[] dropdown = column.getDropdown();
+            if (dropdown != null && dropdown.length > 0) {
+                sheet.addValidationData(createDropDownValidation(sheet, dropdown, j, maxRows, lastRow));
             }
 
             // 3.时间校验
@@ -433,19 +433,19 @@ public class ExcelUtils {
         if (exportRules.isIfFooter()) {
             Map<String, String> footerRules = exportRules.getFooterRules();
             // 构建尾行数字
-            int currRownum = exportRules.getMaxRows() + data.size();
-            int[] footerNum = getFooterNum(footerRules.entrySet().iterator(), currRownum);
+            int currRowNum = exportRules.getMaxRows() + data.size();
+            int[] footerNum = getFooterNum(footerRules.entrySet().iterator(), currRowNum);
             Iterator<Entry<String, String>> entries = footerRules.entrySet().iterator();
-            for (int i = 0; i < footerNum.length; i++) {
-                sheet.createRow(footerNum[i]);
+            for (int j : footerNum) {
+                sheet.createRow(j);
             }
             while (entries.hasNext()) {
                 Entry<String, String> entry = entries.next();
                 String key = entry.getKey();
                 String value = entry.getValue();
                 Object[] range = PoiCommon.coverRange(key);
-                int firstRow = (int) range[0] + currRownum - 1;
-                int lastRow = (int) range[1] + currRownum - 1;
+                int firstRow = (int) range[0] + currRowNum - 1;
+                int lastRow = (int) range[1] + currRowNum - 1;
                 int firstCol = PoiConstant.cellRefNums.get(range[2]);
                 int lastCol = PoiConstant.cellRefNums.get(range[3]);
                 Cell cell = CellUtil.createCell(sheet.getRow(firstRow), firstCol, value, cellStyleSource);
@@ -482,16 +482,16 @@ public class ExcelUtils {
         AbsSheetVerifyRule verifyBuilder = AbsSheetVerifyRule.buildRule(absSheetVerifyRule);
         // 规则初始化
         verifyBuilder.init();
-        PoiResult<T> rsp = new PoiResult<T>();
+        PoiResult<T> rsp = new PoiResult<>();
         List<T> beans = new ArrayList<>();
         // 获取excel中所有图片
         List<String> imgField = new ArrayList<>();
         Map<String, PictureData> pictures = null;
-        Map<String, CellVerifyRule> verifys = verifyBuilder.getColumnVerifyRule();
-        Set<String> keySet = verifys.keySet();
+        Map<String, CellVerifyRule> verifies = verifyBuilder.getColumnVerifyRule();
+        Set<String> keySet = verifies.keySet();
         int sheetIndex = sheet.getWorkbook().getSheetIndex(sheet);
         for (String key : keySet) {
-            CellVerifyRule cellVerifyRule = verifys.get(key);
+            CellVerifyRule cellVerifyRule = verifies.get(key);
             AbsCellVerifyRule cellVerify = cellVerifyRule.getCellVerify();
             if (cellVerify instanceof ImgHandler) {
                 imgField.add(key);
@@ -520,8 +520,8 @@ public class ExcelUtils {
                     try {
                         Object cellValue;
                         if (imgField.size() > 0 && imgField.contains(filed)) {
-                            String pictrueIndex = sheetIndex + "," + rowNum + "," + cellNum;
-                            PictureData remove = pictures.remove(pictrueIndex);
+                            String pictureIndex = sheetIndex + "," + rowNum + "," + cellNum;
+                            PictureData remove = pictures.remove(pictureIndex);
                             cellValue = remove == null ? null : remove.getData();
                         } else {
                             cellValue = getCellValue(r, cellNum, formulaEvaluator);
@@ -531,7 +531,7 @@ public class ExcelUtils {
                         // 填充列值
                         FieldUtils.writeField(t, filed, cellValue, true);
                     } catch (PoiException e) {
-                        rowErrors.append("[" + cellRef.formatAsString() + "]").append(e.getMessage()).append("\t");
+                        rowErrors.append("[").append(cellRef.formatAsString()).append("]").append(e.getMessage()).append("\t");
                     }
                     fieldNum++;
                 }
@@ -590,7 +590,7 @@ public class ExcelUtils {
      * @return List<Map < String, Object>>
      */
     public static List<Map<String, Object>> readSheet(InputStream is, int sheetNum, int dataStartRow, int dataEndRowCount) {
-        try (Workbook wb = WorkbookFactory.create(is);) {
+        try (Workbook wb = WorkbookFactory.create(is)) {
             Sheet sheet = wb.getSheetAt(sheetNum);
             return readSheet(sheet, dataStartRow, dataEndRowCount);
         } catch (Exception e) {
@@ -625,7 +625,7 @@ public class ExcelUtils {
      * @return List<Map < String, Object>>
      */
     public static <T> PoiResult<T> readSheet(InputStream is, Class<T> cls, Consumer<AbsSheetVerifyRule> absSheetVerifyRule, int sheetNum, int dataStartRow, int dataEndRowCount, InCallback<T> callback) {
-        try (Workbook wb = WorkbookFactory.create(is);) {
+        try (Workbook wb = WorkbookFactory.create(is)) {
             Sheet sheet = wb.getSheetAt(sheetNum);
             return readSheet(sheet, cls, absSheetVerifyRule, dataStartRow, dataEndRowCount, callback);
         } catch (Exception e) {
@@ -660,7 +660,7 @@ public class ExcelUtils {
      * @return List<Map < String, Object>>
      */
     public static <T> PoiResult<T> readSheet(InputStream is, Class<T> cls, Consumer<AbsSheetVerifyRule> absSheetVerifyRule, int sheetNum, int dataStartRow, int dataEndRowCount) {
-        try (Workbook wb = WorkbookFactory.create(is);) {
+        try (Workbook wb = WorkbookFactory.create(is)) {
             Sheet sheet = wb.getSheetAt(sheetNum);
             return readSheet(sheet, cls, absSheetVerifyRule, dataStartRow, dataEndRowCount, null);
         } catch (Exception e) {
@@ -672,7 +672,7 @@ public class ExcelUtils {
     /**
      * 读取规则excel数据内容为map
      *
-     * @param sheet
+     * @param sheet           sheet页
      * @param dataStartRow    起始行
      * @param dataEndRowCount 尾部非数据行数量
      * @return List<Map < String, Object>>
@@ -813,8 +813,7 @@ public class ExcelUtils {
      * @param fields  字段名称
      * @return Object
      */
-    @SuppressWarnings("rawtypes")
-    private static Object readField(Map<Class<? extends Object>, Map<String, Field>> clsInfo, Object t, String fields) {
+    private static Object readField(Map<Class<?>, Map<String, Field>> clsInfo, Object t, String fields) {
         // 读取子属性
         String[] split = fields.split("\\.");
         Object value = t;
@@ -1036,11 +1035,11 @@ public class ExcelUtils {
     /**
      * 根据页脚数据获得行号
      *
-     * @param entries
-     * @param currRownum
+     * @param entries    规则
+     * @param currRowNum 当前行
      * @return int[]
      */
-    private static int[] getFooterNum(Iterator<Entry<String, String>> entries, int currRownum) {
+    private static int[] getFooterNum(Iterator<Entry<String, String>> entries, int currRowNum) {
         int row = 0;
         while (entries.hasNext()) {
             Entry<String, String> entry = entries.next();
@@ -1051,7 +1050,7 @@ public class ExcelUtils {
         }
         int[] footerNum = new int[row];
         for (int i = 0; i < row; i++) {
-            footerNum[i] = currRownum + i;
+            footerNum[i] = currRowNum + i;
         }
         return footerNum;
     }
@@ -1059,8 +1058,8 @@ public class ExcelUtils {
     /**
      * 获取单元格的值
      *
-     * @param r
-     * @param cellNum
+     * @param r 当前行
+     * @param cellNum 单元格号
      * @return Object
      */
     private static Object getCellValue(Row r, int cellNum, FormulaEvaluator formulaEvaluator) {
@@ -1115,10 +1114,10 @@ public class ExcelUtils {
     private static Map<String, PictureData> getSheetPictures(int sheetNum, Sheet sheet) {
         if(sheet instanceof HSSFSheet){
             HSSFSheet sheetHssf = (HSSFSheet) sheet;
-            return getSheetPictrues03(sheetNum, sheetHssf);
+            return getSheetPictures03(sheetNum, sheetHssf);
         }else {
             XSSFSheet sheetXssf = (XSSFSheet) sheet;
-            return getSheetPictrues07(sheetNum, sheetXssf);
+            return getSheetPictures07(sheetNum, sheetXssf);
         }
     }
 
@@ -1129,7 +1128,7 @@ public class ExcelUtils {
      * @param sheet    当前sheet对象
      * @return Map key:图片单元格索引（0-sheet下标,1-列号,1-行号）String，value:图片流PictureData
      */
-    private static Map<String, PictureData> getSheetPictrues03(int sheetNum, HSSFSheet sheet) {
+    private static Map<String, PictureData> getSheetPictures03(int sheetNum, HSSFSheet sheet) {
         Map<String, PictureData> sheetIndexPicMap = new HashMap<>();
         List<HSSFPictureData> pictures = sheet.getWorkbook().getAllPictures();
         if (!pictures.isEmpty()) {
@@ -1157,7 +1156,7 @@ public class ExcelUtils {
      * @param sheet    当前sheet对象
      * @return Map key:图片单元格索引（0,1,1）String，value:图片流PictureData
      */
-    private static Map<String, PictureData> getSheetPictrues07(int sheetNum, XSSFSheet sheet) {
+    private static Map<String, PictureData> getSheetPictures07(int sheetNum, XSSFSheet sheet) {
         Map<String, PictureData> sheetIndexPicMap = new HashMap<>();
         for (POIXMLDocumentPart dr : sheet.getRelations()) {
             if (dr instanceof XSSFDrawing) {
@@ -1266,8 +1265,27 @@ public class ExcelUtils {
         cal.setTime(endDate);
         String formulaEnd = "=DATE(" + cal.get(Calendar.YEAR) + "," + (cal.get(Calendar.MONTH) + 1) + "," + cal.get(Calendar.DATE) + ")";
         DataValidationConstraint constraint = helper.createDateConstraint(OperatorType.BETWEEN, formulaStart, formulaEnd, pattern);
-        DataValidation dataValidation = helper.createValidation(constraint, cellRangeAddressList);
+        DataValidation dataValidation = handleMultiVersion(info, cellRangeAddressList, helper, constraint);
+        // 2.设置单元格格式
+        Workbook workbook = sheet.getWorkbook();
+        CellStyle style = workbook.createCellStyle();
+        CreationHelper createHelper = workbook.getCreationHelper();
+        style.setDataFormat(createHelper.createDataFormat().getFormat(pattern));
+        sheet.setDefaultColumnStyle(col, style);
+        return dataValidation;
+    }
 
+    /**
+     * 兼容性问题处理
+     *
+     * @param info                 提示消息
+     * @param cellRangeAddressList 地址
+     * @param helper               验证器
+     * @param constraint           验证
+     * @return DataValidation
+     */
+    private static DataValidation handleMultiVersion(String info, CellRangeAddressList cellRangeAddressList, DataValidationHelper helper, DataValidationConstraint constraint) {
+        DataValidation dataValidation = helper.createValidation(constraint, cellRangeAddressList);
         // 处理Excel兼容性问题
         if (dataValidation instanceof XSSFDataValidation) {
             dataValidation.setSuppressDropDownArrow(true);
@@ -1280,12 +1298,6 @@ public class ExcelUtils {
         if (info != null) {
             dataValidation.createPromptBox("提示", info);
         }
-        // 2.设置单元格格式
-        Workbook workbook = sheet.getWorkbook();
-        CellStyle style = workbook.createCellStyle();
-        CreationHelper createHelper = workbook.getCreationHelper();
-        style.setDataFormat(createHelper.createDataFormat().getFormat(pattern));
-        sheet.setDefaultColumnStyle(col, style);
         return dataValidation;
     }
 
@@ -1305,21 +1317,7 @@ public class ExcelUtils {
         CellRangeAddressList cellRangeAddressList = new CellRangeAddressList(maxRow, lastRow, col, col);
         DataValidationHelper helper = sheet.getDataValidationHelper();
         DataValidationConstraint constraint = helper.createIntegerConstraint(OperatorType.BETWEEN, minNum, maxNum);
-        DataValidation dataValidation = helper.createValidation(constraint, cellRangeAddressList);
-
-        // 处理Excel兼容性问题
-        if (dataValidation instanceof XSSFDataValidation) {
-            dataValidation.setSuppressDropDownArrow(true);
-            dataValidation.setShowErrorBox(true);
-        } else {
-            dataValidation.setSuppressDropDownArrow(false);
-        }
-        dataValidation.setEmptyCellAllowed(true);
-        dataValidation.setShowPromptBox(true);
-        if (info != null) {
-            dataValidation.createPromptBox("提示", info);
-        }
-        return dataValidation;
+        return handleMultiVersion(info, cellRangeAddressList, helper, constraint);
     }
 
     /**
@@ -1337,21 +1335,7 @@ public class ExcelUtils {
         CellRangeAddressList cellRangeAddressList = new CellRangeAddressList(maxRow, lastRow, col, col);
         DataValidationHelper helper = sheet.getDataValidationHelper();
         DataValidationConstraint constraint = helper.createDecimalConstraint(OperatorType.BETWEEN, minNum, maxNum);
-        DataValidation dataValidation = helper.createValidation(constraint, cellRangeAddressList);
-
-        // 处理Excel兼容性问题
-        if (dataValidation instanceof XSSFDataValidation) {
-            dataValidation.setSuppressDropDownArrow(true);
-            dataValidation.setShowErrorBox(true);
-        } else {
-            dataValidation.setSuppressDropDownArrow(false);
-        }
-        dataValidation.setEmptyCellAllowed(true);
-        dataValidation.setShowPromptBox(true);
-        if (info != null) {
-            dataValidation.createPromptBox("提示", info);
-        }
-        return dataValidation;
+        return handleMultiVersion(info, cellRangeAddressList, helper, constraint);
     }
 
     /**
@@ -1370,21 +1354,7 @@ public class ExcelUtils {
         CellRangeAddressList cellRangeAddressList = new CellRangeAddressList(maxRow, lastRow, col, col);
         DataValidationHelper helper = sheet.getDataValidationHelper();
         DataValidationConstraint constraint = helper.createTextLengthConstraint(OperatorType.BETWEEN, minNum, maxNum);
-        DataValidation dataValidation = helper.createValidation(constraint, cellRangeAddressList);
-        // 处理Excel兼容性问题
-        if (dataValidation instanceof XSSFDataValidation) {
-            dataValidation.setSuppressDropDownArrow(true);
-            dataValidation.setShowErrorBox(true);
-        } else {
-            dataValidation.setSuppressDropDownArrow(false);
-        }
-        dataValidation.setEmptyCellAllowed(true);
-        dataValidation.setShowPromptBox(true);
-        if (info != null) {
-            dataValidation.createPromptBox("提示", info);
-        }
-
-        return dataValidation;
+        return handleMultiVersion(info, cellRangeAddressList, helper, constraint);
     }
 
     /**
@@ -1406,7 +1376,7 @@ public class ExcelUtils {
             int end = formula.indexOf(")");
             if (start != 1 && end != 0) {
                 String prev = formula.substring(0, start);
-                String sufix = formula.substring(end);
+                String suffix = formula.substring(end);
                 String substring = formula.substring(start, end);
                 char[] charArray = substring.toCharArray();
                 int over = 0;
@@ -1424,7 +1394,7 @@ public class ExcelUtils {
                         }
                     }
                 }
-                formula = prev + String.valueOf(charArray) + sufix;
+                formula = prev + String.valueOf(charArray) + suffix;
             }
 
         }

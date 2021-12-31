@@ -40,7 +40,7 @@ public class DoubleHandler extends AbsCellVerifyRule<Double> {
 		String value = String.valueOf(cellValue);
 		if (cellValue instanceof Double) {
 			return (Double) cellValue;
-		} else if (NumberUtils.isNumber(value)) {
+		} else if (NumberUtils.isCreatable(value)) {
 			return new BigDecimal(value).doubleValue();
 		}
 		throw PoiException.error(fieldName+"格式不正确");

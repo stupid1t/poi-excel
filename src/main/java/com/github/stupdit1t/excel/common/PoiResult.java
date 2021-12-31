@@ -41,8 +41,8 @@ public class PoiResult<T> {
 		this.data = beans;
 	}
 
-	public static PoiResult fail() {
-		PoiResult poiResult = new PoiResult();
+	public static <T> PoiResult<T> fail() {
+		PoiResult<T> poiResult = new PoiResult<>();
 		poiResult.setSuccess(false);
 		poiResult.setMessage("读取Excel失败");
 		poiResult.setData(Collections.emptyList());

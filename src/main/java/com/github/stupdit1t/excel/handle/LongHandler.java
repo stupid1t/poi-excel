@@ -39,7 +39,7 @@ public class LongHandler extends AbsCellVerifyRule<Long> {
 		String value = String.valueOf(cellValue);
 		if (cellValue instanceof Long) {
 			return (Long) cellValue;
-		} else if (NumberUtils.isNumber(value)) {
+		} else if (NumberUtils.isCreatable(value)) {
 			return new BigDecimal(value).longValue();
 		}
 		throw PoiException.error(fieldName+"格式不正确");

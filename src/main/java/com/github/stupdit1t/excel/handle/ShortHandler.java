@@ -39,7 +39,7 @@ public class ShortHandler extends AbsCellVerifyRule<Short> {
 		String value = String.valueOf(cellValue);
 		if (cellValue instanceof Short) {
 			return (Short) cellValue;
-		} else if (NumberUtils.isNumber(value)) {
+		} else if (NumberUtils.isCreatable(value)) {
 			return new BigDecimal(value).shortValue();
 		}
 		throw PoiException.error(fieldName+"格式不正确");

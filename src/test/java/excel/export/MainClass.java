@@ -140,7 +140,7 @@ public class MainClass {
                 // 4.1设置此列宽度为10, 添加注释
                 Column.field("areaName").width(10).comment("你好吗"),
                 // 4.2设置此列下拉框数据
-                Column.field("province").dorpDown(new String[]{"陕西省", "山西省", "辽宁省"}),
+                Column.field("province").dropdown(new String[]{"陕西省", "山西省", "辽宁省"}),
                 // 4.3设置此列水平居右
                 Column.field("city").align(HorizontalAlignment.RIGHT),
                 // 4.4 设置此列垂直居上
@@ -333,12 +333,12 @@ public class MainClass {
                 Column.field("手机号码").verifyText("11~11", "请输入11位的手机号码！"),
                 Column.field("宝宝生日").datePattern("yyyy-MM-dd").verifyDate("2000-01-01~3000-12-31"),
                 Column.field("月龄").width(4).verifyCustom("VALUE(F3:F6000)", "月齡格式：如1年2个月则输入14"),
-                Column.field("宝宝性别").dorpDown(new String[]{"男", "女"}),
-                Column.field("来源渠道").width(12).dorpDown(new String[]{"品推", "市场"}),
-                Column.field("市场人员").width(6).dorpDown(new String[]{"张三", "李四"}),
-                Column.field("咨询顾问").width(6).dorpDown(new String[]{"张三", "李四"}),
-                Column.field("客服顾问").width(6).dorpDown(new String[]{"大唐", "银泰"}),
-                Column.field("分配校区").width(6).dorpDown(new String[]{"大唐", "银泰"}),
+                Column.field("宝宝性别").dropdown(new String[]{"男", "女"}),
+                Column.field("来源渠道").width(12).dropdown(new String[]{"品推", "市场"}),
+                Column.field("市场人员").width(6).dropdown(new String[]{"张三", "李四"}),
+                Column.field("咨询顾问").width(6).dropdown(new String[]{"张三", "李四"}),
+                Column.field("客服顾问").width(6).dropdown(new String[]{"大唐", "银泰"}),
+                Column.field("分配校区").width(6).dropdown(new String[]{"大唐", "银泰"}),
                 Column.field("备注")
         };
         // 3.执行导出到工作簿

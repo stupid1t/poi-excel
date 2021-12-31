@@ -20,7 +20,7 @@ public class DateHandler extends AbsCellVerifyRule<Date> {
     /**
      * 日期格式
      */
-    private String pattern;
+    private final String pattern;
 
     /**
      * 常规验证
@@ -50,7 +50,7 @@ public class DateHandler extends AbsCellVerifyRule<Date> {
         if (cellValue instanceof Date) {
             // 如果是日期格式通过
             return (Date) cellValue;
-        } else if (NumberUtils.isNumber(String.valueOf(cellValue))) {
+        } else if (NumberUtils.isCreatable(String.valueOf(cellValue))) {
             // 如果是数字
             String value = String.valueOf(cellValue);
             long date = new BigDecimal(value).longValue();

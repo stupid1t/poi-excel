@@ -49,14 +49,11 @@ public class PoiConstant {
      */
     public static final int MAX_FILL_COL = 5000;
 
-    /**
-     * 默认填充2列
-     */
     static {
         // 填充2列A~ZZ
         String times = System.getProperty("com.github.stupdit1t.fillCellTimes");
         if (StringUtils.isBlank(times)) {
-            times = "1";
+            times = "2";
         }
         PoiCommon.fillCellRefNums(Integer.parseInt(times));
     }
