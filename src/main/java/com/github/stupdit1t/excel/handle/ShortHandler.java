@@ -18,7 +18,7 @@ public class ShortHandler extends AbsCellVerifyRule<Short> {
 	/**
 	 * 常规验证
 	 *
-	 * @param allowNull
+	 * @param allowNull 可为空
 	 */
 	public ShortHandler(boolean allowNull) {
 		super(allowNull);
@@ -27,8 +27,8 @@ public class ShortHandler extends AbsCellVerifyRule<Short> {
 	/**
 	 * 自定义验证
 	 *
-	 * @param allowNull
-	 * @param customVerify
+	 * @param allowNull 是否可为空
+	 * @param customVerify 自定义校验
 	 */
 	public ShortHandler(boolean allowNull, Function<Object, Short> customVerify) {
 		super(allowNull, customVerify);

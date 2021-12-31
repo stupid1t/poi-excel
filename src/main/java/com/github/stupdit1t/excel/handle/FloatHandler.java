@@ -18,7 +18,7 @@ public class FloatHandler extends AbsCellVerifyRule<Float> {
 	/**
 	 * 常规验证
 	 *
-	 * @param allowNull
+	 * @param allowNull 可为空
 	 */
 	public FloatHandler(boolean allowNull) {
 		super(allowNull);
@@ -27,8 +27,8 @@ public class FloatHandler extends AbsCellVerifyRule<Float> {
 	/**
 	 * 自定义验证
 	 *
-	 * @param allowNull
-	 * @param customVerify
+	 * @param allowNull 可为空
+	 * @param customVerify 自定义校验
 	 */
 	public FloatHandler(boolean allowNull, Function<Object, Float> customVerify) {
 		super(allowNull, customVerify);

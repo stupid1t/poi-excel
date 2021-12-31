@@ -30,7 +30,6 @@ import org.openxmlformats.schemas.drawingml.x2006.spreadsheetDrawing.CTMarker;
 import java.io.*;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
-import java.math.BigDecimal;
 import java.text.ParseException;
 import java.util.*;
 import java.util.Map.Entry;
@@ -260,9 +259,9 @@ public class ExcelUtils {
             if (exportRules.getTitle() == null) {
                 // 冻结表头
                 sheet.createFreezePane(0, 1, 0, 1);
-                String[] hearder = exportRules.getHeader();
-                for (int i = 0; i < hearder.length; i++) {
-                    CellUtil.createCell(sheet.getRow(0), i, hearder[i], headerStyleSource);
+                String[] header = exportRules.getHeader();
+                for (int i = 0; i < header.length; i++) {
+                    CellUtil.createCell(sheet.getRow(0), i, header[i], headerStyleSource);
                 }
             } else {
                 // 冻结表头
@@ -270,9 +269,9 @@ public class ExcelUtils {
                 CellUtil.createCell(sheet.getRow(0), 0, exportRules.getTitle(), titleStyleSource);
                 CellRangeAddress cra = new CellRangeAddress(0, 0, 0, maxColumns);
                 sheet.addMergedRegion(cra);
-                String[] hearder = exportRules.getHeader();
-                for (int i = 0; i < hearder.length; i++) {
-                    CellUtil.createCell(sheet.getRow(1), i, hearder[i], headerStyleSource);
+                String[] header = exportRules.getHeader();
+                for (int i = 0; i < header.length; i++) {
+                    CellUtil.createCell(sheet.getRow(1), i, header[i], headerStyleSource);
                 }
             }
 

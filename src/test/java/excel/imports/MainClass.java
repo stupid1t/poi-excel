@@ -1,13 +1,11 @@
 package excel.imports;
 
 import com.github.stupdit1t.excel.ExcelUtils;
-import com.github.stupdit1t.excel.common.PoiException;
 import com.github.stupdit1t.excel.common.PoiResult;
 import com.github.stupdit1t.excel.handle.*;
 import com.github.stupdit1t.excel.handle.rule.AbsSheetVerifyRule;
 import excel.imports.data.DemoData;
 
-import java.math.BigDecimal;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -24,16 +22,10 @@ public class MainClass {
         // 1. 导入规则定义
         Consumer<AbsSheetVerifyRule> columnRule = (rule) -> {
             // 表示C列数据提取到字段bigDecimalHandler,字段为BigDecimal类型, 并且列不能为空
-            rule.addRule("C", "bigDecimalHandler", "名字", new BigDecimalHandler(false, value -> {
-                // 自定义处理, 名字不能是1.2345
-                if (new BigDecimal(String.valueOf(value)).equals(new BigDecimal("1.2345"))) {
-                    throw PoiException.error("不能是1.2345");
-                }
-                return new BigDecimal(String.valueOf(value));
-            }));
+            rule.addRule("C", "bigDecimalHandler", "名字", new LongHandler(false));
             rule.addRule("E", "booleanHandler", "布尔宝", new BooleanHandler(true));
             rule.addRule("G", "charHandler", "char宝", new CharHandler(true));
-            rule.addRule("I", "dateHandler", "日期宝", new DateHandler("yyyy-MM-dd HH:mm:ss", true));
+            rule.addRule("I", "dateHandler", "日期宝", new DateHandler(true, "yyyy-MM-dd HH:mm:ss"));
             rule.addRule("K", "doubleHandler", "double宝", new DoubleHandler(true));
             rule.addRule("M", "floatHandler", "float宝", new FloatHandler(true));
             rule.addRule("O", "integerHandler", "integer宝", new IntegerHandler(true));

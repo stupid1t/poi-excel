@@ -18,7 +18,7 @@ public class BigDecimalHandler extends AbsCellVerifyRule<BigDecimal> {
     /**
      * 常规验证
      *
-     * @param allowNull
+     * @param allowNull 可为空
      */
     public BigDecimalHandler(boolean allowNull) {
         super(allowNull);
@@ -27,8 +27,8 @@ public class BigDecimalHandler extends AbsCellVerifyRule<BigDecimal> {
     /**
      * 自定义验证
      *
-     * @param allowNull
-     * @param customVerify
+     * @param allowNull    是否可为空
+     * @param customVerify 自定义校验
      */
     public BigDecimalHandler(boolean allowNull, Function<Object, BigDecimal> customVerify) {
         super(allowNull, customVerify);
@@ -39,7 +39,7 @@ public class BigDecimalHandler extends AbsCellVerifyRule<BigDecimal> {
         String value = String.valueOf(cellValue);
         if (cellValue instanceof BigDecimal) {
             return (BigDecimal) cellValue;
-        } else if (NumberUtils.isNumber(value)) {
+        } else if (NumberUtils.isCreatable(value)) {
             return new BigDecimal(value);
         }
         throw PoiException.error(fieldName+"格式不正确");

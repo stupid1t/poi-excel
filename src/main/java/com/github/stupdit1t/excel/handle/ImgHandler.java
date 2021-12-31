@@ -16,7 +16,7 @@ public class ImgHandler extends AbsCellVerifyRule<byte[]> {
     /**
      * 常规验证
      *
-     * @param allowNull
+     * @param allowNull 可为空
      */
     public ImgHandler(boolean allowNull) {
         super(allowNull);
@@ -25,8 +25,8 @@ public class ImgHandler extends AbsCellVerifyRule<byte[]> {
     /**
      * 自定义验证
      *
-     * @param allowNull
-     * @param customVerify
+     * @param allowNull    可为空
+     * @param customVerify 自定义校验
      */
     public ImgHandler(boolean allowNull, Function<Object, byte[]> customVerify) {
         super(allowNull, customVerify);

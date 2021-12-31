@@ -15,8 +15,8 @@ public class ObjectHandler extends AbsCellVerifyRule<Object> {
     /**
      * 自定义验证
      *
-     * @param allowNull
-     * @param customVerify
+     * @param allowNull    可为空
+     * @param customVerify 自定义校验
      */
     public ObjectHandler(boolean allowNull, Function<Object, Object> customVerify) {
         super(allowNull, customVerify);

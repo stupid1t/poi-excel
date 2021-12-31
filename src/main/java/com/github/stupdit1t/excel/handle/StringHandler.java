@@ -19,7 +19,7 @@ public class StringHandler extends AbsCellVerifyRule<String> {
     /**
      * 常规验证
      *
-     * @param allowNull
+     * @param allowNull 是否可为空
      */
     public StringHandler(boolean allowNull) {
         super(allowNull);
@@ -28,8 +28,8 @@ public class StringHandler extends AbsCellVerifyRule<String> {
     /**
      * 自定义验证
      *
-     * @param allowNull
-     * @param customVerify
+     * @param allowNull    是否可为空
+     * @param customVerify 自定义校验
      */
     public StringHandler(boolean allowNull, Function<Object, String> customVerify) {
         super(allowNull, customVerify);
@@ -38,23 +38,13 @@ public class StringHandler extends AbsCellVerifyRule<String> {
     /**
      * 常规验证
      *
-     * @param allowNull
+     * @param allowNull 是否可为空
      */
-    public StringHandler(String pattern, boolean allowNull) {
+    public StringHandler(boolean allowNull, String pattern) {
         super(allowNull);
         this.pattern = pattern;
     }
 
-    /**
-     * 自定义验证
-     *
-     * @param allowNull
-     * @param customVerify
-     */
-    public StringHandler(String pattern, boolean allowNull, Function<Object, String> customVerify) {
-        super(allowNull, customVerify);
-        this.pattern = pattern;
-    }
 
     @Override
     public String doHandle(String fieldName, Object cellValue) throws Exception {

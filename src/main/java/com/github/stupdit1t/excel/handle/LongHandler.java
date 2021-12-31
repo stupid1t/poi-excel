@@ -18,7 +18,7 @@ public class LongHandler extends AbsCellVerifyRule<Long> {
 	/**
 	 * 常规验证
 	 *
-	 * @param allowNull
+	 * @param allowNull 可为空
 	 */
 	public LongHandler(boolean allowNull) {
 		super(allowNull);
@@ -27,8 +27,8 @@ public class LongHandler extends AbsCellVerifyRule<Long> {
 	/**
 	 * 自定义验证
 	 *
-	 * @param allowNull
-	 * @param customVerify
+	 * @param allowNull 可为空
+	 * @param customVerify 自定义校验
 	 */
 	public LongHandler(boolean allowNull, Function<Object, Long> customVerify) {
 		super(allowNull, customVerify);

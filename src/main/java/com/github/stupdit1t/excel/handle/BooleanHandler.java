@@ -12,12 +12,10 @@ import java.util.function.Function;
  */
 public class BooleanHandler extends AbsCellVerifyRule<Boolean> {
 
-    private String pattern;
-
     /**
      * 常规验证
      *
-     * @param allowNull
+     * @param allowNull 可为空
      */
     public BooleanHandler(boolean allowNull) {
         super(allowNull);
@@ -26,32 +24,11 @@ public class BooleanHandler extends AbsCellVerifyRule<Boolean> {
     /**
      * 自定义验证
      *
-     * @param allowNull
-     * @param customVerify
+     * @param allowNull    可为空
+     * @param customVerify 自定义校验
      */
     public BooleanHandler(boolean allowNull, Function<Object, Boolean> customVerify) {
         super(allowNull, customVerify);
-    }
-
-    /**
-     * 常规验证
-     *
-     * @param allowNull
-     */
-    public BooleanHandler(String pattern, boolean allowNull) {
-        super(allowNull);
-        this.pattern = pattern;
-    }
-
-    /**
-     * 自定义验证
-     *
-     * @param allowNull
-     * @param customVerify
-     */
-    public BooleanHandler(String pattern, boolean allowNull, Function<Object, Boolean> customVerify) {
-        super(allowNull, customVerify);
-        this.pattern = pattern;
     }
 
     @Override

@@ -17,7 +17,7 @@ public class IntegerHandler extends AbsCellVerifyRule<Integer> {
     /**
      * 常规验证
      *
-     * @param allowNull
+     * @param allowNull 可为空
      */
     public IntegerHandler(boolean allowNull) {
         super(allowNull);
@@ -26,8 +26,8 @@ public class IntegerHandler extends AbsCellVerifyRule<Integer> {
     /**
      * 自定义验证
      *
-     * @param allowNull
-     * @param customVerify
+     * @param allowNull    可为空
+     * @param customVerify 自定义校验
      */
     public IntegerHandler(boolean allowNull, Function<Object, Integer> customVerify) {
         super(allowNull, customVerify);

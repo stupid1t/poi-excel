@@ -17,14 +17,18 @@ import java.util.function.Function;
  */
 public class DateHandler extends AbsCellVerifyRule<Date> {
 
+    /**
+     * 日期格式
+     */
     private String pattern;
 
     /**
      * 常规验证
      *
-     * @param allowNull
+     * @param allowNull 可为空
+     * @param pattern   格式化
      */
-    public DateHandler(String pattern, boolean allowNull) {
+    public DateHandler(boolean allowNull, String pattern) {
         super(allowNull);
         this.pattern = pattern;
     }
@@ -32,10 +36,11 @@ public class DateHandler extends AbsCellVerifyRule<Date> {
     /**
      * 自定义验证
      *
-     * @param allowNull
-     * @param customVerify
+     * @param allowNull    可为空
+     * @param pattern      格式化
+     * @param customVerify 自定义校验
      */
-    public DateHandler(String pattern, boolean allowNull, Function<Object, Date> customVerify) {
+    public DateHandler(boolean allowNull, String pattern, Function<Object, Date> customVerify) {
         super(allowNull, customVerify);
         this.pattern = pattern;
     }

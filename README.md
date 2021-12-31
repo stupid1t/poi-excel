@@ -510,7 +510,7 @@ public class MainClass {
             rule.addRule("E", "booleanHandler", "布尔宝", new BooleanHandler(true));
             rule.addRule("G", "charHandler", "char宝", new CharHandler(true));
             // 日期处理格式化,日期可以是 数字 或 字符串 或 excel日期
-            rule.addRule("I", "dateHandler", "日期宝", new DateHandler("yyyy-MM-dd HH:mm:ss", true));
+            rule.addRule("I", "dateHandler", "日期宝", new DateHandler(true, "yyyy-MM-dd HH:mm:ss"));
             rule.addRule("K", "doubleHandler", "double宝", new DoubleHandler(true));
             rule.addRule("M", "floatHandler", "float宝", new FloatHandler(true));
             rule.addRule("O", "integerHandler", "integer宝", new IntegerHandler(true));

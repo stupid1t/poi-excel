@@ -1,12 +1,11 @@
 package excel.imports.data;
 
-import java.math.BigDecimal;
 import java.util.Date;
 import java.util.Map;
 
 public class DemoData {
 
-	private BigDecimal bigDecimalHandler;
+	private Long bigDecimalHandler;
 
 	private Boolean booleanHandler;
 
@@ -38,11 +37,11 @@ public class DemoData {
 		this.shortHandler = shortHandler;
 	}
 
-	public BigDecimal getBigDecimalHandler() {
+	public Long getBigDecimalHandler() {
 		return bigDecimalHandler;
 	}
 
-	public void setBigDecimalHandler(BigDecimal bigDecimalHandler) {
+	public void setBigDecimalHandler(Long bigDecimalHandler) {
 		this.bigDecimalHandler = bigDecimalHandler;
 	}
 

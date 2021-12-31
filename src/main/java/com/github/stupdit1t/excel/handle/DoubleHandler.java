@@ -19,7 +19,7 @@ public class DoubleHandler extends AbsCellVerifyRule<Double> {
 	/**
 	 * 常规验证
 	 *
-	 * @param allowNull
+	 * @param allowNull 可为空
 	 */
 	public DoubleHandler(boolean allowNull) {
 		super(allowNull);
@@ -28,8 +28,8 @@ public class DoubleHandler extends AbsCellVerifyRule<Double> {
 	/**
 	 * 自定义验证
 	 *
-	 * @param allowNull
-	 * @param customVerify
+	 * @param allowNull 可为空
+	 * @param customVerify 自定义校验
 	 */
 	public DoubleHandler(boolean allowNull, Function<Object, Double> customVerify) {
 		super(allowNull, customVerify);
