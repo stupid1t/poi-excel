@@ -15,6 +15,8 @@ import com.github.stupdit1t.excel.style.ICellStyle;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.reflect.FieldUtils;
 import org.apache.commons.lang3.time.DateUtils;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.apache.poi.hssf.usermodel.*;
 import org.apache.poi.ooxml.POIXMLDocumentPart;
 import org.apache.poi.ss.usermodel.*;
@@ -40,6 +42,8 @@ import java.util.function.Consumer;
  * @author 625
  */
 public class ExcelUtils {
+
+    private static final Logger LOG = LogManager.getLogger(ExcelUtils.class);
 
     /**
      * 设置打印方向
@@ -132,7 +136,7 @@ public class ExcelUtils {
             fillBook(workbook, data, exportRules, callBack);
             workbook.write(temp);
         } catch (IOException e) {
-            e.printStackTrace();
+            LOG.error(e);
         }
     }
 
@@ -152,7 +156,7 @@ public class ExcelUtils {
             fillBook(workbook, data, exportRules, callBack);
             workbook.write(temp);
         } catch (IOException e) {
-            e.printStackTrace();
+            LOG.error(e);
         }
     }
 
@@ -327,9 +331,10 @@ public class ExcelUtils {
                 try {
                     sheet.addValidationData(createDateValidation(sheet, column.getDatePattern(), split1[0], split1[1], info, j, maxRows, lastRow));
                 } catch (ParseException e) {
+                    LOG.error(e);
                     throw new IllegalArgumentException("时间校验表达式不正确,请填写如" + column.getDatePattern() + "的值!");
                 } catch (Exception e) {
-                    e.printStackTrace();
+                    LOG.error(e);
                 }
             }
 
@@ -473,6 +478,8 @@ public class ExcelUtils {
      * @return ImportRspInfo
      */
     public static <T> PoiResult<T> readSheet(Sheet sheet, Class<T> cls, Consumer<AbsSheetVerifyRule> absSheetVerifyRule, int dataStartRow, int dataEndRowCount, InCallback<T> callback) {
+        // 公式计算初始化
+        FormulaEvaluator formulaEvaluator = sheet.getWorkbook().getCreationHelper().createFormulaEvaluator();
         AbsSheetVerifyRule verifyBuilder = AbsSheetVerifyRule.buildRule(absSheetVerifyRule);
         // 规则初始化
         verifyBuilder.init();
@@ -518,7 +525,7 @@ public class ExcelUtils {
                             PictureData remove = pictures.remove(pictrueIndex);
                             cellValue = remove == null ? null : remove.getData();
                         } else {
-                            cellValue = getCellValue(r, cellNum);
+                            cellValue = getCellValue(r, cellNum, formulaEvaluator);
                         }
                         // 校验和格式化列值
                         cellValue = verifyBuilder.verify(filed, cellValue);
@@ -544,7 +551,7 @@ public class ExcelUtils {
                 }
             }
         } catch (Exception e) {
-            e.printStackTrace();
+            LOG.error(e);
         } finally {
             // throw parse exception
             if (errors.length() > 0) {
@@ -570,7 +577,7 @@ public class ExcelUtils {
         try (InputStream is = new FileInputStream(filePath)) {
             return readSheet(is, sheetNum, dataStartRow, dataEndRowCount);
         } catch (IOException e) {
-            e.printStackTrace();
+            LOG.error(e);
         }
         return Collections.emptyList();
     }
@@ -588,7 +595,7 @@ public class ExcelUtils {
             Sheet sheet = wb.getSheetAt(sheetNum);
             return readSheet(sheet, dataStartRow, dataEndRowCount);
         } catch (Exception e) {
-            e.printStackTrace();
+            LOG.error(e);
         }
         return Collections.emptyList();
     }
@@ -605,7 +612,7 @@ public class ExcelUtils {
         try (InputStream is = new FileInputStream(filePath)) {
             return readSheet(is, cls, absSheetVerifyRule, sheetNum, dataStartRow, dataEndRowCount, callback);
         } catch (IOException e) {
-            e.printStackTrace();
+            LOG.error(e);
         }
         return PoiResult.fail();
     }
@@ -623,7 +630,7 @@ public class ExcelUtils {
             Sheet sheet = wb.getSheetAt(sheetNum);
             return readSheet(sheet, cls, absSheetVerifyRule, dataStartRow, dataEndRowCount, callback);
         } catch (Exception e) {
-            e.printStackTrace();
+            LOG.error(e);
         }
         return PoiResult.fail();
     }
@@ -640,7 +647,7 @@ public class ExcelUtils {
         try (InputStream is = new FileInputStream(filePath)) {
             return readSheet(is, cls, absSheetVerifyRule, sheetNum, dataStartRow, dataEndRowCount);
         } catch (IOException e) {
-            e.printStackTrace();
+            LOG.error(e);
         }
         return PoiResult.fail();
     }
@@ -658,7 +665,7 @@ public class ExcelUtils {
             Sheet sheet = wb.getSheetAt(sheetNum);
             return readSheet(sheet, cls, absSheetVerifyRule, dataStartRow, dataEndRowCount, null);
         } catch (Exception e) {
-            e.printStackTrace();
+            LOG.error(e);
         }
         return PoiResult.fail();
     }
@@ -676,12 +683,13 @@ public class ExcelUtils {
         int rowStart = sheet.getFirstRowNum() + dataStartRow;
         // 获取真实的数据行尾数
         int rowEnd = getLastRealLastRow(sheet.getRow(sheet.getLastRowNum())) - dataEndRowCount;
+        FormulaEvaluator formulaEvaluator = sheet.getWorkbook().getCreationHelper().createFormulaEvaluator();
         for (int j = rowStart; j <= rowEnd; j++) {
             Map<String, Object> cellMap = new HashMap<>();
             Row row = sheet.getRow(j);
             short lastCellNum = row.getLastCellNum();
             for (int k = 0; k < lastCellNum; k++) {
-                Object cellValue = getCellValue(row, k);
+                Object cellValue = getCellValue(row, k, formulaEvaluator);
                 cellMap.put(PoiConstant.numsRefCell.get(k), cellValue);
             }
             sheetData.add(cellMap);
@@ -701,7 +709,7 @@ public class ExcelUtils {
 
             return readExcelWrite(is, variable);
         } catch (IOException e) {
-            e.printStackTrace();
+            LOG.error(e);
         }
         return null;
     }
@@ -717,7 +725,7 @@ public class ExcelUtils {
             Workbook wb = WorkbookFactory.create(is);
             return readExcelWrite(wb, variable);
         } catch (IOException e) {
-            e.printStackTrace();
+            LOG.error(e);
         }
         return null;
     }
@@ -730,6 +738,7 @@ public class ExcelUtils {
      */
     private static Workbook readExcelWrite(Workbook workbook, Map<String, String> variable) {
         int numberOfSheets = workbook.getNumberOfSheets();
+        FormulaEvaluator formulaEvaluator = workbook.getCreationHelper().createFormulaEvaluator();
         for (int i = 0; i < numberOfSheets; i++) {
             Sheet sheet = workbook.getSheetAt(i);
             Row lastRow = sheet.getRow(sheet.getLastRowNum());
@@ -738,7 +747,7 @@ public class ExcelUtils {
                 Row row = sheet.getRow(j);
                 short lastCellNum = row.getLastCellNum();
                 for (short k = 0; k < lastCellNum; k++) {
-                    Object cellValue = getCellValue(row, k);
+                    Object cellValue = getCellValue(row, k, formulaEvaluator);
                     if (cellValue instanceof String) {
                         String cellValueStr = (String) cellValue;
                         if (!cellValueStr.contains("$")) {
@@ -855,6 +864,7 @@ public class ExcelUtils {
                 }
             }
         } catch (Exception e) {
+            LOG.error(e);
             t = null;
         }
         return t;
@@ -979,12 +989,8 @@ public class ExcelUtils {
             } else {
                 cell.setCellValue(strValue);
             }
-        } else if (value instanceof BigDecimal || value instanceof Float || value instanceof Double) {
+        } else if (value instanceof Number) {
             cell.setCellValue(((Number) value).doubleValue());
-        } else if (value instanceof Long) {
-            cell.setCellValue((Long) value);
-        } else if (value instanceof Integer) {
-            cell.setCellValue((Integer) value);
         } else if (value instanceof Date) {
             // 1.格式化
             String pattern = customer ? customColumn.getDatePattern() : sourceColumn.getDatePattern();
@@ -1058,7 +1064,7 @@ public class ExcelUtils {
      * @param cellNum
      * @return Object
      */
-    private static Object getCellValue(Row r, int cellNum) {
+    private static Object getCellValue(Row r, int cellNum, FormulaEvaluator formulaEvaluator) {
         // 缺失列处理政策
         Cell cell = r.getCell(cellNum, MissingCellPolicy.CREATE_NULL_AS_BLANK);
         Object obj = null;
@@ -1078,7 +1084,18 @@ public class ExcelUtils {
                 obj = cell.getBooleanCellValue();
                 break;
             case FORMULA:
-                obj = cell.getCellFormula();
+                // 拿到计算公式eval
+                CellValue evaluate = formulaEvaluator.evaluate(cell);
+                switch (cell.getCachedFormulaResultType()) {
+                    case NUMERIC:
+                        obj = evaluate.getNumberValue();
+                        break;
+                    case STRING:
+                        obj = evaluate.formatAsString();
+                        break;
+                    default:
+                        obj = cell.getRichStringCellValue().getString();
+                }
                 break;
             case BLANK:
                 obj = "";
@@ -1097,10 +1114,10 @@ public class ExcelUtils {
      * @return Map key:图片单元格索引（0-sheet下标,1-列号,1-行号）String，value:图片流PictureData
      */
     private static Map<String, PictureData> getSheetPictures(int sheetNum, Sheet sheet) {
-        try {
+        if(sheet instanceof HSSFSheet){
             HSSFSheet sheetHssf = (HSSFSheet) sheet;
             return getSheetPictrues03(sheetNum, sheetHssf);
-        } catch (Exception e) {
+        }else {
             XSSFSheet sheetXssf = (XSSFSheet) sheet;
             return getSheetPictrues07(sheetNum, sheetXssf);
         }

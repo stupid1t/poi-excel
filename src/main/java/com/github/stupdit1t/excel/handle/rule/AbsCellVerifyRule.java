@@ -2,6 +2,8 @@ package com.github.stupdit1t.excel.handle.rule;
 
 import com.github.stupdit1t.excel.common.PoiException;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import java.util.function.Function;
 
@@ -11,6 +13,8 @@ import java.util.function.Function;
  * @author 625
  */
 public abstract class AbsCellVerifyRule<T> {
+
+    private static final Logger LOG = LogManager.getLogger(AbsCellVerifyRule.class);
 
     /**
      * 是否可为空
@@ -83,7 +87,7 @@ public abstract class AbsCellVerifyRule<T> {
         } catch (PoiException e) {
             throw e;
         } catch (Exception e) {
-            e.printStackTrace();
+            LOG.error(e);
             throw PoiException.error(fieldName + "格式不正确");
         }
         return endVal;

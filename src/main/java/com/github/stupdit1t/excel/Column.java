@@ -1,14 +1,9 @@
 package com.github.stupdit1t.excel;
 
-/**
- * 列定义
- *
- * @author: 李涛
- * @version: 2019年08月31日 19:52
- */
-
 import com.github.stupdit1t.excel.common.PoiCommon;
 import com.github.stupdit1t.excel.common.PoiConstant;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.apache.poi.ss.usermodel.HorizontalAlignment;
 import org.apache.poi.ss.usermodel.IndexedColors;
 import org.apache.poi.ss.usermodel.VerticalAlignment;
@@ -19,6 +14,8 @@ import org.apache.poi.ss.usermodel.VerticalAlignment;
  * @author 625
  */
 public class Column implements Cloneable {
+
+    private static final Logger LOG = LogManager.getLogger(Column.class);
 
     /**
      * 字段名称
@@ -128,7 +125,7 @@ public class Column implements Cloneable {
         try {
             column = (Column) sourceColumn.clone();
         } catch (CloneNotSupportedException e) {
-            e.printStackTrace();
+            LOG.error(e);
         }
         column.custom = 1;
         return column;
