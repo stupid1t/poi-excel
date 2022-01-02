@@ -3,6 +3,7 @@ package com.github.stupdit1t.excel.handle;
 import com.github.stupdit1t.excel.common.PoiException;
 import com.github.stupdit1t.excel.handle.rule.AbsCellVerifyRule;
 
+import java.math.BigDecimal;
 import java.util.function.Function;
 import java.util.regex.Pattern;
 
@@ -49,6 +50,10 @@ public class StringHandler extends AbsCellVerifyRule<String> {
     @Override
     public String doHandle(String fieldName, Object cellValue) throws Exception {
         String value = String.valueOf(cellValue);
+        // 处理数值 转为 string包含E科学计数的问题
+        if (cellValue instanceof Number) {
+            value = new BigDecimal(value).toString();
+        }
         if (pattern != null && !Pattern.matches(pattern, value)) {
             throw PoiException.error(fieldName + "格式不正确");
         }
