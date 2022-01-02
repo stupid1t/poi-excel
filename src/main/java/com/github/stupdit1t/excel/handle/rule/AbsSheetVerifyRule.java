@@ -1,5 +1,7 @@
 package com.github.stupdit1t.excel.handle.rule;
 
+import com.github.stupdit1t.excel.handle.StringHandler;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -43,6 +45,18 @@ public abstract class AbsSheetVerifyRule {
      */
     public void addRule(String index, String field, String filedName, AbsCellVerifyRule cellVerify) {
         CellVerifyRule cellVerifyRule = new CellVerifyRule(index, field, filedName, cellVerify);
+        this.cellVerifyRules.add(cellVerifyRule);
+    }
+
+    /**
+     * 添加string规则
+     *
+     * @param index     单元格坐标
+     * @param field     字段
+     * @param filedName 字段名
+     */
+    public void addRule(String index, String field, String filedName) {
+        CellVerifyRule cellVerifyRule = new CellVerifyRule(index, field, filedName, new StringHandler(true));
         this.cellVerifyRules.add(cellVerifyRule);
     }
 
