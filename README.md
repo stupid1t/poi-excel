@@ -172,6 +172,11 @@ class a {
             }
 
             @Override
+            public short getHeight() {
+                return 1500;
+            }
+            
+            @Override
             public void handleStyle(Font font, CellStyle cellStyle) {
                 // 加粗
                 font.setBold(true);
