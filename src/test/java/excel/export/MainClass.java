@@ -134,7 +134,7 @@ public class MainClass {
         // 2.导出header对应的字段设置
         Column[] columns = {
                 // 不设置宽度自适应
-                Column.field("projectName"),
+                Column.field("projectName").width(50),
                 // 4.9项目图片
                 Column.field("img"),
                 // 4.1设置此列宽度为10, 添加注释
@@ -179,6 +179,11 @@ public class MainClass {
             @Override
             public CellPosition getPosition() {
                 return CellPosition.HEADER;
+            }
+
+            @Override
+            public short getHeight() {
+                return 1500;
             }
 
             @Override

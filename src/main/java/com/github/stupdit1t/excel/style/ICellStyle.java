@@ -14,6 +14,14 @@ public interface ICellStyle {
 	 */
 	CellPosition getPosition();
 
+	/**
+	 * 行高设置,300位默认, -1表示不干预设置
+	 */
+	default short getHeight() {
+		return -1;
+	}
+
+	;
 
 	/**
 	 * 样式处理方式

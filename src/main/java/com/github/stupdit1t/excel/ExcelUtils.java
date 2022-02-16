@@ -240,11 +240,18 @@ public class ExcelUtils {
                 int lastRow = (int) range[1] - 1;
                 int firstCol = PoiConstant.cellRefNums.get(range[2]);
                 int lastCol = PoiConstant.cellRefNums.get(range[3]);
+                Row row = sheet.getRow(firstRow);
                 if ((maxColumns - 1) == lastCol - firstCol) {
                     // 占满全格，则为表头
-                    CellUtil.createCell(sheet.getRow(firstRow), firstCol, value, titleStyleSource);
+                    if (titleStyle.getHeight() != -1) {
+                        row.setHeight(titleStyle.getHeight());
+                    }
+                    CellUtil.createCell(row, firstCol, value, titleStyleSource);
                 } else {
-                    CellUtil.createCell(sheet.getRow(firstRow), firstCol, value, headerStyleSource);
+                    if (headerStyle.getHeight() != -1) {
+                        row.setHeight(headerStyle.getHeight());
+                    }
+                    CellUtil.createCell(row, firstCol, value, headerStyleSource);
                 }
                 if ((lastRow - firstRow) != 0 || (lastCol - firstCol) != 0) {
                     CellRangeAddress cra = new CellRangeAddress(firstRow, lastRow, firstCol, lastCol);
@@ -259,6 +266,9 @@ public class ExcelUtils {
             if (exportRules.getTitle() == null) {
                 // 冻结表头
                 sheet.createFreezePane(0, 1, 0, 1);
+                if (headerStyle.getHeight() != -1) {
+                    sheet.getRow(0).setHeight(headerStyle.getHeight());
+                }
                 String[] header = exportRules.getHeader();
                 for (int i = 0; i < header.length; i++) {
                     CellUtil.createCell(sheet.getRow(0), i, header[i], headerStyleSource);
@@ -266,9 +276,15 @@ public class ExcelUtils {
             } else {
                 // 冻结表头
                 sheet.createFreezePane(0, 2, 0, 2);
+                if (titleStyle.getHeight() != -1) {
+                    sheet.getRow(0).setHeight(titleStyle.getHeight());
+                }
                 CellUtil.createCell(sheet.getRow(0), 0, exportRules.getTitle(), titleStyleSource);
                 CellRangeAddress cra = new CellRangeAddress(0, 0, 0, maxColumns);
                 sheet.addMergedRegion(cra);
+                if (headerStyle.getHeight() != -1) {
+                    sheet.getRow(1).setHeight(headerStyle.getHeight());
+                }
                 String[] header = exportRules.getHeader();
                 for (int i = 0; i < header.length; i++) {
                     CellUtil.createCell(sheet.getRow(1), i, header[i], headerStyleSource);
@@ -403,6 +419,9 @@ public class ExcelUtils {
         Map<Object, CellStyle> subCellStyle = new HashMap<>();
         for (int i = 0; i < data.size(); i++) {
             Row row = sheet.createRow(i + maxRows);
+            if (cellStyle.getHeight() != -1) {
+                row.setHeight(cellStyle.getHeight());
+            }
             T t = data.get(i);
             for (int j = 0, n = 0; n < fields.length; j++, n++) {
                 Cell cell = row.createCell(j);
@@ -1058,7 +1077,7 @@ public class ExcelUtils {
     /**
      * 获取单元格的值
      *
-     * @param r 当前行
+     * @param r       当前行
      * @param cellNum 单元格号
      * @return Object
      */
@@ -1112,10 +1131,10 @@ public class ExcelUtils {
      * @return Map key:图片单元格索引（0-sheet下标,1-列号,1-行号）String，value:图片流PictureData
      */
     private static Map<String, PictureData> getSheetPictures(int sheetNum, Sheet sheet) {
-        if(sheet instanceof HSSFSheet){
+        if (sheet instanceof HSSFSheet) {
             HSSFSheet sheetHssf = (HSSFSheet) sheet;
             return getSheetPictures03(sheetNum, sheetHssf);
-        }else {
+        } else {
             XSSFSheet sheetXssf = (XSSFSheet) sheet;
             return getSheetPictures07(sheetNum, sheetXssf);
         }
@@ -1419,4 +1438,5 @@ public class ExcelUtils {
         dataValidation.createPromptBox("提示", msg);
         return dataValidation;
     }
+
 }
