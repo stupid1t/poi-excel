@@ -527,6 +527,9 @@ public class ExcelUtils {
             int rowEnd = getLastRealLastRow(sheet.getRow(sheet.getLastRowNum())) - dataEndRowCount;
             for (int rowNum = rowStart; rowNum <= rowEnd; rowNum++) {
                 Row r = sheet.getRow(rowNum);
+                if (r == null) {
+                    continue;
+                }
                 // 创建对象
                 T t = cls.newInstance();
                 int fieldNum = 0;
@@ -705,6 +708,9 @@ public class ExcelUtils {
         for (int j = rowStart; j <= rowEnd; j++) {
             Map<String, Object> cellMap = new HashMap<>();
             Row row = sheet.getRow(j);
+            if (row == null) {
+                continue;
+            }
             short lastCellNum = row.getLastCellNum();
             for (int k = 0; k < lastCellNum; k++) {
                 Object cellValue = getCellValue(row, k, formulaEvaluator);
@@ -763,6 +769,9 @@ public class ExcelUtils {
             int lastRealLastRow = getLastRealLastRow(lastRow);
             for (int j = 0; j <= lastRealLastRow; j++) {
                 Row row = sheet.getRow(j);
+                if (row == null) {
+                    continue;
+                }
                 short lastCellNum = row.getLastCellNum();
                 for (short k = 0; k < lastCellNum; k++) {
                     Object cellValue = getCellValue(row, k, formulaEvaluator);
@@ -1103,7 +1112,7 @@ public class ExcelUtils {
             case FORMULA:
                 // 拿到计算公式eval
                 CellValue evaluate = formulaEvaluator.evaluate(cell);
-                switch (cell.getCachedFormulaResultType()) {
+                switch (evaluate.getCellType()) {
                     case NUMERIC:
                         obj = evaluate.getNumberValue();
                         break;
