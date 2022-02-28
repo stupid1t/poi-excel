@@ -17,6 +17,7 @@ import org.apache.commons.lang3.reflect.FieldUtils;
 import org.apache.commons.lang3.time.DateUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.apache.poi.hssf.record.crypto.Biff8EncryptionKey;
 import org.apache.poi.hssf.usermodel.*;
 import org.apache.poi.ooxml.POIXMLDocumentPart;
 import org.apache.poi.ss.usermodel.*;
@@ -27,9 +28,12 @@ import org.apache.poi.xssf.streaming.SXSSFWorkbook;
 import org.apache.poi.xssf.usermodel.*;
 import org.openxmlformats.schemas.drawingml.x2006.spreadsheetDrawing.CTMarker;
 
+import javax.servlet.http.HttpServletResponse;
 import java.io.*;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
+import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
 import java.text.ParseException;
 import java.util.*;
 import java.util.Map.Entry;
@@ -55,6 +59,20 @@ public class ExcelUtils {
         printSetup.setLandscape(true);
         sheet.setFitToPage(true);
         sheet.setHorizontallyCenter(true);
+    }
+
+    /**
+     * 给工作簿加密码 目前仅支持xlx
+     *
+     * @param workbook 工作簿
+     * @param password 密码
+     */
+    public static void encryptWorkbook(Workbook workbook, String password) {
+        if (workbook instanceof HSSFWorkbook) {
+            // 2003
+            Biff8EncryptionKey.setCurrentUserPassword(password);
+            ((HSSFWorkbook) workbook).writeProtectWorkbook(password, StringUtils.EMPTY);
+        }
     }
 
     /**
@@ -97,6 +115,75 @@ public class ExcelUtils {
     }
 
     /**
+     * 创建空的workBook，做循环填充用
+     *
+     * @param xlsx 是否为xlsx格式
+     */
+    public static Workbook createEmptyWorkbook(boolean xlsx, String password) {
+        Workbook emptyWorkbook = createEmptyWorkbook(xlsx);
+        encryptWorkbook(emptyWorkbook, password);
+        return emptyWorkbook;
+    }
+
+    /**
+     * 获取导出Excel的流
+     *
+     * @param response 响应流
+     * @param fileName 文件名
+     * @return
+     */
+    public static OutputStream getDownloadStream(HttpServletResponse response, String fileName) {
+        try {
+            if (fileName.endsWith(".xlsx")) {
+                response.setContentType("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet");
+            } else {
+                response.setContentType("application/vnd.ms-excel");
+            }
+            response.setCharacterEncoding(StandardCharsets.UTF_8.name());
+            response.setHeader("Content-disposition", "attachment; filename=" + URLEncoder.encode(fileName, StandardCharsets.UTF_8.name()));
+            return response.getOutputStream();
+        } catch (IOException e) {
+            LOG.error(e);
+        }
+        return null;
+    }
+
+    /**
+     * 导出
+     *
+     * @param workbook 工作簿
+     * @param response 响应
+     * @param fileName 文件名
+     */
+    public static <T> void export(Workbook workbook, HttpServletResponse response, String fileName) {
+        export(workbook, getDownloadStream(response, fileName));
+    }
+
+    /**
+     * 导出
+     *
+     * @param response    HTTP响应
+     * @param fileName    文件名
+     * @param data        数据源
+     * @param exportRules 导出规则
+     */
+    public static <T> void export(HttpServletResponse response, String fileName, List<T> data, ExportRules exportRules) {
+        export(response, fileName, data, exportRules, null);
+    }
+
+    /**
+     * 导出
+     *
+     * @param response    HTTP响应
+     * @param fileName    文件名
+     * @param data        数据源
+     * @param exportRules 导出规则
+     */
+    public static <T> void export(HttpServletResponse response, String fileName, List<T> data, ExportRules exportRules, OutCallback<T> callBack) {
+        export(getDownloadStream(response, fileName), data, exportRules, callBack);
+    }
+
+    /**
      * 导出
      *
      * @param file        导出地址
@@ -128,13 +215,10 @@ public class ExcelUtils {
      * @param callBack    回调处理
      */
     public static <T> void export(String file, List<T> data, ExportRules exportRules, OutCallback<T> callBack) {
-        try (
-                OutputStream temp = new FileOutputStream(file);
-                Workbook workbook = createEmptyWorkbook(exportRules.isXlsx())
-        ) {
-            fillBook(workbook, data, exportRules, callBack);
-            workbook.write(temp);
-        } catch (IOException e) {
+        try {
+            OutputStream out = new FileOutputStream(file);
+            export(out, data, exportRules, callBack);
+        } catch (FileNotFoundException e) {
             LOG.error(e);
         }
     }
@@ -148,16 +232,31 @@ public class ExcelUtils {
      * @param callBack    回调
      */
     public static <T> void export(OutputStream out, List<T> data, ExportRules exportRules, OutCallback<T> callBack) {
+        Workbook workbook = createEmptyWorkbook(exportRules.isXlsx());
+        if (StringUtils.isNotBlank(exportRules.getPassword())) {
+            encryptWorkbook(workbook, exportRules.getPassword());
+        }
+        fillBook(workbook, data, exportRules, callBack);
+        export(workbook, out);
+    }
+
+    /**
+     * 导出
+     *
+     * @param workbook     工作簿
+     * @param outputStream 流
+     */
+    public static <T> void export(Workbook workbook, OutputStream outputStream) {
         try (
-                OutputStream temp = out;
-                Workbook workbook = createEmptyWorkbook(exportRules.isXlsx())
+                Workbook wb = workbook;
+                OutputStream out = outputStream;
         ) {
-            fillBook(workbook, data, exportRules, callBack);
-            workbook.write(temp);
+            wb.write(out);
         } catch (IOException e) {
             LOG.error(e);
         }
     }
+
 
     /**
      * 填充wb，循环填充为多个Sheet

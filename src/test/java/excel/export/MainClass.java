@@ -120,7 +120,7 @@ public class MainClass {
                 Column.field("createTime").datePattern("yyyy-MM-dd")
         };
         // 3.执行导出
-        ExcelUtils.export("src/test/java/excel/export/simpleExport.xlsx", data, ExportRules.simpleRule(columns, headers));
+        ExcelUtils.export("src/test/java/excel/export/simpleExport.xls", data, ExportRules.simpleRule(columns, headers).xlsx(false).password("123"));
     }
 
     /**

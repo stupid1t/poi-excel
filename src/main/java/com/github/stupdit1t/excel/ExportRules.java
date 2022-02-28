@@ -83,6 +83,11 @@ public class ExportRules {
     private ICellStyle[] globalStyle = DefaultCellStyleEnum.values();
 
     /**
+     * Excel密码, 只支持xls 格式
+     */
+    private String password;
+
+    /**
      * 初始化规则，构建一个简单表头
      *
      * @param column 定义导出列字段
@@ -211,6 +216,15 @@ public class ExportRules {
     public ExportRules xlsx(boolean xlsx) {
         this.xlsx = xlsx;
         return this;
+    }
+
+    public ExportRules password(String password) {
+        this.password = password;
+        return this;
+    }
+
+    String getPassword() {
+        return password;
     }
 
     boolean isXlsx() {

@@ -4,7 +4,7 @@
 <dependency>
     <groupId>com.github.stupdit1t</groupId>
     <artifactId>poi-excel</artifactId>
-    <version>2.0.5</version>
+    <version>2.0.6</version>
 </dependency>
 ```
 
@@ -98,8 +98,8 @@ class a {
                 // 格式化日期
                 Column.field("createTime").datePattern("yyyy-MM-dd")
         };
-        // 3.执行导出
-        ExcelUtils.export(outPath, data, ExportRules.simpleRule(columns, headers));
+        // 3.执行导出, 并设置密码为123456. 只支持xls格式
+        ExcelUtils.export(outPath, data, ExportRules.simpleRule(columns, headers).xlsx(false).password("123456"));
     }
 }
 ```
