@@ -1319,7 +1319,7 @@ public class ExcelUtils {
         CellRangeAddressList cellRangeAddressList = new CellRangeAddressList(firstRow, lastRow, col, col);
         DataValidationHelper helper = sheet.getDataValidationHelper();
         DataValidationConstraint constraint;
-        if (dataSource.length < 11) {
+        if (sheet.getWorkbook() instanceof HSSFWorkbook) {
             constraint = helper.createExplicitListConstraint(dataSource);
         } else {
             Workbook workbook = sheet.getWorkbook();
@@ -1508,7 +1508,7 @@ public class ExcelUtils {
                 String substring = formula.substring(start, end);
                 String[] ranges = substring.split(":");
                 StringBuilder chars = new StringBuilder();
-                Pattern pattern = Pattern.compile("(\\w+)(\\d+)");
+                Pattern pattern = Pattern.compile("([A-Z]+)(\\d+)");
                 for (String range : ranges) {
                     Matcher matcher = pattern.matcher(range);
                     if (matcher.find()) {
