@@ -38,6 +38,8 @@ import java.text.ParseException;
 import java.util.*;
 import java.util.Map.Entry;
 import java.util.function.Consumer;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
  * excel导入导出工具，也可以导出模板
@@ -1329,7 +1331,7 @@ public class ExcelUtils {
             int dataLength = dataSource.length;
             int rowNum = hidden.getLastRowNum();
             char colLetter = 'A';
-            if (rowNum == 0) {
+            if (rowNum == -1) {
                 // 第一次创建下拉框数据
                 for (int i = 0; i < dataLength; i++, rowNum++) {
                     hidden.createRow(i).createCell(0).setCellValue(dataSource[i]);
@@ -1495,33 +1497,28 @@ public class ExcelUtils {
      */
     private static DataValidation createCustomValidation(Sheet sheet, String formula, String info, int col, int maxRow, int lastRow) {
         String msg = "请输入正确的值！";
-        // 0.修正xls表达式不正确定位的问题,只修正了开始，如F3:F2000,修正了F3变为A0,F2000变为A2000
+        // 0.修正xls表达式不正确定位的问题,只修正了开始，如F3:F2000,修正了F3变为A2,F2000变为A2000
         Workbook workbook = sheet.getWorkbook();
         if (workbook instanceof HSSFWorkbook) {
-            // 替换字母为A，下标从0开始
             int start = formula.indexOf("(") + 1;
             int end = formula.indexOf(")");
             if (start != 1 && end != 0) {
                 String prev = formula.substring(0, start);
                 String suffix = formula.substring(end);
                 String substring = formula.substring(start, end);
-                char[] charArray = substring.toCharArray();
-                int over = 0;
-                for (int i = 0; i < charArray.length; i++) {
-                    char c = charArray[i];
-                    if (c == ':') {
-                        over++;
-                        continue;
+                String[] ranges = substring.split(":");
+                StringBuilder chars = new StringBuilder();
+                Pattern pattern = Pattern.compile("(\\w+)(\\d+)");
+                for (String range : ranges) {
+                    Matcher matcher = pattern.matcher(range);
+                    if (matcher.find()) {
+                        Integer rowNum = Integer.parseInt(matcher.group(2));
+                        chars.append("A").append(rowNum - 1 + "").append(":");
                     }
-                    if (!Character.isDigit(c)) {
-                        charArray[i] = 'A';
-                    } else {
-                        if (over == 0) {
-                            charArray[i] = String.valueOf(maxRow - 2).charAt(0);
-                        }
-                    }
+
                 }
-                formula = prev + String.valueOf(charArray) + suffix;
+                chars.deleteCharAt(chars.length() - 1);
+                formula = prev + chars + suffix;
             }
 
         }
