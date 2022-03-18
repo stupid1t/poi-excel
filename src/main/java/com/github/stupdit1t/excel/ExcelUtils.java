@@ -1215,7 +1215,11 @@ public class ExcelUtils {
                 CellValue evaluate = formulaEvaluator.evaluate(cell);
                 switch (evaluate.getCellType()) {
                     case NUMERIC:
-                        obj = evaluate.getNumberValue();
+                        if (DateUtil.isCellDateFormatted(cell)) {
+                            obj = cell.getDateCellValue();
+                        } else {
+                            obj = cell.getNumericCellValue();
+                        }
                         break;
                     case STRING:
                         obj = evaluate.formatAsString();
