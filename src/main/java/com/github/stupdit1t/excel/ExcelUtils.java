@@ -1222,7 +1222,7 @@ public class ExcelUtils {
                         }
                         break;
                     case STRING:
-                        obj = evaluate.formatAsString();
+                        obj = evaluate.getStringValue();
                         break;
                     default:
                         obj = cell.getRichStringCellValue().getString();
