@@ -4,7 +4,7 @@
 <dependency>
     <groupId>com.github.stupdit1t</groupId>
     <artifactId>poi-excel</artifactId>
-    <version>2.0.9</version>
+    <version>2.0.10</version>
 </dependency>
 ```
 
@@ -19,6 +19,10 @@
 ## 二. 更新记录
 
 > 有需求才有进步，这个轮子本身就是从0开始因为需求慢慢叠加起来的。有新需求提出来,我觉得合适会更新. 如有疑问可加群帮解答: 811606008
+
+### v2.0.10
+
+1. 导出支持LocalDateTIme 和 LocalDate
 
 ### v2.0.9
 
