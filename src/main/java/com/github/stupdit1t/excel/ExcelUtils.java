@@ -35,6 +35,8 @@ import java.lang.reflect.Method;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
 import java.text.ParseException;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.*;
 import java.util.Map.Entry;
 import java.util.function.Consumer;
@@ -1118,10 +1120,9 @@ public class ExcelUtils {
             }
         } else if (value instanceof Number) {
             cell.setCellValue(((Number) value).doubleValue());
-        } else if (value instanceof Date) {
+        } else if (value instanceof Date || value instanceof LocalDate || value instanceof LocalDateTime) {
             // 1.格式化
             String pattern = customer ? customColumn.getDatePattern() : sourceColumn.getDatePattern();
-            Date date = (Date) value;
             CellStyle style = subCellStyle.get(pattern);
             if (style == null) {
                 CellStyle sourceStyle = cell.getCellStyle();
@@ -1132,7 +1133,16 @@ public class ExcelUtils {
                 subCellStyle.put(pattern, style);
             }
             cell.setCellStyle(style);
-            cell.setCellValue(date);
+            if (value instanceof Date) {
+                Date date = (Date) value;
+                cell.setCellValue(date);
+            } else if (value instanceof LocalDateTime) {
+                LocalDateTime date = (LocalDateTime) value;
+                cell.setCellValue(date);
+            } else if (value instanceof LocalDate) {
+                LocalDate date = (LocalDate) value;
+                cell.setCellValue(date);
+            }
         } else if (value instanceof byte[]) {
             byte[] data = (byte[]) value;
             // 5.1anchor主要用于设置图片的属性
