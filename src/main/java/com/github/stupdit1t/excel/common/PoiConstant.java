@@ -55,6 +55,7 @@ public class PoiConstant {
         if (StringUtils.isBlank(times)) {
             times = "2";
         }
+        System.setProperty("com.github.stupdit1t.fillCellTimes", "2");
         PoiCommon.fillCellRefNums(Integer.parseInt(times));
     }
 }

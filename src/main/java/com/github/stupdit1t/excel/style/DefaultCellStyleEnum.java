@@ -48,26 +48,45 @@ public enum DefaultCellStyleEnum  implements ICellStyle {
 
 	/**
 	 * 单元格样式
-	 */
-	CELL(CellPosition.CELL, (font, style) -> {
-		font.setFontName("Arial");
-		font.setFontHeightInPoints((short) 10);
-		style.setFont(font);
-		style.setWrapText(false);
-		style.setAlignment(HorizontalAlignment.CENTER);
-		style.setBorderRight(BorderStyle.THIN);
-		style.setRightBorderColor(IndexedColors.BLACK.getIndex());
-		style.setBorderLeft(BorderStyle.THIN);
-		style.setLeftBorderColor(IndexedColors.BLACK.getIndex());
-		style.setBorderTop(BorderStyle.THIN);
-		style.setTopBorderColor(IndexedColors.BLACK.getIndex());
-		style.setBorderBottom(BorderStyle.THIN);
-		style.setBottomBorderColor(IndexedColors.BLACK.getIndex());
-	});
+     */
+    CELL(CellPosition.CELL, (font, style) -> {
+        font.setFontName("Arial");
+        font.setFontHeightInPoints((short) 10);
+        style.setFont(font);
+        style.setWrapText(false);
+        style.setAlignment(HorizontalAlignment.CENTER);
+        style.setBorderRight(BorderStyle.THIN);
+        style.setRightBorderColor(IndexedColors.BLACK.getIndex());
+        style.setBorderLeft(BorderStyle.THIN);
+        style.setLeftBorderColor(IndexedColors.BLACK.getIndex());
+        style.setBorderTop(BorderStyle.THIN);
+        style.setTopBorderColor(IndexedColors.BLACK.getIndex());
+        style.setBorderBottom(BorderStyle.THIN);
+        style.setBottomBorderColor(IndexedColors.BLACK.getIndex());
+    }),
 
-	/**
-	 * 位置
-	 */
+    /**
+     * 尾部样式
+     */
+    FOOTER(CellPosition.FOOTER, (font, style) -> {
+        font.setFontName("Arial");
+        font.setFontHeightInPoints((short) 10);
+        style.setFont(font);
+        style.setWrapText(false);
+        style.setAlignment(HorizontalAlignment.CENTER);
+        style.setBorderRight(BorderStyle.THIN);
+        style.setRightBorderColor(IndexedColors.BLACK.getIndex());
+        style.setBorderLeft(BorderStyle.THIN);
+        style.setLeftBorderColor(IndexedColors.BLACK.getIndex());
+        style.setBorderTop(BorderStyle.THIN);
+        style.setTopBorderColor(IndexedColors.BLACK.getIndex());
+        style.setBorderBottom(BorderStyle.THIN);
+        style.setBottomBorderColor(IndexedColors.BLACK.getIndex());
+    });
+
+    /**
+     * 位置
+     */
 	private final CellPosition position;
 
 	/**

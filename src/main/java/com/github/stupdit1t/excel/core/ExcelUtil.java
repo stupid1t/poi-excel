@@ -1,7 +1,6 @@
-package com.github.stupdit1t.excel;
+package com.github.stupdit1t.excel.core;
 
 import com.github.stupdit1t.excel.callback.InCallback;
-import com.github.stupdit1t.excel.callback.OutCallback;
 import com.github.stupdit1t.excel.common.PoiCommon;
 import com.github.stupdit1t.excel.common.PoiConstant;
 import com.github.stupdit1t.excel.common.PoiException;
@@ -38,26 +37,42 @@ import java.text.ParseException;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.*;
-import java.util.Map.Entry;
+import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 
 /**
  * excel导入导出工具，也可以导出模板
  *
  * @author 625
  */
-public class ExcelUtils {
+public class ExcelUtil {
 
-    private static final Logger LOG = LogManager.getLogger(ExcelUtils.class);
+    private static final Logger LOG = LogManager.getLogger(ExcelUtil.class);
+
+    /**
+     * 私有
+     */
+    private ExcelUtil() {
+    }
+
+    /**
+     * 导出入口
+     *
+     * @return OpsExport
+     */
+    public static OpsExport opsExport() {
+        return new OpsExport();
+    }
 
     /**
      * 设置打印方向
      *
      * @param sheet sheet页
      */
-    private static void printSetup(Sheet sheet) {
+    static void printSetup(Sheet sheet) {
         PrintSetup printSetup = sheet.getPrintSetup();
         // 打印方向，true：横向，false：纵向
         printSetup.setLandscape(true);
@@ -71,7 +86,7 @@ public class ExcelUtils {
      * @param workbook 工作簿
      * @param password 密码
      */
-    public static void encryptWorkbook(Workbook workbook, String password) {
+    static void encryptWorkbook(Workbook workbook, String password) {
         if (workbook instanceof HSSFWorkbook) {
             // 2003
             Biff8EncryptionKey.setCurrentUserPassword(password);
@@ -85,7 +100,7 @@ public class ExcelUtils {
      * <p>
      * 默认后缀 xlsx
      */
-    public static Workbook createBigWorkbook() {
+    static Workbook createBigWorkbook() {
         return new SXSSFWorkbook();
     }
 
@@ -97,7 +112,7 @@ public class ExcelUtils {
      *
      * @param rowAccessWindowSize 在内存中的行数
      */
-    public static Workbook createBigWorkbook(int rowAccessWindowSize) {
+    static Workbook createBigWorkbook(int rowAccessWindowSize) {
         return new SXSSFWorkbook(rowAccessWindowSize);
     }
 
@@ -106,7 +121,7 @@ public class ExcelUtils {
      *
      * @param xlsx 是否为xlsx格式
      */
-    public static Workbook createEmptyWorkbook(boolean xlsx) {
+    static Workbook createEmptyWorkbook(boolean xlsx) {
         Workbook wb;
         if (xlsx) {
             // 2007
@@ -123,7 +138,7 @@ public class ExcelUtils {
      *
      * @param xlsx 是否为xlsx格式
      */
-    public static Workbook createEmptyWorkbook(boolean xlsx, String password) {
+    static Workbook createEmptyWorkbook(boolean xlsx, String password) {
         Workbook emptyWorkbook = createEmptyWorkbook(xlsx);
         encryptWorkbook(emptyWorkbook, password);
         return emptyWorkbook;
@@ -134,9 +149,8 @@ public class ExcelUtils {
      *
      * @param response 响应流
      * @param fileName 文件名
-     * @return
      */
-    public static OutputStream getDownloadStream(HttpServletResponse response, String fileName) {
+    static OutputStream getDownloadStream(HttpServletResponse response, String fileName) {
         try {
             if (fileName.endsWith(".xlsx")) {
                 response.setContentType("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet");
@@ -159,88 +173,23 @@ public class ExcelUtils {
      * @param response 响应
      * @param fileName 文件名
      */
-    public static <T> void export(Workbook workbook, HttpServletResponse response, String fileName) {
+    static void export(Workbook workbook, HttpServletResponse response, String fileName) {
         export(workbook, getDownloadStream(response, fileName));
     }
 
     /**
      * 导出
      *
-     * @param response    HTTP响应
-     * @param fileName    文件名
-     * @param data        数据源
-     * @param exportRules 导出规则
-     */
-    public static <T> void export(HttpServletResponse response, String fileName, List<T> data, ExportRules exportRules) {
-        export(response, fileName, data, exportRules, null);
-    }
-
-    /**
-     * 导出
-     *
-     * @param response    HTTP响应
-     * @param fileName    文件名
-     * @param data        数据源
-     * @param exportRules 导出规则
-     */
-    public static <T> void export(HttpServletResponse response, String fileName, List<T> data, ExportRules exportRules, OutCallback<T> callBack) {
-        export(getDownloadStream(response, fileName), data, exportRules, callBack);
-    }
-
-    /**
-     * 导出
-     *
-     * @param file        导出地址
-     * @param data        数据源
-     * @param exportRules 导出规则
-     */
-    public static <T> void export(String file, List<T> data, ExportRules exportRules) {
-        export(file, data, exportRules, null);
-    }
-
-    /**
-     * 导出
-     *
      * @param out         导出流
      * @param data        数据源
      * @param exportRules 导出规则
      */
-    public static <T> void export(OutputStream out, List<T> data, ExportRules exportRules) {
-        export(out, data, exportRules, null);
-    }
-
-
-    /**
-     * 导出
-     *
-     * @param file        导出地址
-     * @param data        数据源
-     * @param exportRules 导出规则
-     * @param callBack    回调处理
-     */
-    public static <T> void export(String file, List<T> data, ExportRules exportRules, OutCallback<T> callBack) {
-        try {
-            OutputStream out = new FileOutputStream(file);
-            export(out, data, exportRules, callBack);
-        } catch (FileNotFoundException e) {
-            LOG.error(e);
+    static <T> void export(OutputStream out, List<T> data, ExportRules exportRules) {
+        Workbook workbook = createEmptyWorkbook(exportRules.xlsx);
+        if (StringUtils.isNotBlank(exportRules.password)) {
+            encryptWorkbook(workbook, exportRules.password);
         }
-    }
-
-    /**
-     * 导出
-     *
-     * @param out         导出流
-     * @param data        数据源
-     * @param exportRules 导出规则
-     * @param callBack    回调
-     */
-    public static <T> void export(OutputStream out, List<T> data, ExportRules exportRules, OutCallback<T> callBack) {
-        Workbook workbook = createEmptyWorkbook(exportRules.isXlsx());
-        if (StringUtils.isNotBlank(exportRules.getPassword())) {
-            encryptWorkbook(workbook, exportRules.getPassword());
-        }
-        fillBook(workbook, data, exportRules, callBack);
+        fillBook(workbook, data, exportRules);
         export(workbook, out);
     }
 
@@ -250,10 +199,10 @@ public class ExcelUtils {
      * @param workbook     工作簿
      * @param outputStream 流
      */
-    public static <T> void export(Workbook workbook, OutputStream outputStream) {
+    static void export(Workbook workbook, OutputStream outputStream) {
         try (
                 Workbook wb = workbook;
-                OutputStream out = outputStream;
+                OutputStream out = outputStream
         ) {
             wb.write(out);
         } catch (IOException e) {
@@ -261,16 +210,21 @@ public class ExcelUtils {
         }
     }
 
-
     /**
-     * 填充wb，循环填充为多个Sheet
+     * 导出
      *
-     * @param wb          工作簿
-     * @param data        数据
-     * @param exportRules 导出规则
+     * @param workbook 工作簿
+     * @param outPath  删除目录
      */
-    public static <T> void fillBook(Workbook wb, List<T> data, ExportRules exportRules) {
-        fillBook(wb, data, exportRules, null);
+    static void export(Workbook workbook, String outPath) {
+        try (
+                Workbook wb = workbook;
+                OutputStream out = new FileOutputStream(outPath)
+        ) {
+            wb.write(out);
+        } catch (IOException e) {
+            LOG.error(e);
+        }
     }
 
     /**
@@ -279,147 +233,202 @@ public class ExcelUtils {
      * @param wb          工作簿
      * @param data        数据
      * @param exportRules 导出规则
-     * @param callBack    回调函数
      */
-    public static <T> void fillBook(Workbook wb, List<T> data, ExportRules exportRules, OutCallback<T> callBack) {
-        boolean autoNum = exportRules.isAutoNum();
-        Column[] fields = exportRules.getColumn();
-        ICellStyle[] globalStyle = exportRules.getGlobalStyle();
+    static <T> void fillBook(Workbook wb, List<T> data, ExportRules exportRules) {
 
+        // -------------------- 全局样式处理 start ------------------------
+        ICellStyle[] globalStyle = exportRules.globalStyle;
         // 标题样式设置
-        ICellStyle titleStyle = ICellStyle.getCellStyleByPosition(CellPosition.TITLE, globalStyle);
-        CellStyle titleStyleSource = wb.createCellStyle();
         Font titleFont = wb.createFont();
-        titleStyleSource.setFont(titleFont);
-        titleStyle.handleStyle(titleFont, titleStyleSource);
+        CellStyle titleStyleSource = wb.createCellStyle();
+        ICellStyle titleStyle = handleGlobalStyle(globalStyle, titleFont, titleStyleSource, CellPosition.TITLE);
 
         // 小标题样式
-        ICellStyle headerStyle = ICellStyle.getCellStyleByPosition(CellPosition.HEADER, globalStyle);
-        CellStyle headerStyleSource = wb.createCellStyle();
         Font headerFont = wb.createFont();
-        headerStyleSource.setFont(headerFont);
-        headerStyle.handleStyle(headerFont, headerStyleSource);
+        CellStyle headerStyleSource = wb.createCellStyle();
+        ICellStyle headerStyle = handleGlobalStyle(globalStyle, headerFont, headerStyleSource, CellPosition.HEADER);
 
         // 单元格样式
-        ICellStyle cellStyle = ICellStyle.getCellStyleByPosition(CellPosition.CELL, globalStyle);
-        CellStyle cellStyleSource = wb.createCellStyle();
         Font cellFont = wb.createFont();
-        cellStyleSource.setFont(cellFont);
-        cellStyle.handleStyle(cellFont, cellStyleSource);
+        CellStyle cellStyleSource = wb.createCellStyle();
+        ICellStyle cellStyle = handleGlobalStyle(globalStyle, cellFont, cellStyleSource, CellPosition.CELL);
 
-        String sheetName = exportRules.getSheetName();
-        Sheet sheet;
-        if (sheetName != null) {
-            sheet = wb.createSheet(sheetName);
-        } else {
-            sheet = wb.createSheet();
-        }
+        // 尾行样式
+        Font footerFont = wb.createFont();
+        CellStyle footerStyleSource = wb.createCellStyle();
+        ICellStyle footerStyle = handleGlobalStyle(globalStyle, footerFont, footerStyleSource, CellPosition.FOOTER);
+        // -------------------- 全局样式处理 end  ------------------------
 
-        ExcelUtils.printSetup(sheet);
-        // -----------------------表头设置------------------------
-        int maxColumns = exportRules.getMaxColumns();
-        int maxRows = exportRules.getMaxRows();
+        String sheetName = exportRules.sheetName;
+        Sheet sheet = sheetName != null ? wb.createSheet(sheetName) : wb.createSheet();
+        ExcelUtil.printSetup(sheet);
+
+        // ----------------------- 表头设置 start ------------------------
 
         // 创建表头
-        for (int i = 0; i < maxRows; i++) {
+        for (int i = 0; i < exportRules.maxRows; i++) {
             Row row = sheet.createRow(i);
-            for (int j = 0; j < maxColumns; j++) {
+            for (int j = 0; j < exportRules.maxColumns; j++) {
                 row.createCell(j);
             }
         }
         // 合并模式
-        if (exportRules.isIfMerge()) {
-            // 冻结表头
-            sheet.createFreezePane(0, maxRows, 0, maxRows);
-            // header
-            Map<String, String> rules = exportRules.getHeaderRules();
-            Set<Entry<String, String>> entries = rules.entrySet();
-            for (Entry<String, String> entry : entries) {
-                String key = entry.getKey();
-                String value = entry.getValue();
-                Object[] range = PoiCommon.coverRange(key);
-                // 合并表头
-                int firstRow = (int) range[0] - 1;
-                int lastRow = (int) range[1] - 1;
-                int firstCol = PoiConstant.cellRefNums.get(range[2]);
-                int lastCol = PoiConstant.cellRefNums.get(range[3]);
-                Row row = sheet.getRow(firstRow);
-                if ((maxColumns - 1) == lastCol - firstCol) {
-                    // 占满全格，则为表头
-                    if (titleStyle.getHeight() != -1) {
-                        row.setHeight(titleStyle.getHeight());
-                    }
-                    CellUtil.createCell(row, firstCol, value, titleStyleSource);
-                } else {
-                    if (headerStyle.getHeight() != -1) {
-                        row.setHeight(headerStyle.getHeight());
-                    }
-                    CellUtil.createCell(row, firstCol, value, headerStyleSource);
-                }
-                if ((lastRow - firstRow) != 0 || (lastCol - firstCol) != 0) {
-                    CellRangeAddress cra = new CellRangeAddress(firstRow, lastRow, firstCol, lastCol);
-                    sheet.addMergedRegion(cra);
-                    RegionUtil.setBorderTop(BorderStyle.THIN, cra, sheet);
-                    RegionUtil.setBorderBottom(BorderStyle.THIN, cra, sheet);
-                    RegionUtil.setBorderLeft(BorderStyle.THIN, cra, sheet);
-                    RegionUtil.setBorderRight(BorderStyle.THIN, cra, sheet);
-                }
-            }
+        if (exportRules.ifMerge) {
+            handleComplexHeader(exportRules, titleFont, titleStyleSource, titleStyle, headerFont, headerStyleSource, headerStyle, sheet);
         } else {// 非合并
-            if (exportRules.getTitle() == null) {
-                // 冻结表头
-                sheet.createFreezePane(0, 1, 0, 1);
-                if (headerStyle.getHeight() != -1) {
-                    sheet.getRow(0).setHeight(headerStyle.getHeight());
+            handleSimpleHeader(exportRules, titleFont, titleStyleSource, titleStyle, headerFont, headerStyleSource, headerStyle, sheet);
+        }
+
+        // ----------------------- 表头设置 end    ------------------------
+
+        // ----------------------- 列属性设置 start -----------------------
+        handleColumnProperty(data, exportRules, sheet);
+        // ----------------------- 列属性设置 end  ------------------------
+
+        // ----------------------- body设置 start ------------------------
+        // 画图器
+        @SuppressWarnings("unchecked") Drawing<Picture> createDrawingPatriarch = (Drawing<Picture>) sheet.createDrawingPatriarch();
+        // 存储类的字段信息
+        Map<Class<?>, Map<String, Field>> clsInfo = new HashMap<>();
+        // 存储单元格样式信息，防止重复生成
+        Map<String, CellStyle> cacheCellStyle = new HashMap<>();
+        // 列信息
+        List<Column<?>> fields = exportRules.column;
+        for (int i = 0; i < data.size(); i++) {
+            Row row = sheet.createRow(i + exportRules.maxRows);
+            if (cellStyle.getHeight() != -1) {
+                row.setHeight(cellStyle.getHeight());
+            }
+            // 行高自定义设置
+            if (exportRules.cellHeight != -1) {
+                row.setHeight(exportRules.cellHeight);
+            }
+            T t = data.get(i);
+            for (int j = 0, n = 0; n < fields.size(); j++, n++) {
+                Column<T> column = (Column<T>) fields.get(n);
+                Cell cell = row.createCell(j);
+                cell.setCellStyle(cellStyleSource);
+                // 1.序号设置
+                if (exportRules.autoNum && j == 0) {
+                    cell.setCellValue(i + 1);
+                    n--;
+                    continue;
                 }
-                String[] header = exportRules.getHeader();
-                for (int i = 0; i < header.length; i++) {
-                    CellUtil.createCell(sheet.getRow(0), i, header[i], headerStyleSource);
+                // 2.读取Map/Object对应字段值
+                if (clsInfo.get(t.getClass()) == null) {
+                    clsInfo.put(t.getClass(), PoiCommon.getAllFields(t.getClass()));
                 }
-            } else {
-                // 冻结表头
-                sheet.createFreezePane(0, 2, 0, 2);
-                if (titleStyle.getHeight() != -1) {
-                    sheet.getRow(0).setHeight(titleStyle.getHeight());
+                Object value = readField(clsInfo, t, column.field);
+
+                // 3.填充列值
+                if (column.outHandle != null) {
+                    value = column.outHandle.callback(value, t);
                 }
-                CellUtil.createCell(sheet.getRow(0), 0, exportRules.getTitle(), titleStyleSource);
-                CellRangeAddress cra = new CellRangeAddress(0, 0, 0, maxColumns);
-                sheet.addMergedRegion(cra);
-                if (headerStyle.getHeight() != -1) {
-                    sheet.getRow(1).setHeight(headerStyle.getHeight());
-                }
-                String[] header = exportRules.getHeader();
-                for (int i = 0; i < header.length; i++) {
-                    CellUtil.createCell(sheet.getRow(1), i, header[i], headerStyleSource);
-                }
+                // 4.设置单元格值
+                setCellValue(createDrawingPatriarch, column, value, cell, cacheCellStyle);
+            }
+        }
+        // ----------------------- body设置 end     ------------------------
+
+        // ------------------------footer设置 start  ------------------------
+        handleFooter(data, exportRules, footerFont, footerStyleSource, footerStyle, sheet);
+        // ------------------------footer设置 end ------------------------
+    }
+
+    /**
+     * footer设置
+     *
+     * @param data              数据
+     * @param exportRules       导出规则
+     * @param footerFont        font
+     * @param footerStyleSource style
+     * @param sheet             sheet
+     * @param footerStyle       全局样式
+     */
+    private static <T> void handleFooter(List<T> data, ExportRules exportRules, Font footerFont, CellStyle footerStyleSource, ICellStyle footerStyle, Sheet sheet) {
+        if (exportRules.ifFooter) {
+            Workbook workbook = sheet.getWorkbook();
+            List<ComplexCell> footerRules = exportRules.footerRules;
+            // 构建尾行
+            int currRowNum = exportRules.maxRows + data.size();
+            int[] footerNum = getFooterNum(footerRules, currRowNum);
+            for (int j : footerNum) {
+                sheet.createRow(j);
             }
 
+            for (ComplexCell entry : footerRules) {
+                Integer[] range = entry.getLocationIndex();
+                String value = entry.getText();
+                BiConsumer<Font, CellStyle> fontCellStyle = entry.getStyle();
+                int firstRow = range[0] + currRowNum;
+                int lastRow = range[1] + currRowNum;
+                int firstCol = range[2];
+                int lastCol = range[3];
+                CellStyle styleNew;
+                if (fontCellStyle != null) {
+                    // 自定义header单元格样式
+                    styleNew = workbook.createCellStyle();
+                    Font fontNew = workbook.createFont();
+                    PoiCommon.copyStyle(styleNew, fontNew, footerStyleSource, footerFont);
+                    fontCellStyle.accept(fontNew, styleNew);
+                } else {
+                    styleNew = footerStyleSource;
+                }
+                Cell cell = CellUtil.createCell(sheet.getRow(firstRow), firstCol, value, styleNew);
+                if (value.startsWith("=")) {
+                    cell.setCellFormula(value.substring(1));
+                }
+                if ((lastRow - firstRow) != 0 || (lastCol - firstCol) != 0) {
+                    cellMerge(sheet, firstRow, lastRow, firstCol, lastCol);
+                }
+                // 行高自定义设置
+                for (int i = firstRow; i <= lastRow; i++) {
+                    if (footerStyle.getHeight() != -1) {
+                        sheet.getRow(i).setHeight(footerStyle.getHeight());
+                    }
+                    if (exportRules.footerHeight != -1) {
+                        sheet.getRow(i).setHeight(exportRules.footerHeight);
+                    }
+                }
+            }
         }
-        // --------------------set width--------------------
-        for (int i = 0, j = 0; i < fields.length; i++, j++) {
+    }
+
+    /**
+     * 列属性设置
+     *
+     * @param data        数据
+     * @param exportRules 导出规则
+     * @param sheet       sheet
+     */
+    private static <T> void handleColumnProperty(List<T> data, ExportRules exportRules, Sheet sheet) {
+        // ----------------------- 列属性设置 start--------------------
+        List<Column<?>> fields = exportRules.column;
+        int autoNumColumnWidth = exportRules.autoNumColumnWidth == -1 ? 2000 : exportRules.autoNumColumnWidth;
+        for (int i = 0, j = 0; i < fields.size(); i++, j++) {
             // 0.每一列默认单元格样式设置
             // 1.width设置
-            if (autoNum && j == 0) {
+            if (exportRules.autoNum && j == 0) {
                 j++;
-                sheet.setColumnWidth(0, 2000);
+                sheet.setColumnWidth(0, autoNumColumnWidth);
             }
-            Column column = fields[i];
+            Column<?> column = fields.get(i);
             // 1.1是否自动列宽
-            int width = column.getWidth();
-            if (width != 0) {
+            int width = column.width;
+            if (width != -1) {
                 sheet.setColumnWidth(j, width);
             } else {
                 try {
                     // 1.2根据maxRows，获取表头的值设置宽度
-                    Row row = sheet.getRow(maxRows - 1);
+                    Row row = sheet.getRow(exportRules.maxRows - 1);
                     String headerValue = row.getCell(j).getStringCellValue();
                     if (StringUtils.isBlank(headerValue)) {
-                        row = sheet.getRow(maxRows - 2);
+                        row = sheet.getRow(exportRules.maxRows - 2);
                         headerValue = row.getCell(j).getStringCellValue();
                     }
                     sheet.setColumnWidth(j, headerValue.getBytes().length * 256);
                 } catch (Exception e) {
-                    if (autoNum) {
+                    if (exportRules.autoNum) {
                         throw new UnsupportedOperationException("自动序号设置错误，请确认在header添加序号列");
                     } else {
                         throw e;
@@ -427,15 +436,15 @@ public class ExcelUtils {
                 }
             }
             // 2.downDown设置
-            int lastRow = (maxRows - 1) + data.size();
-            lastRow = lastRow == (maxRows - 1) ? PoiConstant.MAX_FILL_COL : lastRow;
-            String[] dropdown = column.getDropdown();
+            int lastRow = (exportRules.maxRows - 1) + data.size();
+            lastRow = lastRow == (exportRules.maxRows - 1) ? PoiConstant.MAX_FILL_COL : lastRow;
+            String[] dropdown = column.dropdown;
             if (dropdown != null && dropdown.length > 0) {
-                sheet.addValidationData(createDropDownValidation(sheet, dropdown, j, maxRows, lastRow));
+                sheet.addValidationData(createDropDownValidation(sheet, dropdown, j, exportRules.maxRows, lastRow));
             }
 
             // 3.时间校验
-            String date = column.getVerifyDate();
+            String date = column.verifyDate;
             if (date != null) {
                 String[] split = date.split("@");
                 String info = null;
@@ -444,20 +453,20 @@ public class ExcelUtils {
                 }
                 String[] split1 = split[0].split("~");
                 if (split1.length < 2) {
-                    throw new IllegalArgumentException("时间校验表达式不正确,请填写如" + column.getDatePattern() + "的值!");
+                    throw new IllegalArgumentException("时间校验表达式不正确,请填写如" + column.datePattern + "的值!");
                 }
                 try {
-                    sheet.addValidationData(createDateValidation(sheet, column.getDatePattern(), split1[0], split1[1], info, j, maxRows, lastRow));
+                    sheet.addValidationData(createDateValidation(sheet, column.datePattern, split1[0], split1[1], info, j, exportRules.maxRows, lastRow));
                 } catch (ParseException e) {
                     LOG.error(e);
-                    throw new IllegalArgumentException("时间校验表达式不正确,请填写如" + column.getDatePattern() + "的值!");
+                    throw new IllegalArgumentException("时间校验表达式不正确,请填写如" + column.datePattern + "的值!");
                 } catch (Exception e) {
                     LOG.error(e);
                 }
             }
 
             // 4.整数数字校验
-            String num = column.getVerifyIntNum();
+            String num = column.verifyIntNum;
             if (num != null) {
                 String[] split = num.split("@");
                 String info = null;
@@ -468,11 +477,11 @@ public class ExcelUtils {
                 if (split1.length < 2) {
                     throw new IllegalArgumentException("数字表达式不正确,请填写如10~30的值!");
                 }
-                sheet.addValidationData(createNumValidation(sheet, split1[0], split1[1], info, j, maxRows, lastRow));
+                sheet.addValidationData(createNumValidation(sheet, split1[0], split1[1], info, j, exportRules.maxRows, lastRow));
             }
 
             // 4.浮点数字校验
-            String floatNum = column.getVerifyFloatNum();
+            String floatNum = column.verifyFloatNum;
             if (floatNum != null) {
                 String[] split = floatNum.split("@");
                 String info = null;
@@ -483,22 +492,22 @@ public class ExcelUtils {
                 if (split1.length < 2) {
                     throw new IllegalArgumentException("数字表达式不正确,请填写如10.0~30.0的值!");
                 }
-                sheet.addValidationData(createFloatValidation(sheet, split1[0], split1[1], info, j, maxRows, lastRow));
+                sheet.addValidationData(createFloatValidation(sheet, split1[0], split1[1], info, j, exportRules.maxRows, lastRow));
             }
 
             // 5.自定义校验
-            String custom = column.getVerifyCustom();
+            String custom = column.verifyCustom;
             if (custom != null) {
                 String[] split = custom.split("@");
                 String info = null;
                 if (split.length == 2) {
                     info = split[1];
                 }
-                sheet.addValidationData(createCustomValidation(sheet, split[0], info, j, maxRows, lastRow));
+                sheet.addValidationData(createCustomValidation(sheet, split[0], info, j, exportRules.maxRows, lastRow));
             }
 
             // 6.文本长度校验
-            String text = column.getVerifyText();
+            String text = column.verifyText;
             if (text != null) {
                 String[] split1 = text.split("@");
                 String info = null;
@@ -509,82 +518,173 @@ public class ExcelUtils {
                 if (split2.length < 2) {
                     throw new IllegalArgumentException("文本长度校验格式不正确，请设置如3~10格式!");
                 }
-                sheet.addValidationData(createTextLengthValidation(sheet, split2[0], split2[1], info, j, maxRows, lastRow));
+                sheet.addValidationData(createTextLengthValidation(sheet, split2[0], split2[1], info, j, exportRules.maxRows, lastRow));
             }
         }
+    }
 
-        // ------------------body row-----------------
-        // 画图器
-        @SuppressWarnings("unchecked") Drawing<Picture> createDrawingPatriarch = (Drawing<Picture>) sheet.createDrawingPatriarch();
-        // 存储类的字段信息
-        Map<Class<?>, Map<String, Field>> clsInfo = new HashMap<>();
-        // 存储单元格样式信息，此方式与因为POI的一个BUG
-        Map<Object, CellStyle> subCellStyle = new HashMap<>();
-        for (int i = 0; i < data.size(); i++) {
-            Row row = sheet.createRow(i + maxRows);
-            if (cellStyle.getHeight() != -1) {
-                row.setHeight(cellStyle.getHeight());
+    /**
+     * 简单表头设计
+     *
+     * @param exportRules       导出规则
+     * @param titleFont         大标题字体
+     * @param titleStyleSource  大标题样式
+     * @param titleStyle        大标题自定义样式处理
+     * @param headerFont        标题字体
+     * @param headerStyleSource 标题样式
+     * @param headerStyle       标题自定义样式处理
+     * @param sheet             sheet
+     */
+    private static void handleSimpleHeader(ExportRules exportRules, Font titleFont, CellStyle titleStyleSource, ICellStyle titleStyle, Font headerFont, CellStyle headerStyleSource, ICellStyle headerStyle, Sheet sheet) {
+        // 1. 冻结表头
+        if (exportRules.freezeHeader) {
+            sheet.createFreezePane(0, exportRules.maxRows - 1, 0, exportRules.maxRows - 1);
+        }
+
+        // 2. title 内容设置和行高
+        if (exportRules.title != null) {
+            // title全局行高
+            if (titleStyle.getHeight() != -1) {
+                sheet.getRow(0).setHeight(titleStyle.getHeight());
             }
-            T t = data.get(i);
-            for (int j = 0, n = 0; n < fields.length; j++, n++) {
-                Cell cell = row.createCell(j);
-                cell.setCellStyle(cellStyleSource);
-                // 1.序号设置
-                if (autoNum && j == 0) {
-                    cell.setCellValue(i + 1);
-                    n--;
-                    continue;
-                }
-                // 2.读取Map/Object对应字段值
-                if (clsInfo.get(t.getClass()) == null) {
-                    clsInfo.put(t.getClass(), PoiCommon.getAllFields(t.getClass()));
-                }
-                Object value = readField(clsInfo, t, fields[n].getField());
+            // title行高自定义设置
+            if (exportRules.titleHeight != -1) {
+                sheet.getRow(0).setHeight(exportRules.titleHeight);
+            }
+            CellUtil.createCell(sheet.getRow(0), 0, exportRules.title, titleStyleSource);
+        }
 
-                // 3.填充列值
-                Column customStyle = null;
-                if (callBack != null) {
-                    customStyle = Column.custom(fields[n]);
-                    value = callBack.callback(fields[n].getField(), value, t, customStyle);
+        // 3.header设置和行高
+        int headerIndex = exportRules.title == null ? 0 : 1;
+        // header全局行高
+        if (headerStyle.getHeight() != -1) {
+            sheet.getRow(headerIndex).setHeight(headerStyle.getHeight());
+        }
+        // header行高自定义设置
+        if (exportRules.headerHeight != -1) {
+            sheet.getRow(headerIndex).setHeight(exportRules.headerHeight);
+        }
+        LinkedHashMap<String, BiConsumer<Font, CellStyle>> headerMap = exportRules.simpleHeader;
+        List<String> header = new ArrayList<>(headerMap.keySet());
+        for (int i = 0; i < header.size(); i++) {
+            String text = header.get(i);
+            CellStyle styleNew;
+            BiConsumer<Font, CellStyle> fontCellStyle = headerMap.get(text);
+            if (fontCellStyle != null) {
+                // 自定义header单元格样式
+                styleNew = sheet.getWorkbook().createCellStyle();
+                Font fontNew = sheet.getWorkbook().createFont();
+                PoiCommon.copyStyle(styleNew, fontNew, headerStyleSource, headerFont);
+                fontCellStyle.accept(fontNew, styleNew);
+            } else {
+                styleNew = headerStyleSource;
+            }
+            CellUtil.createCell(sheet.getRow(headerIndex), i, text, styleNew);
+        }
+    }
+
+    /**
+     * 复杂表头设计
+     *
+     * @param exportRules       导出规则
+     * @param titleFont         大标题字体
+     * @param titleStyleSource  大标题样式
+     * @param titleStyle        大标题自定义样式处理
+     * @param headerFont        标题字体
+     * @param headerStyleSource 标题样式
+     * @param headerStyle       标题自定义样式处理
+     * @param sheet             sheet
+     */
+    private static void handleComplexHeader(ExportRules exportRules, Font titleFont, CellStyle titleStyleSource, ICellStyle titleStyle, Font headerFont, CellStyle headerStyleSource, ICellStyle headerStyle, Sheet sheet) {
+        // 冻结表头
+        if (exportRules.freezeHeader) {
+            sheet.createFreezePane(0, exportRules.maxRows, 0, exportRules.maxRows);
+        }
+        // header
+        List<ComplexCell> complexHeader = exportRules.complexHeader;
+        for (ComplexCell complexCell : complexHeader) {
+            Integer[] range = complexCell.getLocationIndex();
+            // 合并表头
+            int firstRow = range[0];
+            int lastRow = range[1];
+            int firstCol = range[2];
+            int lastCol = range[3];
+            CellStyle styleTemp;
+            Font fontTemp;
+            if ((exportRules.maxColumns - 1) == lastCol - firstCol && firstRow == 0) {
+                // 占满全格, 且第一行开始为表头
+                for (int i = firstRow; i <= lastRow; i++) {
+                    if (titleStyle.getHeight() != -1) {
+                        sheet.getRow(i).setHeight(titleStyle.getHeight());
+                    }
+                    // 行高自定义设置
+                    if (exportRules.titleHeight != -1) {
+                        sheet.getRow(i).setHeight(exportRules.titleHeight);
+                    }
                 }
-                // 4.设置单元格值
-                setCellValue(createDrawingPatriarch, fields[n], customStyle, value, cell, subCellStyle);
+                styleTemp = titleStyleSource;
+                fontTemp = titleFont;
+            } else {
+                // 没有大表头, 普通合并格
+                for (int i = firstRow; i <= lastRow; i++) {
+                    if (headerStyle.getHeight() != -1) {
+                        sheet.getRow(i).setHeight(headerStyle.getHeight());
+                    }
+                    // 行高自定义设置
+                    if (exportRules.headerHeight != -1) {
+                        sheet.getRow(i).setHeight(exportRules.headerHeight);
+                    }
+                }
+                styleTemp = headerStyleSource;
+                fontTemp = headerFont;
+            }
+            CellStyle styleNew = styleTemp;
+            BiConsumer<Font, CellStyle> fontCellStyle = complexCell.getStyle();
+            if (fontCellStyle != null) {
+                // 自定义header单元格样式
+                styleNew = sheet.getWorkbook().createCellStyle();
+                Font fontNew = sheet.getWorkbook().createFont();
+                PoiCommon.copyStyle(styleNew, fontNew, styleTemp, fontTemp);
+                fontCellStyle.accept(fontNew, styleNew);
+            }
+            CellUtil.createCell(sheet.getRow(firstRow), firstCol, complexCell.getText(), styleNew);
+            if ((lastRow - firstRow) != 0 || (lastCol - firstCol) != 0) {
+                cellMerge(sheet, firstRow, lastRow, firstCol, lastCol);
             }
         }
-        // ------------------------footer row-----------------------------
-        if (exportRules.isIfFooter()) {
-            Map<String, String> footerRules = exportRules.getFooterRules();
-            // 构建尾行数字
-            int currRowNum = exportRules.getMaxRows() + data.size();
-            int[] footerNum = getFooterNum(footerRules.entrySet().iterator(), currRowNum);
-            Iterator<Entry<String, String>> entries = footerRules.entrySet().iterator();
-            for (int j : footerNum) {
-                sheet.createRow(j);
-            }
-            while (entries.hasNext()) {
-                Entry<String, String> entry = entries.next();
-                String key = entry.getKey();
-                String value = entry.getValue();
-                Object[] range = PoiCommon.coverRange(key);
-                int firstRow = (int) range[0] + currRowNum - 1;
-                int lastRow = (int) range[1] + currRowNum - 1;
-                int firstCol = PoiConstant.cellRefNums.get(range[2]);
-                int lastCol = PoiConstant.cellRefNums.get(range[3]);
-                Cell cell = CellUtil.createCell(sheet.getRow(firstRow), firstCol, value, cellStyleSource);
-                if (value.startsWith("=")) {
-                    cell.setCellFormula(value.substring(1));
-                }
-                if ((lastRow - firstRow) != 0 || (lastCol - firstCol) != 0) {
-                    CellRangeAddress cra = new CellRangeAddress(firstRow, lastRow, firstCol, lastCol);
-                    sheet.addMergedRegion(cra);
-                    RegionUtil.setBorderBottom(BorderStyle.THIN, cra, sheet);
-                    RegionUtil.setBorderTop(BorderStyle.THIN, cra, sheet);
-                    RegionUtil.setBorderLeft(BorderStyle.THIN, cra, sheet);
-                    RegionUtil.setBorderRight(BorderStyle.THIN, cra, sheet);
-                }
-            }
+    }
 
-        }
+    /**
+     * 合并单元格
+     *
+     * @param sheet    sheet
+     * @param firstRow 卡死行
+     * @param lastRow  结束行
+     * @param firstCol 开始列
+     * @param lastCol  结束列
+     */
+    private static void cellMerge(Sheet sheet, int firstRow, int lastRow, int firstCol, int lastCol) {
+        CellRangeAddress cra = new CellRangeAddress(firstRow, lastRow, firstCol, lastCol);
+        sheet.addMergedRegion(cra);
+        RegionUtil.setBorderTop(BorderStyle.THIN, cra, sheet);
+        RegionUtil.setBorderBottom(BorderStyle.THIN, cra, sheet);
+        RegionUtil.setBorderLeft(BorderStyle.THIN, cra, sheet);
+        RegionUtil.setBorderRight(BorderStyle.THIN, cra, sheet);
+    }
+
+    /**
+     * 全局样式处理
+     *
+     * @param globalStyle  全局样式
+     * @param font         字体
+     * @param cellStyle    样式
+     * @param cellPosition 位置
+     */
+    private static ICellStyle handleGlobalStyle(ICellStyle[] globalStyle, Font font, CellStyle cellStyle, CellPosition cellPosition) {
+        ICellStyle titleStyle = ICellStyle.getCellStyleByPosition(cellPosition, globalStyle);
+        cellStyle.setFont(font);
+        titleStyle.handleStyle(font, cellStyle);
+        return titleStyle;
     }
 
     /**
@@ -598,7 +698,7 @@ public class ExcelUtils {
      * @param callback           加入回调逻辑
      * @return ImportRspInfo
      */
-    public static <T> PoiResult<T> readSheet(Sheet sheet, Class<T> cls, Consumer<AbsSheetVerifyRule> absSheetVerifyRule, int dataStartRow, int dataEndRowCount, InCallback<T> callback) {
+    static <T> PoiResult<T> readSheet(Sheet sheet, Class<T> cls, Consumer<AbsSheetVerifyRule> absSheetVerifyRule, int dataStartRow, int dataEndRowCount, InCallback<T> callback) {
         // 公式计算初始化
         FormulaEvaluator formulaEvaluator = sheet.getWorkbook().getCreationHelper().createFormulaEvaluator();
         AbsSheetVerifyRule verifyBuilder = AbsSheetVerifyRule.buildRule(absSheetVerifyRule);
@@ -614,7 +714,7 @@ public class ExcelUtils {
         int sheetIndex = sheet.getWorkbook().getSheetIndex(sheet);
         for (String key : keySet) {
             CellVerifyRule cellVerifyRule = verifies.get(key);
-            AbsCellVerifyRule cellVerify = cellVerifyRule.getCellVerify();
+            AbsCellVerifyRule<?> cellVerify = cellVerifyRule.getCellVerify();
             if (cellVerify instanceof ImgHandler) {
                 imgField.add(key);
                 if (pictures == null || pictures.isEmpty()) {
@@ -697,7 +797,7 @@ public class ExcelUtils {
      * @param dataEndRowCount 尾部
      * @return List<Map < String, Object>>
      */
-    public static List<Map<String, Object>> readSheet(String filePath, int sheetNum, int dataStartRow, int dataEndRowCount) {
+    static List<Map<String, Object>> readSheet(String filePath, int sheetNum, int dataStartRow, int dataEndRowCount) {
         try (InputStream is = new FileInputStream(filePath)) {
             return readSheet(is, sheetNum, dataStartRow, dataEndRowCount);
         } catch (IOException e) {
@@ -714,7 +814,7 @@ public class ExcelUtils {
      * @param dataEndRowCount 尾部非数据行数量
      * @return List<Map < String, Object>>
      */
-    public static List<Map<String, Object>> readSheet(InputStream is, int sheetNum, int dataStartRow, int dataEndRowCount) {
+    static List<Map<String, Object>> readSheet(InputStream is, int sheetNum, int dataStartRow, int dataEndRowCount) {
         try (Workbook wb = WorkbookFactory.create(is)) {
             Sheet sheet = wb.getSheetAt(sheetNum);
             return readSheet(sheet, dataStartRow, dataEndRowCount);
@@ -732,7 +832,7 @@ public class ExcelUtils {
      * @param dataEndRowCount 尾部非数据行数量
      * @return List<Map < String, Object>>
      */
-    public static <T> PoiResult<T> readSheet(String filePath, Class<T> cls, Consumer<AbsSheetVerifyRule> absSheetVerifyRule, int sheetNum, int dataStartRow, int dataEndRowCount, InCallback<T> callback) {
+    static <T> PoiResult<T> readSheet(String filePath, Class<T> cls, Consumer<AbsSheetVerifyRule> absSheetVerifyRule, int sheetNum, int dataStartRow, int dataEndRowCount, InCallback<T> callback) {
         try (InputStream is = new FileInputStream(filePath)) {
             return readSheet(is, cls, absSheetVerifyRule, sheetNum, dataStartRow, dataEndRowCount, callback);
         } catch (IOException e) {
@@ -749,7 +849,7 @@ public class ExcelUtils {
      * @param dataEndRowCount 尾部非数据行数量
      * @return List<Map < String, Object>>
      */
-    public static <T> PoiResult<T> readSheet(InputStream is, Class<T> cls, Consumer<AbsSheetVerifyRule> absSheetVerifyRule, int sheetNum, int dataStartRow, int dataEndRowCount, InCallback<T> callback) {
+    static <T> PoiResult<T> readSheet(InputStream is, Class<T> cls, Consumer<AbsSheetVerifyRule> absSheetVerifyRule, int sheetNum, int dataStartRow, int dataEndRowCount, InCallback<T> callback) {
         try (Workbook wb = WorkbookFactory.create(is)) {
             Sheet sheet = wb.getSheetAt(sheetNum);
             return readSheet(sheet, cls, absSheetVerifyRule, dataStartRow, dataEndRowCount, callback);
@@ -767,7 +867,7 @@ public class ExcelUtils {
      * @param dataEndRowCount 尾部非数据行数量
      * @return List<Map < String, Object>>
      */
-    public static <T> PoiResult<T> readSheet(String filePath, Class<T> cls, Consumer<AbsSheetVerifyRule> absSheetVerifyRule, int sheetNum, int dataStartRow, int dataEndRowCount) {
+    static <T> PoiResult<T> readSheet(String filePath, Class<T> cls, Consumer<AbsSheetVerifyRule> absSheetVerifyRule, int sheetNum, int dataStartRow, int dataEndRowCount) {
         try (InputStream is = new FileInputStream(filePath)) {
             return readSheet(is, cls, absSheetVerifyRule, sheetNum, dataStartRow, dataEndRowCount);
         } catch (IOException e) {
@@ -784,7 +884,7 @@ public class ExcelUtils {
      * @param dataEndRowCount 尾部非数据行数量
      * @return List<Map < String, Object>>
      */
-    public static <T> PoiResult<T> readSheet(InputStream is, Class<T> cls, Consumer<AbsSheetVerifyRule> absSheetVerifyRule, int sheetNum, int dataStartRow, int dataEndRowCount) {
+    static <T> PoiResult<T> readSheet(InputStream is, Class<T> cls, Consumer<AbsSheetVerifyRule> absSheetVerifyRule, int sheetNum, int dataStartRow, int dataEndRowCount) {
         try (Workbook wb = WorkbookFactory.create(is)) {
             Sheet sheet = wb.getSheetAt(sheetNum);
             return readSheet(sheet, cls, absSheetVerifyRule, dataStartRow, dataEndRowCount, null);
@@ -802,7 +902,7 @@ public class ExcelUtils {
      * @param dataEndRowCount 尾部非数据行数量
      * @return List<Map < String, Object>>
      */
-    public static List<Map<String, Object>> readSheet(Sheet sheet, int dataStartRow, int dataEndRowCount) {
+    static List<Map<String, Object>> readSheet(Sheet sheet, int dataStartRow, int dataEndRowCount) {
         List<Map<String, Object>> sheetData = new ArrayList<>();
         int rowStart = sheet.getFirstRowNum() + dataStartRow;
         // 获取真实的数据行尾数
@@ -831,7 +931,7 @@ public class ExcelUtils {
      * @param filePath 文件路径
      * @param variable 内置变量
      */
-    public static Workbook readExcelWrite(String filePath, Map<String, String> variable) {
+    static Workbook readExcelWrite(String filePath, Map<String, String> variable) {
         try (FileInputStream is = new FileInputStream(filePath)) {
 
             return readExcelWrite(is, variable);
@@ -847,7 +947,7 @@ public class ExcelUtils {
      * @param is       excel文件流
      * @param variable 内置变量
      */
-    public static Workbook readExcelWrite(InputStream is, Map<String, String> variable) {
+    static Workbook readExcelWrite(InputStream is, Map<String, String> variable) {
         try {
             Workbook wb = WorkbookFactory.create(is);
             return readExcelWrite(wb, variable);
@@ -1010,46 +1110,41 @@ public class ExcelUtils {
      * @param cell                   单元格
      * @param subCellStyle           自定义样式
      */
-    private static void setCellValue(Drawing<Picture> createDrawingPatriarch, Column sourceColumn, Column customColumn, Object value, Cell cell, Map<Object, CellStyle> subCellStyle) {
+    private static void setCellValue(Drawing<Picture> createDrawingPatriarch, Column<?> sourceColumn, Object value, Cell cell, Map<String, CellStyle> subCellStyle) {
         Workbook workbook = cell.getSheet().getWorkbook();
-        // 0.判断是否需要用用户的样式
-        boolean customer = false;
-        if (customColumn != null) {
-            customer = (customColumn.getSet() == 1);
-        }
         // 1.水平定位
-        HorizontalAlignment align = customer ? customColumn.getAlign() : sourceColumn.getAlign();
+        HorizontalAlignment align = sourceColumn.align;
         if (align != null) {
             // 表示需要用户自定义的定位
-            CellStyle style = subCellStyle.get(customer + "-align-" + align);
+            CellStyle style = subCellStyle.get("cell-align-" + align);
             if (style == null) {
                 CellStyle sourceStyle = cell.getCellStyle();
                 style = workbook.createCellStyle();
                 style.cloneStyleFrom(sourceStyle);
                 style.setAlignment(align);
-                subCellStyle.put(customer + "-align-" + align, style);
+                subCellStyle.put("cell-align-" + align, style);
             }
             cell.setCellStyle(style);
         }
         // 2.垂直定位
-        VerticalAlignment valign = customer ? customColumn.getValign() : sourceColumn.getValign();
+        VerticalAlignment valign = sourceColumn.valign;
         if (valign != null) {
             // 表示需要用户自定义的定位
-            CellStyle style = subCellStyle.get(customer + "-valign-" + valign);
+            CellStyle style = subCellStyle.get("cell-valign-" + valign);
             if (style == null) {
                 CellStyle sourceStyle = cell.getCellStyle();
                 style = workbook.createCellStyle();
                 style.cloneStyleFrom(sourceStyle);
                 style.setVerticalAlignment(valign);
-                subCellStyle.put(customer + "-valign-" + valign, style);
+                subCellStyle.put("cell-valign-" + valign, style);
             }
             cell.setCellStyle(style);
         }
         // 3.字体颜色
-        IndexedColors color = customer ? customColumn.getColor() : sourceColumn.getColor();
+        IndexedColors color = sourceColumn.color;
         if (color != null) {
             // 表示需要用户自定义的定位
-            CellStyle style = subCellStyle.get(customer + "-color-" + color);
+            CellStyle style = subCellStyle.get("cell-color-" + color);
             if (style == null) {
                 CellStyle sourceStyle = cell.getCellStyle();
                 style = workbook.createCellStyle();
@@ -1059,35 +1154,35 @@ public class ExcelUtils {
                 font.setFontHeightInPoints((short) 10);
                 font.setColor(color.getIndex());
                 style.setFont(font);
-                subCellStyle.put(customer + "-color-" + color, style);
+                subCellStyle.put("cell-color-" + color, style);
             }
             cell.setCellStyle(style);
         }
         // 4.背景色
-        IndexedColors backColor = customer ? customColumn.getBackColor() : sourceColumn.getBackColor();
+        IndexedColors backColor = sourceColumn.backColor;
         if (backColor != null) {
             // 表示需要用户自定义的定位
-            CellStyle style = subCellStyle.get(customer + "-backColor-" + backColor);
+            CellStyle style = subCellStyle.get("cell-backColor-" + backColor);
             if (style == null) {
                 CellStyle sourceStyle = cell.getCellStyle();
                 style = workbook.createCellStyle();
                 style.cloneStyleFrom(sourceStyle);
                 style.setFillForegroundColor(backColor.getIndex());
                 style.setFillPattern(FillPatternType.SOLID_FOREGROUND);
-                subCellStyle.put(customer + "-backColor-" + backColor, style);
+                subCellStyle.put("cell-backColor-" + backColor, style);
             }
             cell.setCellStyle(style);
         }
 
         // 4.高度
-        int height = customer ? customColumn.getHeight() : sourceColumn.getHeight();
+        int height = sourceColumn.height;
         if (height != 0) {
             // 表示需要用户自定义高度
             cell.getRow().setHeight((short) height);
         }
 
         // 5.批注添加
-        String comment = customer ? customColumn.getComment() : sourceColumn.getComment();
+        String comment = sourceColumn.comment;
         if (StringUtils.isNotBlank(comment)) {
             // 表示需要用户添加批注
             Drawing<?> drawingPatriarch = cell.getSheet().createDrawingPatriarch();
@@ -1122,7 +1217,7 @@ public class ExcelUtils {
             cell.setCellValue(((Number) value).doubleValue());
         } else if (value instanceof Date || value instanceof LocalDate || value instanceof LocalDateTime) {
             // 1.格式化
-            String pattern = customer ? customColumn.getDatePattern() : sourceColumn.getDatePattern();
+            String pattern = sourceColumn.datePattern;
             CellStyle style = subCellStyle.get(pattern);
             if (style == null) {
                 CellStyle sourceStyle = cell.getCellStyle();
@@ -1139,7 +1234,7 @@ public class ExcelUtils {
             } else if (value instanceof LocalDateTime) {
                 LocalDateTime date = (LocalDateTime) value;
                 cell.setCellValue(date);
-            } else if (value instanceof LocalDate) {
+            } else {
                 LocalDate date = (LocalDate) value;
                 cell.setCellValue(date);
             }
@@ -1178,13 +1273,11 @@ public class ExcelUtils {
      * @param currRowNum 当前行
      * @return int[]
      */
-    private static int[] getFooterNum(Iterator<Entry<String, String>> entries, int currRowNum) {
+    private static int[] getFooterNum(List<ComplexCell> entries, int currRowNum) {
         int row = 0;
-        while (entries.hasNext()) {
-            Entry<String, String> entry = entries.next();
-            String key = entry.getKey();
-            Object[] range = PoiCommon.coverRange(key);
-            int a = (int) range[1];
+        List<Integer[]> rules = entries.stream().map(ComplexCell::getLocationIndex).collect(Collectors.toList());
+        for (Integer[] range : rules) {
+            int a = range[1] + 1;
             row = Math.max(a, row);
         }
         int[] footerNum = new int[row];
@@ -1526,8 +1619,8 @@ public class ExcelUtils {
                 for (String range : ranges) {
                     Matcher matcher = pattern.matcher(range);
                     if (matcher.find()) {
-                        Integer rowNum = Integer.parseInt(matcher.group(2));
-                        chars.append("A").append(rowNum - 1 + "").append(":");
+                        int rowNum = Integer.parseInt(matcher.group(2));
+                        chars.append("A").append(rowNum - 1).append(":");
                     }
 
                 }

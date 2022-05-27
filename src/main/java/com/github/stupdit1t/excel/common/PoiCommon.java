@@ -2,9 +2,14 @@ package com.github.stupdit1t.excel.common;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.reflect.FieldUtils;
+import org.apache.poi.ss.usermodel.CellStyle;
+import org.apache.poi.ss.usermodel.Font;
 
 import java.lang.reflect.Field;
-import java.util.*;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 /**
  * 一些公用的方法
@@ -15,16 +20,16 @@ public class PoiCommon {
      * 合并单元格转换
      *
      * @param rule 合并规则 如将1,1,A,A 转换
-     * @return Object[]
+     * @return Integer[]
      */
-    public static Object[] coverRange(String rule) {
+    public static Integer[] coverRangeIndex(String rule) {
         String[] range = rule.split(",");
-        Object[] rangeInt = new Object[4];
+        Integer[] rangeInt = new Integer[4];
         for (int i = 0; i < range.length; i++) {
             if (i < 2) {
-                rangeInt[i] = Integer.parseInt(range[i]);
+                rangeInt[i] = Integer.parseInt(range[i]) - 1;
             } else {
-                rangeInt[i] = range[i];
+                rangeInt[i] = PoiConstant.cellRefNums.get(range[i]);
             }
 
         }
@@ -69,16 +74,6 @@ public class PoiCommon {
             break;
         }
         return new String(chars);
-    }
-
-    /**
-     * 宽度设置,
-     *
-     * @param charNum 汉字数量
-     * @return int
-     */
-    public static int width(int charNum) {
-        return PoiConstant.CHAR_UNIT * charNum;
     }
 
     /**
@@ -135,23 +130,42 @@ public class PoiCommon {
     /**
      * 获取map规则最大列和行数
      *
-     * @param rules 规则
+     * @param indexs 规则
      * @return int[]
      */
-    public static int[] getMapRowColNum(Map<String, String> rules) {
+    public static int[] getMapRowColNum(List<Integer[]> indexLocation) {
         // 解析rules，获取最大行和最大列
-        Iterator<Map.Entry<String, String>> entries = rules.entrySet().iterator();
         int row = 0;
         int col = 0;
-        while (entries.hasNext()) {
-            Map.Entry<String, String> entry = entries.next();
-            String key = entry.getKey();
-            Object[] range = coverRange(key);
-            int a = (int) range[1];
-            int b = PoiConstant.cellRefNums.get(range[3]) + 1;
+        for (Integer[] range : indexLocation) {
+            int a = range[1] + 1;
+            int b = range[3] + 1;
             row = Math.max(a, row);
             col = Math.max(b, col);
         }
         return new int[]{row, col};
+    }
+
+    /**
+     * 拷贝样式
+     *
+     * @param newStyle 新
+     * @param newFont  新
+     * @param oldStyle 旧
+     * @param oldFont  旧
+     */
+    public static void copyStyle(CellStyle newStyle, Font newFont, CellStyle oldStyle, Font oldFont) {
+        newStyle.cloneStyleFrom(oldStyle);
+        newFont.setBold(oldFont.getBold());
+        newFont.setFontHeight(oldFont.getFontHeight());
+        newFont.setFontName(oldFont.getFontName());
+        newFont.setFontHeightInPoints(oldFont.getFontHeightInPoints());
+        newFont.setColor(oldFont.getColor());
+        newFont.setCharSet(oldFont.getCharSet());
+        newFont.setItalic(oldFont.getItalic());
+        newFont.setStrikeout(oldFont.getStrikeout());
+        newFont.setTypeOffset(oldFont.getTypeOffset());
+        newFont.setUnderline(oldFont.getUnderline());
+        newStyle.setFont(newFont);
     }
 }

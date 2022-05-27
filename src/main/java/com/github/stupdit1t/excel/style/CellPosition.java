@@ -11,13 +11,18 @@ public enum CellPosition {
 	 */
 	TITLE,
 
-	/**
-	 * 标题头部
-	 */
-	HEADER,
+    /**
+     * 标题头部
+     */
+    HEADER,
 
-	/**
-	 * 单元格
-	 */
-	CELL,
+    /**
+     * 单元格
+     */
+    CELL,
+
+    /**
+     * 尾部
+     */
+    FOOTER,
 }
