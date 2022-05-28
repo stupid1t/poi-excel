@@ -1,6 +1,8 @@
 package com.github.stupdit1t.excel.callback;
 
 
+import com.github.stupdit1t.excel.core.Column;
+
 /**
  * 导出回调函数
  *
@@ -9,13 +11,13 @@ package com.github.stupdit1t.excel.callback;
 
 @FunctionalInterface
 public interface OutCallback<R> {
-	/**
-	 * 导出回调
-	 *
-	 * @param value       当前单元格值
-	 * @param t           当前实体
-	 * @param customStyle 自定义单元格样式
-	 * @return 返回重置后的单元格值
-	 */
-	Object callback(Object value, R t);
+    /**
+     * 导出回调
+     *
+     * @param value 当前单元格值
+     * @param row   当前行记录
+     * @param style 自定义单元格样式
+     * @return 返回重置后的单元格值
+     */
+    Object callback(Object value, R row, Column.Style style);
 }

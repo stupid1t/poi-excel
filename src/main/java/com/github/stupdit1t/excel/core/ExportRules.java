@@ -121,7 +121,7 @@ class ExportRules {
     /**
      * 自动排序列宽度
      */
-    int autoNumColumnWidth = -1;
+    int autoNumColumnWidth = 2000;
 
     /**
      * 初始化规则，构建一个简单表头

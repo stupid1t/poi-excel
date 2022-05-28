@@ -1,6 +1,5 @@
 package com.github.stupdit1t.excel.core;
 
-import com.github.stupdit1t.excel.callback.OutCallback;
 import com.github.stupdit1t.excel.style.CellPosition;
 
 import java.util.List;
@@ -65,11 +64,6 @@ public class OpsSheet<R> extends AbsParent<OpsExport> {
      */
     OpsFooter<R> opsFooter;
 
-    /**
-     * 回调处理方法
-     */
-    OutCallback<R> callback;
-
     OpsSheet(OpsExport opsExport) {
         super(opsExport);
     }
@@ -131,16 +125,6 @@ public class OpsSheet<R> extends AbsParent<OpsExport> {
      */
     public OpsSheet<R> autoNumColumnWidth(int autoNumColumnWidth) {
         this.autoNumColumnWidth = autoNumColumnWidth;
-        return this;
-    }
-
-    /**
-     * 自动序号列宽度
-     *
-     * @return OpsSheet<R>
-     */
-    public OpsSheet<R> callBack(OutCallback<R> callback) {
-        this.callback = callback;
         return this;
     }
 

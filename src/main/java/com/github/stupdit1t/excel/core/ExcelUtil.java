@@ -1,10 +1,7 @@
 package com.github.stupdit1t.excel.core;
 
 import com.github.stupdit1t.excel.callback.InCallback;
-import com.github.stupdit1t.excel.common.PoiCommon;
-import com.github.stupdit1t.excel.common.PoiConstant;
-import com.github.stupdit1t.excel.common.PoiException;
-import com.github.stupdit1t.excel.common.PoiResult;
+import com.github.stupdit1t.excel.common.*;
 import com.github.stupdit1t.excel.handle.ImgHandler;
 import com.github.stupdit1t.excel.handle.rule.AbsCellVerifyRule;
 import com.github.stupdit1t.excel.handle.rule.AbsSheetVerifyRule;
@@ -63,8 +60,8 @@ public class ExcelUtil {
      *
      * @return OpsExport
      */
-    public static OpsExport opsExport() {
-        return new OpsExport();
+    public static OpsExport opsExport(WorkbookType workbookType) {
+        return new OpsExport(workbookType);
     }
 
     /**
@@ -92,16 +89,6 @@ public class ExcelUtil {
             Biff8EncryptionKey.setCurrentUserPassword(password);
             ((HSSFWorkbook) workbook).writeProtectWorkbook(password, StringUtils.EMPTY);
         }
-    }
-
-    /**
-     * 创建大数据workBook
-     * 避免OOM,导出速度比较慢.
-     * <p>
-     * 默认后缀 xlsx
-     */
-    static Workbook createBigWorkbook() {
-        return new SXSSFWorkbook();
     }
 
     /**
@@ -291,7 +278,9 @@ public class ExcelUtil {
         // 存储类的字段信息
         Map<Class<?>, Map<String, Field>> clsInfo = new HashMap<>();
         // 存储单元格样式信息，防止重复生成
-        Map<String, CellStyle> cacheCellStyle = new HashMap<>();
+        Map<String, CellStyle> cacheStyle = new HashMap<>();
+        // 存储单元格字体信息，防止重复生成
+        Map<String, Font> cacheFont = new HashMap<>();
         // 列信息
         List<Column<?>> fields = exportRules.column;
         for (int i = 0; i < data.size(); i++) {
@@ -307,7 +296,6 @@ public class ExcelUtil {
             for (int j = 0, n = 0; n < fields.size(); j++, n++) {
                 Column<T> column = (Column<T>) fields.get(n);
                 Cell cell = row.createCell(j);
-                cell.setCellStyle(cellStyleSource);
                 // 1.序号设置
                 if (exportRules.autoNum && j == 0) {
                     cell.setCellValue(i + 1);
@@ -321,11 +309,40 @@ public class ExcelUtil {
                 Object value = readField(clsInfo, t, column.field);
 
                 // 3.填充列值
+                Column.Style style = column.style;
                 if (column.outHandle != null) {
-                    value = column.outHandle.callback(value, t);
+                    style = Column.Style.clone(column.style);
+                    value = column.outHandle.callback(value, t, style);
                 }
-                // 4.设置单元格值
-                setCellValue(createDrawingPatriarch, column, value, cell, cacheCellStyle);
+
+                // 4.样式处理
+                setCellStyle(wb, cellFont, cacheStyle, cacheFont, style, cell, value);
+
+                // 5.设置单元格值
+                setCellValue(createDrawingPatriarch, value, cell);
+
+                // 6.批注添加
+                String comment = column.comment;
+                if (StringUtils.isNotBlank(comment)) {
+                    // 表示需要用户添加批注
+                    Drawing<?> drawingPatriarch = cell.getSheet().createDrawingPatriarch();
+                    ClientAnchor clientAnchor;
+                    RichTextString richTextString;
+                    if (wb instanceof XSSFWorkbook) {
+                        clientAnchor = new XSSFClientAnchor();
+                        richTextString = new XSSFRichTextString(comment);
+                    } else if (wb instanceof HSSFWorkbook) {
+                        clientAnchor = new HSSFClientAnchor();
+                        richTextString = new HSSFRichTextString(comment);
+                    } else {
+                        clientAnchor = new XSSFClientAnchor();
+                        richTextString = new XSSFRichTextString(comment);
+                    }
+                    Comment cellComment = drawingPatriarch.createCellComment(clientAnchor);
+                    cellComment.setAddress(cell.getAddress());
+                    cellComment.setString(richTextString);
+                    cell.setCellComment(cellComment);
+                }
             }
         }
         // ----------------------- body设置 end     ------------------------
@@ -333,6 +350,80 @@ public class ExcelUtil {
         // ------------------------footer设置 start  ------------------------
         handleFooter(data, exportRules, footerFont, footerStyleSource, footerStyle, sheet);
         // ------------------------footer设置 end ------------------------
+    }
+
+    /**
+     * 处理单元格样式
+     *
+     * @param wb          工作簿
+     * @param cellFont    原字体
+     * @param cacheStyle  缓存样式
+     * @param cacheFont   缓存字体
+     * @param styleCustom 样式
+     * @param cell        单元格
+     * @param value       值
+     * @param <T>
+     */
+    private static <T> void setCellStyle(Workbook wb, Font cellFont, Map<String, CellStyle> cacheStyle, Map<String, Font> cacheFont, Column.Style styleCustom, Cell cell, Object value) {
+        String styleCacheKey = styleCustom.getStyleCacheKey();
+        // 此处有值, 表示用户自定义列样式
+        if (styleCacheKey != null) {
+            CellStyle style = cacheStyle.get(styleCacheKey);
+            // 表示缓存无, 重新构建
+            if (style == null) {
+                style = wb.createCellStyle();
+                style.cloneStyleFrom(cell.getCellStyle());
+
+                // 1.水平定位
+                HorizontalAlignment align = styleCustom.align;
+                if (align != null) {
+                    style.setAlignment(align);
+                }
+
+                // 2.垂直定位
+                VerticalAlignment valign = styleCustom.valign;
+                if (valign != null) {
+                    style.setVerticalAlignment(valign);
+                }
+
+                // 3.字体颜色
+                IndexedColors color = styleCustom.color;
+                if (color != null) {
+                    Font font = cacheFont.get(styleCacheKey);
+                    if (font == null) {
+                        font = wb.createFont();
+                        PoiCommon.copyFont(font, cellFont);
+                        cacheFont.put(styleCacheKey, font);
+                    }
+                    font.setColor(color.getIndex());
+                    style.setFont(font);
+                }
+
+                // 4.背景色
+                IndexedColors backColor = styleCustom.backColor;
+                if (backColor != null) {
+                    style.setFillForegroundColor(backColor.getIndex());
+                    style.setFillPattern(FillPatternType.SOLID_FOREGROUND);
+                }
+
+                // 5. 日期格式化
+                String pattern = styleCustom.datePattern;
+                if (StringUtils.isNotBlank(pattern) && (value instanceof Date || value instanceof LocalDate || value instanceof LocalDateTime)) {
+                    CreationHelper createHelper = wb.getCreationHelper();
+                    style.setDataFormat(createHelper.createDataFormat().getFormat(pattern));
+                }
+                cacheStyle.put(styleCacheKey, style);
+            }
+            // 最终样式设置
+            cell.setCellStyle(style);
+        }
+
+        // 6.高度
+        int height = styleCustom.height;
+        if (height != -1) {
+            // 表示需要用户自定义高度
+            cell.getRow().setHeight((short) height);
+        }
     }
 
     /**
@@ -369,7 +460,7 @@ public class ExcelUtil {
                     // 自定义header单元格样式
                     styleNew = workbook.createCellStyle();
                     Font fontNew = workbook.createFont();
-                    PoiCommon.copyStyle(styleNew, fontNew, footerStyleSource, footerFont);
+                    PoiCommon.copyStyleAndFont(styleNew, fontNew, footerStyleSource, footerFont);
                     fontCellStyle.accept(fontNew, styleNew);
                 } else {
                     styleNew = footerStyleSource;
@@ -404,7 +495,7 @@ public class ExcelUtil {
     private static <T> void handleColumnProperty(List<T> data, ExportRules exportRules, Sheet sheet) {
         // ----------------------- 列属性设置 start--------------------
         List<Column<?>> fields = exportRules.column;
-        int autoNumColumnWidth = exportRules.autoNumColumnWidth == -1 ? 2000 : exportRules.autoNumColumnWidth;
+        int autoNumColumnWidth = exportRules.autoNumColumnWidth;
         for (int i = 0, j = 0; i < fields.size(); i++, j++) {
             // 0.每一列默认单元格样式设置
             // 1.width设置
@@ -414,7 +505,7 @@ public class ExcelUtil {
             }
             Column<?> column = fields.get(i);
             // 1.1是否自动列宽
-            int width = column.width;
+            int width = column.style.width;
             if (width != -1) {
                 sheet.setColumnWidth(j, width);
             } else {
@@ -453,13 +544,13 @@ public class ExcelUtil {
                 }
                 String[] split1 = split[0].split("~");
                 if (split1.length < 2) {
-                    throw new IllegalArgumentException("时间校验表达式不正确,请填写如" + column.datePattern + "的值!");
+                    throw new IllegalArgumentException("时间校验表达式不正确,请填写如" + column.style.datePattern + "的值!");
                 }
                 try {
-                    sheet.addValidationData(createDateValidation(sheet, column.datePattern, split1[0], split1[1], info, j, exportRules.maxRows, lastRow));
+                    sheet.addValidationData(createDateValidation(sheet, column.style.datePattern, split1[0], split1[1], info, j, exportRules.maxRows, lastRow));
                 } catch (ParseException e) {
                     LOG.error(e);
-                    throw new IllegalArgumentException("时间校验表达式不正确,请填写如" + column.datePattern + "的值!");
+                    throw new IllegalArgumentException("时间校验表达式不正确,请填写如" + column.style.datePattern + "的值!");
                 } catch (Exception e) {
                     LOG.error(e);
                 }
@@ -538,7 +629,7 @@ public class ExcelUtil {
     private static void handleSimpleHeader(ExportRules exportRules, Font titleFont, CellStyle titleStyleSource, ICellStyle titleStyle, Font headerFont, CellStyle headerStyleSource, ICellStyle headerStyle, Sheet sheet) {
         // 1. 冻结表头
         if (exportRules.freezeHeader) {
-            sheet.createFreezePane(0, exportRules.maxRows - 1, 0, exportRules.maxRows - 1);
+            sheet.createFreezePane(0, exportRules.maxRows, 0, exportRules.maxRows);
         }
 
         // 2. title 内容设置和行高
@@ -574,7 +665,7 @@ public class ExcelUtil {
                 // 自定义header单元格样式
                 styleNew = sheet.getWorkbook().createCellStyle();
                 Font fontNew = sheet.getWorkbook().createFont();
-                PoiCommon.copyStyle(styleNew, fontNew, headerStyleSource, headerFont);
+                PoiCommon.copyStyleAndFont(styleNew, fontNew, headerStyleSource, headerFont);
                 fontCellStyle.accept(fontNew, styleNew);
             } else {
                 styleNew = headerStyleSource;
@@ -644,7 +735,7 @@ public class ExcelUtil {
                 // 自定义header单元格样式
                 styleNew = sheet.getWorkbook().createCellStyle();
                 Font fontNew = sheet.getWorkbook().createFont();
-                PoiCommon.copyStyle(styleNew, fontNew, styleTemp, fontTemp);
+                PoiCommon.copyStyleAndFont(styleNew, fontNew, styleTemp, fontTemp);
                 fontCellStyle.accept(fontNew, styleNew);
             }
             CellUtil.createCell(sheet.getRow(firstRow), firstCol, complexCell.getText(), styleNew);
@@ -1104,107 +1195,13 @@ public class ExcelUtil {
      * 给单元格设置值
      *
      * @param createDrawingPatriarch 画图器
-     * @param sourceColumn           原始列
-     * @param customColumn           自定义列
      * @param value                  单元格值
      * @param cell                   单元格
-     * @param subCellStyle           自定义样式
      */
-    private static void setCellValue(Drawing<Picture> createDrawingPatriarch, Column<?> sourceColumn, Object value, Cell cell, Map<String, CellStyle> subCellStyle) {
+    private static void setCellValue(Drawing<Picture> createDrawingPatriarch, Object value, Cell cell) {
         Workbook workbook = cell.getSheet().getWorkbook();
-        // 1.水平定位
-        HorizontalAlignment align = sourceColumn.align;
-        if (align != null) {
-            // 表示需要用户自定义的定位
-            CellStyle style = subCellStyle.get("cell-align-" + align);
-            if (style == null) {
-                CellStyle sourceStyle = cell.getCellStyle();
-                style = workbook.createCellStyle();
-                style.cloneStyleFrom(sourceStyle);
-                style.setAlignment(align);
-                subCellStyle.put("cell-align-" + align, style);
-            }
-            cell.setCellStyle(style);
-        }
-        // 2.垂直定位
-        VerticalAlignment valign = sourceColumn.valign;
-        if (valign != null) {
-            // 表示需要用户自定义的定位
-            CellStyle style = subCellStyle.get("cell-valign-" + valign);
-            if (style == null) {
-                CellStyle sourceStyle = cell.getCellStyle();
-                style = workbook.createCellStyle();
-                style.cloneStyleFrom(sourceStyle);
-                style.setVerticalAlignment(valign);
-                subCellStyle.put("cell-valign-" + valign, style);
-            }
-            cell.setCellStyle(style);
-        }
-        // 3.字体颜色
-        IndexedColors color = sourceColumn.color;
-        if (color != null) {
-            // 表示需要用户自定义的定位
-            CellStyle style = subCellStyle.get("cell-color-" + color);
-            if (style == null) {
-                CellStyle sourceStyle = cell.getCellStyle();
-                style = workbook.createCellStyle();
-                style.cloneStyleFrom(sourceStyle);
-                Font font = workbook.createFont();
-                font.setFontName("Arial");
-                font.setFontHeightInPoints((short) 10);
-                font.setColor(color.getIndex());
-                style.setFont(font);
-                subCellStyle.put("cell-color-" + color, style);
-            }
-            cell.setCellStyle(style);
-        }
-        // 4.背景色
-        IndexedColors backColor = sourceColumn.backColor;
-        if (backColor != null) {
-            // 表示需要用户自定义的定位
-            CellStyle style = subCellStyle.get("cell-backColor-" + backColor);
-            if (style == null) {
-                CellStyle sourceStyle = cell.getCellStyle();
-                style = workbook.createCellStyle();
-                style.cloneStyleFrom(sourceStyle);
-                style.setFillForegroundColor(backColor.getIndex());
-                style.setFillPattern(FillPatternType.SOLID_FOREGROUND);
-                subCellStyle.put("cell-backColor-" + backColor, style);
-            }
-            cell.setCellStyle(style);
-        }
 
-        // 4.高度
-        int height = sourceColumn.height;
-        if (height != 0) {
-            // 表示需要用户自定义高度
-            cell.getRow().setHeight((short) height);
-        }
-
-        // 5.批注添加
-        String comment = sourceColumn.comment;
-        if (StringUtils.isNotBlank(comment)) {
-            // 表示需要用户添加批注
-            Drawing<?> drawingPatriarch = cell.getSheet().createDrawingPatriarch();
-            ClientAnchor clientAnchor;
-            RichTextString richTextString;
-            if (workbook instanceof XSSFWorkbook) {
-                clientAnchor = new XSSFClientAnchor();
-                richTextString = new XSSFRichTextString(comment);
-            } else if (workbook instanceof HSSFWorkbook) {
-                clientAnchor = new HSSFClientAnchor();
-                richTextString = new HSSFRichTextString(comment);
-            } else {
-                clientAnchor = new XSSFClientAnchor();
-                richTextString = new XSSFRichTextString(comment);
-            }
-            Comment cellComment = drawingPatriarch.createCellComment(clientAnchor);
-            cellComment.setAddress(cell.getAddress());
-            cellComment.setString(richTextString);
-            cell.setCellComment(cellComment);
-        }
-
-        // 判断值的类型后进行强制类型转换.再设置单元格格式
+        // 8.值设置, 判断值的类型后进行强制类型转换.再设置单元格格式
         if (value instanceof String) {
             // 判断是否是公式
             String strValue = String.valueOf(value);
@@ -1214,20 +1211,13 @@ public class ExcelUtil {
                 cell.setCellValue(strValue);
             }
         } else if (value instanceof Number) {
-            cell.setCellValue(((Number) value).doubleValue());
-        } else if (value instanceof Date || value instanceof LocalDate || value instanceof LocalDateTime) {
-            // 1.格式化
-            String pattern = sourceColumn.datePattern;
-            CellStyle style = subCellStyle.get(pattern);
-            if (style == null) {
-                CellStyle sourceStyle = cell.getCellStyle();
-                style = workbook.createCellStyle();
-                style.cloneStyleFrom(sourceStyle);
-                CreationHelper createHelper = workbook.getCreationHelper();
-                style.setDataFormat(createHelper.createDataFormat().getFormat(pattern));
-                subCellStyle.put(pattern, style);
+            // 处理整形自动不展示小数点
+            if (value instanceof Integer || value instanceof Long || value instanceof Short) {
+                cell.setCellValue(String.valueOf(value));
+            } else {
+                cell.setCellValue(((Number) value).doubleValue());
             }
-            cell.setCellStyle(style);
+        } else if (value instanceof Date || value instanceof LocalDate || value instanceof LocalDateTime) {
             if (value instanceof Date) {
                 Date date = (Date) value;
                 cell.setCellValue(date);
@@ -1247,13 +1237,13 @@ public class ExcelUtil {
             ClientAnchor anchor;
             int add1;
             if (workbook instanceof XSSFWorkbook) {
-                anchor = new XSSFClientAnchor(10, 10, 10, 10, x, y, x + 1, y + 1);
+                anchor = new XSSFClientAnchor(20, 20, 20, 20, x, y, x + 1, y + 1);
                 add1 = workbook.addPicture(data, XSSFWorkbook.PICTURE_TYPE_PNG);
             } else if (workbook instanceof HSSFWorkbook) {
-                anchor = new HSSFClientAnchor(10, 10, 10, 10, x, y, (short) (x + 1), y + 1);
+                anchor = new HSSFClientAnchor(20, 20, 20, 20, x, y, (short) (x + 1), y + 1);
                 add1 = workbook.addPicture(data, SXSSFWorkbook.PICTURE_TYPE_PNG);
             } else {
-                anchor = new XSSFClientAnchor(10, 10, 10, 10, x, y, (short) (x + 1), y + 1);
+                anchor = new XSSFClientAnchor(20, 20, 20, 20, x, y, (short) (x + 1), y + 1);
                 add1 = workbook.addPicture(data, XSSFWorkbook.PICTURE_TYPE_PNG);
             }
             createDrawingPatriarch.createPicture(anchor, add1);

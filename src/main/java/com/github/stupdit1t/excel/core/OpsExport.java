@@ -1,5 +1,6 @@
 package com.github.stupdit1t.excel.core;
 
+import com.github.stupdit1t.excel.common.WorkbookType;
 import com.github.stupdit1t.excel.style.DefaultCellStyleEnum;
 import com.github.stupdit1t.excel.style.ICellStyle;
 import org.apache.poi.ss.usermodel.Workbook;
@@ -20,7 +21,7 @@ public class OpsExport {
     /**
      * 文件格式
      */
-    boolean xls;
+    WorkbookType workbookType;
 
     /**
      * 全局单元格样式
@@ -44,8 +45,8 @@ public class OpsExport {
      */
     String outPath;
 
-    OpsExport() {
-
+    OpsExport(WorkbookType workbookType) {
+        this.workbookType = workbookType;
     }
 
     /**
@@ -72,17 +73,6 @@ public class OpsExport {
             throw new UnsupportedOperationException("仅支持设置输出 1 种输出方式");
         }
         this.outMode = wantSetMode;
-    }
-
-    /**
-     * 输出路径设置
-     *
-     * @param xls 是否为xls格式
-     * @return OpsExport
-     */
-    public OpsExport xls(boolean xls) {
-        this.xls = xls;
-        return this;
     }
 
     /**
@@ -123,7 +113,7 @@ public class OpsExport {
      * 执行输出
      */
     void execute() {
-        Workbook workbook = ExcelUtil.createEmptyWorkbook(!xls);
+        Workbook workbook = workbookType.create();
         for (OpsSheet<?> opsSheet : opsSheets) {
             OpsHeader<?> opsHeader = opsSheet.opsHeader;
             ExportRules exportRules;
@@ -160,4 +150,5 @@ public class OpsExport {
 
         ExcelUtil.export(workbook, this.outPath);
     }
+
 }

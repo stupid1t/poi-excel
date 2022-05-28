@@ -1,5 +1,6 @@
 package excel.export;
 
+import com.github.stupdit1t.excel.common.WorkbookType;
 import com.github.stupdit1t.excel.core.ExcelUtil;
 import com.github.stupdit1t.excel.style.CellPosition;
 import excel.export.data.ClassRoom;
@@ -87,13 +88,7 @@ public class MainClass {
         // 简单导出
         simpleExport();
         complexExport();
-      /*  simpleExport2();
-        complexExport();
-        complexExport2();
-        mapExport();
-        templateExport();
-        mulSheet();
-        readExport();*/
+        simpleExport2();
         System.out.println("耗时:" + (System.currentTimeMillis() - s));
 
     }
@@ -104,7 +99,30 @@ public class MainClass {
      * @throws Exception
      */
     public static void simpleExport() {
-        ExcelUtil.opsExport()
+        ExcelUtil.opsExport(WorkbookType.XLSX)
+                .password("123456")
+                .opsSheet(data)
+                .opsHeader().simple().texts("项目名称", "项目图", "所属区域", "省份", "市", "项目所属人", "项目领导人", "得分", "平均分", "创建时间").done()
+                .opsColumn().field("projectName").color(IndexedColors.BROWN).outHandle((value, row, style) -> {
+                    if (value.equals("中青旅2")) {
+                        style.setBackColor(IndexedColors.RED);
+                    }
+                    return value;
+                }).done()
+                .fields("img", "areaName", "province", "city", "people", "leader", "scount", "avg", "createTime")
+                .done()
+                .done()
+                .out("src/test/java/excel/export/simpleExport.xlsx")
+        ;
+    }
+
+    /**
+     * 简单导出
+     *
+     * @throws Exception
+     */
+    public static void simpleExport2() {
+        ExcelUtil.opsExport(WorkbookType.BIG_XLSX)
                 .password("123456")
                 .opsSheet(data)
                 .opsHeader().simple().texts("项目名称", "项目图", "所属区域", "省份", "市", "项目所属人", "项目领导人", "得分", "平均分", "创建时间").done()
@@ -129,7 +147,7 @@ public class MainClass {
      * @throws Exception
      */
     public static void complexExport() {
-        ExcelUtil.opsExport()
+        ExcelUtil.opsExport(WorkbookType.XLSX)
                 .opsSheet(data)
                 .autoNum(true)
                 .sheetName("一号sheet")
@@ -137,6 +155,7 @@ public class MainClass {
                 .height(CellPosition.HEADER, 800)
                 .height(CellPosition.FOOTER, 800)
                 .opsHeader()
+                .freeze(false)
                 .complex()
                 .text("项目资源统计", "1,1,A,K")
                 .text("序号", "2,3,A,A")
@@ -154,15 +173,24 @@ public class MainClass {
                 .text("创建时间", "2,3,J,J")
                 .done()
                 .opsColumn()
-                .fields("projectName", "areaName", "province", "city", "people", "leader", "scount", "avg", "img")
+                .field("projectName")
+                .align(HorizontalAlignment.LEFT)
+                .valign(VerticalAlignment.TOP)
+                .height(2000)
+                .width(2000)
+                .color(IndexedColors.BROWN)
+                .backColor(IndexedColors.YELLOW)
+                .comment("hhh")
+                .done()
+                .fields("areaName", "province", "city", "people", "leader", "scount", "avg", "img")
                 .field("createTime")
                 .align(HorizontalAlignment.LEFT)
                 .valign(VerticalAlignment.TOP)
                 .height(2000)
                 .width(2000)
-                .backColor(IndexedColors.BLUE)
-                .comment("hhh")
                 .datePattern("yyyy-MM-dd")
+                .backColor(IndexedColors.YELLOW)
+                .comment("hhh")
                 .done()
                 .done()
                 .opsFooter()

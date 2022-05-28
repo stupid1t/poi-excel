@@ -154,8 +154,19 @@ public class PoiCommon {
      * @param oldStyle 旧
      * @param oldFont  旧
      */
-    public static void copyStyle(CellStyle newStyle, Font newFont, CellStyle oldStyle, Font oldFont) {
+    public static void copyStyleAndFont(CellStyle newStyle, Font newFont, CellStyle oldStyle, Font oldFont) {
         newStyle.cloneStyleFrom(oldStyle);
+        PoiCommon.copyFont(newFont, oldFont);
+        newStyle.setFont(newFont);
+    }
+
+    /**
+     * 拷贝样式
+     *
+     * @param newFont 新
+     * @param oldFont 旧
+     */
+    public static void copyFont(Font newFont, Font oldFont) {
         newFont.setBold(oldFont.getBold());
         newFont.setFontHeight(oldFont.getFontHeight());
         newFont.setFontName(oldFont.getFontName());
@@ -166,6 +177,5 @@ public class PoiCommon {
         newFont.setStrikeout(oldFont.getStrikeout());
         newFont.setTypeOffset(oldFont.getTypeOffset());
         newFont.setUnderline(oldFont.getUnderline());
-        newStyle.setFont(newFont);
     }
 }
