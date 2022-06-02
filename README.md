@@ -221,7 +221,8 @@ class a {
 
 * 导出结果
 
-![image](https://user-images.githubusercontent.com/29246805/146559368-092741f8-a00a-4ffb-bb3b-87a6a38f90b4.png)
+![image](https://user-images.githubusercontent.com/29246805/171567317-b8ecb10d-ec6b-4f71-b600-9006a98a8146.png)
+
 
 
 
@@ -246,7 +247,7 @@ class a {
 
 * 导出结果
 
-![image](https://user-images.githubusercontent.com/29246805/146556910-420b4993-99eb-474f-b880-49bdefae5f97.png)
+![image](https://user-images.githubusercontent.com/29246805/171567398-973a51da-3150-4217-9b2e-b1537cf1f0bb.png)
 
 
 ##### 4. map数据导出
