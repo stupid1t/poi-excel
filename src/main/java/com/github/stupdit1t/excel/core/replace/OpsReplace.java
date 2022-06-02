@@ -83,9 +83,9 @@ public class OpsReplace {
     /**
      * 替换变量
      *
-     * @param key
-     * @param value
-     * @return
+     * @param key 变量名
+     * @param value 变量值
+     * @return OpsReplace
      */
     public OpsReplace variable(String key, String value) {
         this.variable.put(key, value);
@@ -95,7 +95,7 @@ public class OpsReplace {
     /**
      * 替换
      *
-     * @return
+     * @return Workbook
      */
     public Workbook replace() {
         if (StringUtils.isBlank(fromPath) && fromStream == null) {

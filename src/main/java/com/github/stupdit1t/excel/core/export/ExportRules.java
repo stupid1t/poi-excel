@@ -331,7 +331,7 @@ public class ExportRules {
     /**
      * 获取最大列
      *
-     * @return
+     * @return int
      */
     public int getMaxColumns() {
         return maxColumns;
@@ -340,7 +340,7 @@ public class ExportRules {
     /**
      * 获取最大行
      *
-     * @return
+     * @return int
      */
     public int getMaxRows() {
         return maxRows;
@@ -349,7 +349,7 @@ public class ExportRules {
     /**
      * 是否合并模式
      *
-     * @return
+     * @return boolean
      */
     public boolean isIfMerge() {
         return ifMerge;
@@ -358,7 +358,7 @@ public class ExportRules {
     /**
      * 是否有尾行
      *
-     * @return
+     * @return boolean
      */
     public boolean isIfFooter() {
         return ifFooter;
@@ -367,7 +367,7 @@ public class ExportRules {
     /**
      * 是否简单导出
      *
-     * @return
+     * @return boolean
      */
     public boolean isSimple() {
         return simple;
@@ -376,7 +376,7 @@ public class ExportRules {
     /**
      * 是否冻结表头
      *
-     * @return
+     * @return boolean
      */
     public boolean isFreezeHeader() {
         return freezeHeader;
@@ -385,7 +385,7 @@ public class ExportRules {
     /**
      * 大标题高度
      *
-     * @return
+     * @return short
      */
     public short getTitleHeight() {
         return titleHeight;
@@ -394,7 +394,7 @@ public class ExportRules {
     /**
      * 表头高度
      *
-     * @return
+     * @return short
      */
     public short getHeaderHeight() {
         return headerHeight;
@@ -403,7 +403,7 @@ public class ExportRules {
     /**
      * 单元格高度
      *
-     * @return
+     * @return short
      */
     public short getCellHeight() {
         return cellHeight;
@@ -412,7 +412,7 @@ public class ExportRules {
     /**
      * 尾行高度
      *
-     * @return
+     * @return short
      */
     public short getFooterHeight() {
         return footerHeight;
@@ -421,7 +421,7 @@ public class ExportRules {
     /**
      * 自动学号列宽度
      *
-     * @return
+     * @return int
      */
     public int getAutoNumColumnWidth() {
         return autoNumColumnWidth;

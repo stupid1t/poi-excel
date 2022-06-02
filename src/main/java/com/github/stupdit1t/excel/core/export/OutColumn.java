@@ -333,7 +333,7 @@ public class OutColumn<R> extends AbsParent<OpsColumn<R>> implements Cloneable {
         /**
          * 获取样式缓存
          *
-         * @return
+         * @return String
          */
         public String getStyleCacheKey() {
             if (
@@ -562,7 +562,7 @@ public class OutColumn<R> extends AbsParent<OpsColumn<R>> implements Cloneable {
     /**
      * 获取自定义校验
      *
-     * @return
+     * @return String
      */
     public String getVerifyCustom() {
         return verifyCustom;
@@ -571,7 +571,7 @@ public class OutColumn<R> extends AbsParent<OpsColumn<R>> implements Cloneable {
     /**
      * 获取批注
      *
-     * @return
+     * @return String
      */
     public String getComment() {
         return comment;
@@ -580,7 +580,7 @@ public class OutColumn<R> extends AbsParent<OpsColumn<R>> implements Cloneable {
     /**
      * 获取校验数量
      *
-     * @return
+     * @return int
      */
     public int getVerifyCount() {
         return verifyCount;
@@ -589,7 +589,7 @@ public class OutColumn<R> extends AbsParent<OpsColumn<R>> implements Cloneable {
     /**
      * 获取样式
      *
-     * @return
+     * @return Style
      */
     public Style getStyle() {
         return style;
@@ -598,7 +598,7 @@ public class OutColumn<R> extends AbsParent<OpsColumn<R>> implements Cloneable {
     /**
      * 获取输出回调
      *
-     * @return
+     * @return OutCallback
      */
     public OutCallback<R> getOutHandle() {
         return outHandle;
