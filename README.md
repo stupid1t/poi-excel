@@ -563,36 +563,3 @@ public class MainClass {
 第4行: 项目领导人-不能为空(G4)  总分-格式不正确(H4) 
 第8行: 项目领导人-不能为空(G8) 
 ```
-
-## 五. 便捷快速读Excel
-
-* 示例图
-
-![image](https://user-images.githubusercontent.com/29246805/146621587-f9a0f779-84a0-463d-885b-a0d3a16afb3c.png)
-
-* 代码示例
-
-```java
-class a {
-    public static void readSheet() {
-        List<Map<String, Object>> lists = ExcelUtils.readSheet("src/test/java/excel/export/readExport_OUT.xlsx", 0, 3, 1);
-        for (Map<String, Object> list : lists) {
-            System.out.println(list);
-        }
-    }
-}
-```
-
-* 输出
-
-```xhtml
-{A=2.0, B=中青旅1, C=, D=华东长三角, E=陕西省, F=保定市, G=张三, H=李四, I=239.0, J=0.33438526939871205, K=Fri Dec 17 17:38:17 CST 2021}
-{A=3.0, B=中青旅2, C=, D=华东长三角, E=陕西省, F=保定市, G=张三, H=李四, I=734.0, J=0.046917323921557674, K=Fri Dec 17 17:38:17 CST 2021}
-{A=4.0, B=中青旅3, C=, D=华东长三角, E=陕西省, F=保定市, G=张三, H=李四, I=235.0, J=0.8870974305330224, K=Fri Dec 17 17:38:17 CST 2021}
-{A=5.0, B=中青旅4, C=, D=西安市, E=陕西省, F=保定市, G=张三, H=李四, I=484.0, J=0.3290520137271864, K=Fri Dec 17 17:38:17 CST 2021}
-{A=6.0, B=中青旅5, C=, D=华东长三角, E=陕西省, F=保定市, G=张三, H=李四, I=18.0, J=0.28227006573210534, K=Fri Dec 17 17:38:17 CST 2021}
-{A=7.0, B=中青旅6, C=, D=华东长三角, E=陕西省, F=保定市, G=张三, H=李四, I=233.0, J=0.43438315036948694, K=Fri Dec 17 17:38:17 CST 2021}
-{A=8.0, B=中青旅7, C=, D=华东长三角, E=陕西省, F=保定市, G=张三, H=李四, I=984.0, J=0.11953560849002731, K=Fri Dec 17 17:38:17 CST 2021}
-{A=9.0, B=中青旅8, C=, D=华东长三角, E=陕西省, F=保定市, G=张三, H=李四, I=710.0, J=0.35917838863116225, K=Fri Dec 17 17:38:17 CST 2021}
-{A=10.0, B=中青旅9, C=, D=华东长三角, E=陕西省, F=保定市, G=张三, H=李四, I=429.0, J=0.2535268079402, K=Fri Dec 17 17:38:17 CST 2021}
-```
