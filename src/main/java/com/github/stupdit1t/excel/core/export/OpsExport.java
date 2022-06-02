@@ -142,7 +142,8 @@ public class OpsExport {
     public void export(String toPath) {
         checkSetToMode(1);
         this.path = toPath;
-        this.export();
+        final Workbook workbook = this.createBook();
+        this.export(workbook);
     }
 
     /**
@@ -153,7 +154,8 @@ public class OpsExport {
     public void export(OutputStream toStream) {
         checkSetToMode(2);
         this.stream = toStream;
-        this.export();
+        final Workbook workbook = this.createBook();
+        this.export(workbook);
     }
 
     /**
@@ -166,13 +168,33 @@ public class OpsExport {
         checkSetToMode(3);
         this.response = toResponse;
         this.responseName = fileName;
-        this.export();
+        final Workbook workbook = this.createBook();
+        this.export(workbook);
     }
 
     /**
      * 执行输出
+     * @param workbook
      */
-    void export() {
+    private void export(Workbook workbook){
+        // 5.执行导出
+        switch (this.toMode) {
+            case 1:
+                ExcelUtil.export(workbook, this.path);
+                break;
+            case 2:
+                ExcelUtil.export(workbook, this.stream);
+                break;
+            case 3:
+                ExcelUtil.export(workbook, this.response, this.responseName);
+                break;
+        }
+    }
+
+    /**
+     * 创建workbook
+     */
+    public Workbook createBook() {
         // 1.声明工作簿
         Workbook workbook = workbookType.create();
 
@@ -199,19 +221,7 @@ public class OpsExport {
             }
         }
 
-        // 5.执行导出
-        switch (this.toMode) {
-            case 1:
-                ExcelUtil.export(workbook, this.path);
-                break;
-            case 2:
-                ExcelUtil.export(workbook, this.stream);
-                break;
-            case 3:
-                ExcelUtil.export(workbook, this.response, this.responseName);
-                break;
-        }
-
+        return workbook;
     }
 
     /**

@@ -136,7 +136,7 @@ public class ExportClass {
                 .opsHeader().simple().texts("项目名称", "项目图", "所属区域", "省份", "市", "项目所属人", "项目领导人", "得分", "平均分", "创建时间").done()
                 .opsColumn().fields("projectName", "img", "areaName", "province", "city", "people", "leader", "scount", "avg", "createTime").done()
                 .done()
-                .export("src/test/java/excel/export/excel/simpleExport.xlsx")
+                .getWorkbook("src/test/java/excel/export/excel/simpleExport.xlsx")
         ;
     }
 
@@ -245,7 +245,7 @@ public class ExportClass {
                 .done()
                 .done()
                 // 执行导出
-                .export("src/test/java/excel/export/excel/simpleExport2.xls")
+                .getWorkbook("src/test/java/excel/export/excel/simpleExport2.xls")
         ;
     }
 
@@ -289,7 +289,7 @@ public class ExportClass {
                 .textIndex("=SUM(H4:H13)", new Integer[]{0, 1, 3, 10})
                 .done()
                 .done()
-                .export("src/test/java/excel/export/excel/complexExport.xlsx");
+                .getWorkbook("src/test/java/excel/export/excel/complexExport.xlsx");
     }
 
     /**
@@ -305,7 +305,7 @@ public class ExportClass {
                 .opsHeader().simple().texts("學生姓名", "所在班級", "所在學校", "更多父母姓名").done()
                 .opsColumn().fields("name", "classRoom.name", "classRoom.school.name", "moreInfo.parent.age").done()
                 .done()
-                .export("src/test/java/excel/export/excel/complexObject.xlsx");
+                .getWorkbook("src/test/java/excel/export/excel/complexObject.xlsx");
     }
 
     /**
@@ -321,7 +321,7 @@ public class ExportClass {
                 .opsHeader().simple().texts("姓名", "年龄").done()
                 .opsColumn().fields("name", "age").done()
                 .done()
-                .export("src/test/java/excel/export/excel/mapExport.xlsx");
+                .getWorkbook("src/test/java/excel/export/excel/mapExport.xlsx");
     }
 
     /**
@@ -345,7 +345,7 @@ public class ExportClass {
                 .field("备注").done()
                 .done()
                 .done()
-                .export("src/test/java/excel/export/excel/templateExport.xlsx");
+                .getWorkbook("src/test/java/excel/export/excel/templateExport.xlsx");
     }
 
     /**
@@ -374,7 +374,7 @@ public class ExportClass {
                 .opsHeader().simple().texts("项目名称", "项目图", "所属区域", "省份", "市", "项目所属人", "项目领导人", "得分", "平均分", "创建时间").done()
                 .opsColumn().fields("projectName", "img", "areaName", "province", "city", "people", "leader", "scount", "avg", "createTime").done()
                 .done()
-                .export("src/test/java/excel/export/excel/mulSheet.xlsx");
+                .getWorkbook("src/test/java/excel/export/excel/mulSheet.xlsx");
     }
 
     /**
@@ -391,7 +391,7 @@ public class ExportClass {
                 .opsHeader().simple().texts("项目名称", "项目图", "所属区域", "省份", "市", "项目所属人", "项目领导人", "得分", "平均分", "创建时间").done()
                 .opsColumn().fields("projectName", "img", "areaName", "province", "city", "people", "leader", "scount", "avg", "createTime").done()
                 .done()
-                .export("src/test/java/excel/export/excel/bigData.xlsx");
+                .getWorkbook("src/test/java/excel/export/excel/bigData.xlsx");
     }
 
     /**
