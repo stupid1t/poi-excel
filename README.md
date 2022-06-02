@@ -53,8 +53,8 @@ class a {
 ```
 
 * 导出结果
+![image](https://user-images.githubusercontent.com/29246805/171567064-3b62d725-96c8-4ee1-b91c-59f1d5f98f56.png)
 
-![image](https://user-images.githubusercontent.com/29246805/146552540-fc5d311a-92c2-4abb-9814-699251e16b17.png)
 
 ##### 2. 简单导出 + 自定义属性完整示例
 
