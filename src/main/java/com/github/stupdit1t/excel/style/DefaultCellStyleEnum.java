@@ -28,6 +28,7 @@ public enum DefaultCellStyleEnum  implements ICellStyle {
 	 */
 	HEADER(CellPosition.HEADER, (font, style) -> {
 		font.setFontName("Arial");
+		font.setBold(true);
 		font.setFontHeightInPoints((short) 10);
 		font.setColor(IndexedColors.WHITE.getIndex());
 		style.setBorderRight(BorderStyle.THIN);

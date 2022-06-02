@@ -314,6 +314,7 @@ public class ExcelUtil {
                 setCellStyle(wb, cellFont, cacheStyle, cacheFont, style, cell, value);
 
                 // 5.设置单元格值
+                cell.setCellStyle(cellStyleSource);
                 setCellValue(createDrawingPatriarch, value, cell);
 
                 // 6.批注添加
