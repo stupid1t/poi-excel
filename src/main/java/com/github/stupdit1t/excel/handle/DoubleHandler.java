@@ -1,49 +1,38 @@
 package com.github.stupdit1t.excel.handle;
 
+import com.github.stupdit1t.excel.common.PoiConstant;
 import com.github.stupdit1t.excel.common.PoiException;
-import com.github.stupdit1t.excel.handle.rule.AbsCellVerifyRule;
+import com.github.stupdit1t.excel.handle.rule.BaseVerifyRule;
 import org.apache.commons.lang3.math.NumberUtils;
 
 import java.math.BigDecimal;
-import java.util.function.Function;
 
 
 /**
  * double校验实体
- * 
- * @author 625
  *
+ * @author 625
  */
-public class DoubleHandler extends AbsCellVerifyRule<Double> {
+public class DoubleHandler extends BaseVerifyRule<Double> {
 
-	/**
-	 * 常规验证
-	 *
-	 * @param allowNull 可为空
-	 */
-	public DoubleHandler(boolean allowNull) {
-		super(allowNull);
-	}
+    /**
+     * 常规验证
+     *
+     * @param allowNull 可为空
+     */
+    public DoubleHandler(boolean allowNull) {
+        super(allowNull);
+    }
 
-	/**
-	 * 自定义验证
-	 *
-	 * @param allowNull 可为空
-	 * @param customVerify 自定义校验
-	 */
-	public DoubleHandler(boolean allowNull, Function<Object, Double> customVerify) {
-		super(allowNull, customVerify);
-	}
-
-	@Override
-	public Double doHandle(String fieldName, Object cellValue) throws Exception {
-		String value = String.valueOf(cellValue);
-		if (cellValue instanceof Double) {
-			return (Double) cellValue;
-		} else if (NumberUtils.isCreatable(value)) {
-			return new BigDecimal(value).doubleValue();
-		}
-		throw PoiException.error(fieldName+"格式不正确");
-	}
+    @Override
+    public Double doHandle(String fieldName, String index, Object cellValue) throws Exception {
+        String value = String.valueOf(cellValue);
+        if (cellValue instanceof Double) {
+            return (Double) cellValue;
+        } else if (NumberUtils.isCreatable(value)) {
+            return new BigDecimal(value).doubleValue();
+        }
+        throw PoiException.error(String.format(PoiConstant.INCORRECT_FORMAT_STR, fieldName, index));
+    }
 
 }

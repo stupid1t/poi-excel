@@ -73,7 +73,7 @@
 // 1.导出的hearder设置
 String[]hearder={"项目名称","所属区域","省份","市","项目所属人","项目领导人","得分","平均分","创建时间","项目图片"};
 // 2.导出hearder对应的字段设置
-        Column[]column={Column.field("projectName"),Column.field("areaName"),Column.field("province"),
+        Column[]inColumn={Column.field("projectName"),Column.field("areaName"),Column.field("province"),
         Column.field("city"),Column.field("people"),Column.field("leader"),Column.field("scount"),
         Column.field("avg"),Column.field("createTime"),
         // 项目图片
@@ -101,7 +101,7 @@ public void handleStyle(Font font,CellStyle style){
         }
         };
 // 3.执行导出到工作簿
-        Workbook bean=ExcelUtils.createWorkbook(sheetData,ExportRules.simpleRule(column,hearder)
+        Workbook bean=ExcelUtils.createWorkbook(sheetData,ExportRules.simpleRule(inColumn,hearder)
         .title("项目资源统计")
         .autoNum(true)
         .sheetName("mysheet1")
@@ -147,7 +147,7 @@ footerRules.put("1,2,A,C", "合计:");
 footerRules.put("1,2,D,K", "=SUM(H4:H13)");
 
 // 3.导出hearder对应的属性设置
-Column[] column = {
+        Column[]inColumn={
         Column.field("projectName"),
         // 4.1设置此列宽度为10
         Column.field("areaName").width(10),
@@ -172,7 +172,7 @@ Column[] column = {
 
 };
 // 4.导出规则定义
-ExportRules exportRules = ExportRules.complexRule(column, headerRules)
+        ExportRules exportRules=ExportRules.complexRule(inColumn,headerRules)
         // 自动生成序号, 需要定义序号列
         .autoNum(true)
         // 尾部合计行定义
@@ -209,12 +209,12 @@ mapData.add(obj);
 
 // 2.导出hearder对应的字段设置，列宽设置
 String[] hearder = {"姓名", "年龄"};
-Column[] column = {
+Column[] inColumn = {
         Column.field("name"),
         Column.field("age"),
 };
 // 3.执行导出到工作簿
-Workbook bean = ExcelUtils.createWorkbook(mapData, ExportRules.simpleRule(column, hearder), true);
+Workbook bean = ExcelUtils.createWorkbook(mapData, ExportRules.simpleRule(inColumn, hearder), true);
 // 4.写出文件
 bean.write(new FileOutputStream(filePath);
 ```
@@ -241,7 +241,7 @@ for (int i = 0; i < 20; i++) {
 String[] hearder = {"學生姓名", "所在班級", "所在學校", "更多父母姓名"};
 
 // 2.导出hearder对应的字段设置，列宽设置
-Column[] column = {
+Column[] inColumn = {
         Column.field("name"), 
         Column.field("classRoom.name"), 
         Column.field("classRoom.school.name"),
@@ -249,7 +249,7 @@ Column[] column = {
 };
 
 // 3.执行导出到工作簿
-Workbook bean = ExcelUtils.createWorkbook(complexData, ExportRules.simpleRule(column, hearder).title("學生基本信息"), true);
+Workbook bean = ExcelUtils.createWorkbook(complexData, ExportRules.simpleRule(inColumn, hearder).title("學生基本信息"), true);
 
 // 4.写出文件
 bean.write(new FileOutputStream(filePath));
@@ -271,9 +271,9 @@ for (int i = 0; i < moreSheetData.size(); i++) {
         // 1.导出的hearder设置
         String[] hearder = {"项目名称", "所属区域", "省份", "市", "项目所属人", "项目领导人", "得分", "平均分", "创建时间", "项目图片"};
         // 2.导出hearder对应的字段设置
-        Column[] column = {
-                Column.field("projectName"), 
-                Column.field("areaName"), 
+        Column[]inColumn={
+        Column.field("projectName"),
+        Column.field("areaName"), 
                 Column.field("province"),
                 Column.field("city"),
                 Column.field("people"), 
@@ -284,34 +284,34 @@ for (int i = 0; i < moreSheetData.size(); i++) {
                 // 项目图片
                 Column.field("img")
         };
-        ExcelUtils.fillBook(emptyWorkbook, data1, ExportRules.simpleRule(column, hearder).title("项目资源统计").sheetName("mysheet1").autoNum(true));
-    }
+        ExcelUtils.fillBook(emptyWorkbook,data1,ExportRules.simpleRule(inColumn,hearder).title("项目资源统计").sheetName("mysheet1").autoNum(true));
+        }
     if (i == 1) {
         List<Map<String, Object>> data2 = (ArrayList<Map<String, Object>>) moreSheetData.get(i);
         // 1.导出的hearder设置
         String[] hearder = {"姓名", "年龄"};
         // 2.导出hearder对应的字段设置，列宽设置
-        Column[] column = {
-                Column.field("name"),
+        Column[]inColumn={
+        Column.field("name"),
                 Column.field("age")
         };
-        ExcelUtils.fillBook(emptyWorkbook, data2, ExportRules.simpleRule(column, hearder).sheetName("mysheet2"));
-    }
+        ExcelUtils.fillBook(emptyWorkbook,data2,ExportRules.simpleRule(inColumn,hearder).sheetName("mysheet2"));
+        }
 
     if (i == 2) {
         List<Student> data3 = (ArrayList<Student>) moreSheetData.get(i);
         // 1.导出的hearder设置
         String[] hearder = {"學生姓名", "所在班級", "所在學校", "更多父母姓名"};
         // 2.导出hearder对应的字段设置，列宽设置
-        Column[] column = {
-                Column.field("name"), 
-                Column.field("classRoom.name"), 
+        Column[]inColumn={
+        Column.field("name"),
+        Column.field("classRoom.name"), 
                 Column.field("classRoom.school.name"),
                 Column.field("moreInfo.parent.name")
         };
         // 3.执行导出到工作簿
-        ExcelUtils.fillBook(emptyWorkbook, data3, ExportRules.simpleRule(column, hearder).title("學生基本信息"));
-    }
+        ExcelUtils.fillBook(emptyWorkbook,data3,ExportRules.simpleRule(inColumn,hearder).title("學生基本信息"));
+        }
 
 }
 // 4.写出文件
@@ -332,14 +332,14 @@ List<Map<String, Object>>mapData=new ArrayList<>();
         String[]hearder={"姓名","年龄"};
 
 // 2.导出hearder对应的字段设置，列宽设置
-        Column[]column={
+        Column[]inColumn={
         Column.field("name"),
         Column.field("age"),
         };
 
 // 3.执行导出到工作簿
         Workbook bigWorkbook=ExcelUtils.createBigWorkbook();
-        ExcelUtils.fillBook(bigWorkbook,mapData,ExportRules.simpleRule(column,hearder));
+        ExcelUtils.fillBook(bigWorkbook,mapData,ExportRules.simpleRule(inColumn,hearder));
 
 // 4.写出文件
         bigWorkbook.write(new FileOutputStream(filePath);
@@ -353,8 +353,8 @@ String[] hearder = {"宝宝姓名", "宝宝昵称", "家长姓名", "手机号�
     "分配校区", "备注"};
 
 // 2.导出hearder对应的字段设置，列宽设置
-Column[] column = {Column.field("宝宝姓名"), Column.field("宝宝昵称"), Column.field("家长姓名"),
-    Column.field("手机号码").verifyText("11~11", "请输入11位的手机号码！"),
+        Column[]inColumn={Column.field("宝宝姓名"),Column.field("宝宝昵称"),Column.field("家长姓名"),
+        Column.field("手机号码").verifyText("11~11","请输入11位的手机号码！"),
     Column.field("宝宝生日").verifyDate("2000-01-01~3000-12-31"),
     Column.field("月龄").width(4).verifyCustom("VALUE(F3:F6000)", "月齡格式：如1年2个月则输入14"),
     Column.field("宝宝性别").dorpDown(new String[]{"男", "女"}),
@@ -365,7 +365,7 @@ Column[] column = {Column.field("宝宝姓名"), Column.field("宝宝昵称"), C
     Column.field("分配校区").width(6).dorpDown(new String[]{"大唐", "银泰"}), Column.field("备注")};
 
 // 3.执行导出到工作簿
-Workbook bean = ExcelUtils.createWorkbook(Collections.emptyList(), ExportRules.simpleRule(column, hearder), true);
+        Workbook bean=ExcelUtils.createWorkbook(Collections.emptyList(),ExportRules.simpleRule(inColumn,hearder),true);
 
 // 4.写出文件
 bean.write(new FileOutputStream(filePath));

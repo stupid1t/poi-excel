@@ -1,7 +1,7 @@
 package com.github.stupdit1t.excel.callback;
 
 
-import com.github.stupdit1t.excel.core.Column;
+import com.github.stupdit1t.excel.core.export.OutColumn;
 
 /**
  * 导出回调函数
@@ -19,5 +19,5 @@ public interface OutCallback<R> {
      * @param style 自定义单元格样式
      * @return 返回重置后的单元格值
      */
-    Object callback(Object value, R row, Column.Style style);
+    Object callback(Object value, R row, OutColumn.Style style);
 }

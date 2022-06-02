@@ -1,4 +1,4 @@
-package com.github.stupdit1t.excel.core;
+package com.github.stupdit1t.excel.core.export;
 
 import com.github.stupdit1t.excel.common.PoiCommon;
 import com.github.stupdit1t.excel.style.DefaultCellStyleEnum;
@@ -12,7 +12,7 @@ import java.util.List;
 import java.util.function.BiConsumer;
 import java.util.stream.Collectors;
 
-class ExportRules {
+public class ExportRules {
 
     /**
      * sheetName
@@ -29,7 +29,7 @@ class ExportRules {
     /**
      * 列数据规则定义
      */
-    final List<Column<?>> column;
+    final List<OutColumn<?>> column;
 
     /**
      * 表头名
@@ -129,7 +129,7 @@ class ExportRules {
      * @param column 定义导出列字段
      * @param header 表头设计
      */
-    public static ExportRules simpleRule(List<Column<?>> column, LinkedHashMap<String, BiConsumer<Font, CellStyle>> header) {
+    public static ExportRules simpleRule(List<OutColumn<?>> column, LinkedHashMap<String, BiConsumer<Font, CellStyle>> header) {
         return new ExportRules(column, header, true);
     }
 
@@ -139,7 +139,7 @@ class ExportRules {
      * @param column        定义导出列字段
      * @param complexHeader 表头设计
      */
-    public static ExportRules complexRule(List<Column<?>> column, List<ComplexCell> complexHeader) {
+    public static ExportRules complexRule(List<OutColumn<?>> column, List<ComplexCell> complexHeader) {
         return new ExportRules(column, complexHeader);
     }
 
@@ -150,7 +150,7 @@ class ExportRules {
      * @param header 表头标题
      * @param simple 简单表头
      */
-    private ExportRules(List<Column<?>> column, LinkedHashMap<String, BiConsumer<Font, CellStyle>> header, boolean simple) {
+    private ExportRules(List<OutColumn<?>> column, LinkedHashMap<String, BiConsumer<Font, CellStyle>> header, boolean simple) {
         super();
         this.column = column;
         this.simple = simple;
@@ -163,18 +163,28 @@ class ExportRules {
      * @param column        列数据规则定义
      * @param complexHeader 表头设计
      */
-    private ExportRules(List<Column<?>> column, List<ComplexCell> complexHeader) {
+    private ExportRules(List<OutColumn<?>> column, List<ComplexCell> complexHeader) {
         super();
         this.column = column;
         setComplexHeader(complexHeader);
     }
 
+    /**
+     * 设置简单表头
+     *
+     * @param simpleHeader 简单表头设置
+     */
     private void setSimpleHeader(LinkedHashMap<String, BiConsumer<Font, CellStyle>> simpleHeader) {
         this.simpleHeader = simpleHeader;
         this.maxRows = this.maxRows + 1;
         this.maxColumns = simpleHeader.size() - 1;
     }
 
+    /**
+     * 设置复杂表头
+     *
+     * @param complexHeader 复杂表土设置
+     */
     private void setComplexHeader(List<ComplexCell> complexHeader) {
         this.complexHeader = complexHeader;
         List<Integer[]> indexLocation = complexHeader.stream().map(ComplexCell::getLocationIndex).collect(Collectors.toList());
@@ -226,5 +236,194 @@ class ExportRules {
         }
         this.title = title;
         this.maxRows = this.maxRows + 1;
+    }
+
+    /**
+     * 获取book密码
+     *
+     * @return String
+     */
+    public String getPassword() {
+        return password;
+    }
+
+    /**
+     * 是否xlsx格式
+     *
+     * @return boolean
+     */
+    public boolean isXlsx() {
+        return xlsx;
+    }
+
+    /**
+     * 全局样式
+     *
+     * @return ICellStyle[]
+     */
+    public ICellStyle[] getGlobalStyle() {
+        return globalStyle;
+    }
+
+    /**
+     * 获取sheet名字
+     *
+     * @return String
+     */
+    public String getSheetName() {
+        return sheetName;
+    }
+
+    /**
+     * 是否自动生成序号
+     *
+     * @return boolean
+     */
+    public boolean isAutoNum() {
+        return autoNum;
+    }
+
+    /**
+     * 获取输出列
+     *
+     * @return List<OutColumn < ?>>
+     */
+    public List<OutColumn<?>> getColumn() {
+        return column;
+    }
+
+    /**
+     * 获取大标题
+     *
+     * @return List<OutColumn < ?>>
+     */
+    public String getTitle() {
+        return title;
+    }
+
+    /**
+     * 获取简单表头设置
+     *
+     * @return LinkedHashMap<String, BiConsumer < Font, CellStyle>>
+     */
+    public LinkedHashMap<String, BiConsumer<Font, CellStyle>> getSimpleHeader() {
+        return simpleHeader;
+    }
+
+    /**
+     * 获取复杂表头设计
+     *
+     * @return List<ComplexCell>
+     */
+    public List<ComplexCell> getComplexHeader() {
+        return complexHeader;
+    }
+
+    /**
+     * 获取复杂尾部设计
+     *
+     * @return List<ComplexCell>
+     */
+    public List<ComplexCell> getFooterRules() {
+        return footerRules;
+    }
+
+    /**
+     * 获取最大列
+     *
+     * @return
+     */
+    public int getMaxColumns() {
+        return maxColumns;
+    }
+
+    /**
+     * 获取最大行
+     *
+     * @return
+     */
+    public int getMaxRows() {
+        return maxRows;
+    }
+
+    /**
+     * 是否合并模式
+     *
+     * @return
+     */
+    public boolean isIfMerge() {
+        return ifMerge;
+    }
+
+    /**
+     * 是否有尾行
+     *
+     * @return
+     */
+    public boolean isIfFooter() {
+        return ifFooter;
+    }
+
+    /**
+     * 是否简单导出
+     *
+     * @return
+     */
+    public boolean isSimple() {
+        return simple;
+    }
+
+    /**
+     * 是否冻结表头
+     *
+     * @return
+     */
+    public boolean isFreezeHeader() {
+        return freezeHeader;
+    }
+
+    /**
+     * 大标题高度
+     *
+     * @return
+     */
+    public short getTitleHeight() {
+        return titleHeight;
+    }
+
+    /**
+     * 表头高度
+     *
+     * @return
+     */
+    public short getHeaderHeight() {
+        return headerHeight;
+    }
+
+    /**
+     * 单元格高度
+     *
+     * @return
+     */
+    public short getCellHeight() {
+        return cellHeight;
+    }
+
+    /**
+     * 尾行高度
+     *
+     * @return
+     */
+    public short getFooterHeight() {
+        return footerHeight;
+    }
+
+    /**
+     * 自动学号列宽度
+     *
+     * @return
+     */
+    public int getAutoNumColumnWidth() {
+        return autoNumColumnWidth;
     }
 }

@@ -5,12 +5,12 @@ package com.github.stupdit1t.excel.core;
  *
  * @param <T>
  */
-abstract class AbsParent<T> {
+public abstract class AbsParent<T> {
 
     /**
      * 上一个
      */
-    protected T parent;
+    public T parent;
 
     /**
      * 声明构造

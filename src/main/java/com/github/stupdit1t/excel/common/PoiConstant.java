@@ -49,6 +49,21 @@ public class PoiConstant {
      */
     public static final int MAX_FILL_COL = 5000;
 
+    /**
+     * 不能为空模板
+     */
+    public static final String NOT_EMPTY_STR = "%s-不能为空(%s) ";
+
+    /**
+     * 格式不正确
+     */
+    public static final String INCORRECT_FORMAT_STR = "%s-格式不正确(%s) ";
+
+    /**
+     * 不能为空模板
+     */
+    public static final String ROW_INDEX_STR = "第%s行: %s";
+
     static {
         // 填充2列A~ZZ
         String times = System.getProperty("com.github.stupdit1t.fillCellTimes");

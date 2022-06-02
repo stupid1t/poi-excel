@@ -7,12 +7,12 @@ package com.github.stupdit1t.excel.callback;
  */
 
 @FunctionalInterface
-public interface InCallback<T> {
-	/**
-	 * 导入回调
-	 * 
-	 * @param t 当前行数据
-	 * @param rowNum 当前行号
-	 */
-	void callback(T t, int rowNum) throws Exception;
+public interface InCallback<R> {
+    /**
+     * 导入回调
+     *
+     * @param row    当前数据
+     * @param rowNum 行号
+     */
+    void callback(R row, int rowNum) throws Exception;
 }

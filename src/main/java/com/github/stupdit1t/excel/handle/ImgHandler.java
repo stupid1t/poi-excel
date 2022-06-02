@@ -1,17 +1,16 @@
 package com.github.stupdit1t.excel.handle;
 
 
+import com.github.stupdit1t.excel.common.PoiConstant;
 import com.github.stupdit1t.excel.common.PoiException;
-import com.github.stupdit1t.excel.handle.rule.AbsCellVerifyRule;
-
-import java.util.function.Function;
+import com.github.stupdit1t.excel.handle.rule.BaseVerifyRule;
 
 /**
  * 图片校验实体
  *
  * @author 625
  */
-public class ImgHandler extends AbsCellVerifyRule<byte[]> {
+public class ImgHandler extends BaseVerifyRule<byte[]> {
 
     /**
      * 常规验证
@@ -22,22 +21,12 @@ public class ImgHandler extends AbsCellVerifyRule<byte[]> {
         super(allowNull);
     }
 
-    /**
-     * 自定义验证
-     *
-     * @param allowNull    可为空
-     * @param customVerify 自定义校验
-     */
-    public ImgHandler(boolean allowNull, Function<Object, byte[]> customVerify) {
-        super(allowNull, customVerify);
-    }
-
     @Override
-    public byte[] doHandle(String fieldName, Object cellValue) throws Exception {
+    public byte[] doHandle(String fieldName, String index, Object cellValue) throws Exception {
         if (cellValue instanceof byte[]) {
             return (byte[]) cellValue;
         }
-        throw PoiException.error(fieldName + "请检查图片数据格式");
+        throw PoiException.error(String.format(PoiConstant.INCORRECT_FORMAT_STR, fieldName, index));
     }
 
 }

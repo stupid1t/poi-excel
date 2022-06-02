@@ -11,42 +11,46 @@ import java.util.List;
  */
 public class PoiResult<T> {
 
-	private boolean success = true;
+    private boolean success = true;
 
-	private String message;
+    private List<String> message = Collections.emptyList();
 
-	private List<T> data;
+    private List<T> data;
 
-	public boolean isSuccess() {
-		return success;
-	}
+    public boolean isSuccess() {
+        return success;
+    }
 
-	public void setSuccess(boolean success) {
-		this.success = success;
-	}
+    public void setSuccess(boolean success) {
+        this.success = success;
+    }
 
-	public String getMessage() {
-		return message;
-	}
+    public List<String> getMessage() {
+        return message;
+    }
 
-	public void setMessage(String message) {
-		this.message = message;
-	}
+    public String getMessageToString() {
+        return String.join("\n", message);
+    }
 
-	public List<T> getData() {
-		return data;
-	}
+    public void setMessage(List<String> message) {
+        this.message = message;
+    }
 
-	public void setData(List<T> beans) {
-		this.data = beans;
-	}
+    public List<T> getData() {
+        return data;
+    }
 
-	public static <T> PoiResult<T> fail() {
-		PoiResult<T> poiResult = new PoiResult<>();
-		poiResult.setSuccess(false);
-		poiResult.setMessage("读取Excel失败");
-		poiResult.setData(Collections.emptyList());
-		return poiResult;
-	}
+    public void setData(List<T> beans) {
+        this.data = beans;
+    }
+
+    public static <T> PoiResult<T> fail() {
+        PoiResult<T> poiResult = new PoiResult<>();
+        poiResult.setSuccess(false);
+        poiResult.setMessage(Collections.singletonList("读取Excel失败"));
+        poiResult.setData(Collections.emptyList());
+        return poiResult;
+    }
 
 }

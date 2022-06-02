@@ -1,11 +1,11 @@
 package com.github.stupdit1t.excel.handle;
 
+import com.github.stupdit1t.excel.common.PoiConstant;
 import com.github.stupdit1t.excel.common.PoiException;
-import com.github.stupdit1t.excel.handle.rule.AbsCellVerifyRule;
+import com.github.stupdit1t.excel.handle.rule.BaseVerifyRule;
 import org.apache.commons.lang3.math.NumberUtils;
 
 import java.math.BigDecimal;
-import java.util.function.Function;
 
 
 /**
@@ -13,7 +13,7 @@ import java.util.function.Function;
  *
  * @author 625
  */
-public class BigDecimalHandler extends AbsCellVerifyRule<BigDecimal> {
+public class BigDecimalHandler extends BaseVerifyRule<BigDecimal> {
 
     /**
      * 常规验证
@@ -24,24 +24,14 @@ public class BigDecimalHandler extends AbsCellVerifyRule<BigDecimal> {
         super(allowNull);
     }
 
-    /**
-     * 自定义验证
-     *
-     * @param allowNull    是否可为空
-     * @param customVerify 自定义校验
-     */
-    public BigDecimalHandler(boolean allowNull, Function<Object, BigDecimal> customVerify) {
-        super(allowNull, customVerify);
-    }
-
     @Override
-    public BigDecimal doHandle(String fieldName, Object cellValue) throws Exception {
+    public BigDecimal doHandle(String fieldName, String index, Object cellValue) throws Exception {
         String value = String.valueOf(cellValue);
         if (cellValue instanceof BigDecimal) {
             return (BigDecimal) cellValue;
         } else if (NumberUtils.isCreatable(value)) {
             return new BigDecimal(value);
         }
-        throw PoiException.error(fieldName+"格式不正确");
+        throw PoiException.error(String.format(PoiConstant.INCORRECT_FORMAT_STR, fieldName, index));
     }
 }

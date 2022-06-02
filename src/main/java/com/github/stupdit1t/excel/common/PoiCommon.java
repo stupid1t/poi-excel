@@ -130,7 +130,7 @@ public class PoiCommon {
     /**
      * 获取map规则最大列和行数
      *
-     * @param indexs 规则
+     * @param indexLocation 规则
      * @return int[]
      */
     public static int[] getMapRowColNum(List<Integer[]> indexLocation) {
@@ -177,5 +177,27 @@ public class PoiCommon {
         newFont.setStrikeout(oldFont.getStrikeout());
         newFont.setTypeOffset(oldFont.getTypeOffset());
         newFont.setUnderline(oldFont.getUnderline());
+    }
+
+    /**
+     * 判断是否是Map型数据
+     *
+     * @param cls 数据类
+     * @return boolean
+     */
+    public static boolean isMapData(Class<?> cls) {
+        boolean mapData = false;
+        if (cls == Map.class) {
+            mapData = true;
+        } else {
+            Class<?>[] interfaces = cls.getInterfaces();
+            for (Class<?> anInterface : interfaces) {
+                if (anInterface == Map.class) {
+                    mapData = true;
+                    break;
+                }
+            }
+        }
+        return mapData;
     }
 }

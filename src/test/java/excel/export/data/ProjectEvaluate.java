@@ -1,8 +1,9 @@
 package excel.export.data;
 
+import java.io.Serializable;
 import java.util.Date;
 
-public class ProjectEvaluate {
+public class ProjectEvaluate implements Serializable {
 
 	/**
 	 * 主键
@@ -60,7 +61,7 @@ public class ProjectEvaluate {
 	/**
 	 * 历史平均分
 	 */
-	private Double avg;
+	private double avg;
 
 	/**
 	 * 项目所属人

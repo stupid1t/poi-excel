@@ -1,7 +1,7 @@
-package com.github.stupdit1t.excel.core;
+package com.github.stupdit1t.excel.core.export;
 
 import com.github.stupdit1t.excel.callback.OutCallback;
-import com.github.stupdit1t.excel.common.PoiConstant;
+import com.github.stupdit1t.excel.core.AbsParent;
 import org.apache.poi.ss.usermodel.HorizontalAlignment;
 import org.apache.poi.ss.usermodel.IndexedColors;
 import org.apache.poi.ss.usermodel.VerticalAlignment;
@@ -11,7 +11,7 @@ import org.apache.poi.ss.usermodel.VerticalAlignment;
  *
  * @author 625
  */
-public class Column<R> extends AbsParent<OpsColumn<R>> implements Cloneable {
+public class OutColumn<R> extends AbsParent<OpsColumn<R>> implements Cloneable {
 
     /**
      * 字段名称
@@ -68,7 +68,7 @@ public class Column<R> extends AbsParent<OpsColumn<R>> implements Cloneable {
      */
     OutCallback<R> outHandle;
 
-    public Column(OpsColumn<R> opsColumn, String field) {
+    public OutColumn(OpsColumn<R> opsColumn, String field) {
         super(opsColumn);
         this.field = field;
     }
@@ -79,7 +79,7 @@ public class Column<R> extends AbsParent<OpsColumn<R>> implements Cloneable {
      * @param height 不设置默认
      * @return Column<R>
      */
-    public Column<R> height(int height) {
+    public OutColumn<R> height(int height) {
 
         style.height = height;
         return this;
@@ -91,7 +91,7 @@ public class Column<R> extends AbsParent<OpsColumn<R>> implements Cloneable {
      * @param width 不设置默认自动
      * @return Column<R>
      */
-    public Column<R> width(int width) {
+    public OutColumn<R> width(int width) {
 
         style.width = width;
         return this;
@@ -103,7 +103,7 @@ public class Column<R> extends AbsParent<OpsColumn<R>> implements Cloneable {
      * @param align ，CellStyle 取值
      * @return Column<R>
      */
-    public Column<R> align(HorizontalAlignment align) {
+    public OutColumn<R> align(HorizontalAlignment align) {
 
         style.align = align;
         return this;
@@ -115,7 +115,7 @@ public class Column<R> extends AbsParent<OpsColumn<R>> implements Cloneable {
      * @param color HSSFColor,XSSFColor
      * @return Column<R>
      */
-    public Column<R> color(IndexedColors color) {
+    public OutColumn<R> color(IndexedColors color) {
 
         style.color = color;
         return this;
@@ -127,7 +127,7 @@ public class Column<R> extends AbsParent<OpsColumn<R>> implements Cloneable {
      * @param backColor 背景色
      * @return Column<R>
      */
-    public Column<R> backColor(IndexedColors backColor) {
+    public OutColumn<R> backColor(IndexedColors backColor) {
 
         style.backColor = backColor;
         return this;
@@ -139,7 +139,7 @@ public class Column<R> extends AbsParent<OpsColumn<R>> implements Cloneable {
      * @param comment 批注添加
      * @return Column<R>
      */
-    public Column<R> comment(String comment) {
+    public OutColumn<R> comment(String comment) {
         this.comment = comment;
         return this;
     }
@@ -150,7 +150,7 @@ public class Column<R> extends AbsParent<OpsColumn<R>> implements Cloneable {
      * @param valign 默认居下
      * @return Column<R>
      */
-    public Column<R> valign(VerticalAlignment valign) {
+    public OutColumn<R> valign(VerticalAlignment valign) {
 
         style.valign = valign;
         return this;
@@ -162,7 +162,7 @@ public class Column<R> extends AbsParent<OpsColumn<R>> implements Cloneable {
      * @param datePattern 格式化内容
      * @return Column<R>
      */
-    public Column<R> datePattern(String datePattern) {
+    public OutColumn<R> datePattern(String datePattern) {
 
         style.datePattern = datePattern;
         return this;
@@ -174,7 +174,7 @@ public class Column<R> extends AbsParent<OpsColumn<R>> implements Cloneable {
      * @param dropDown 下拉列表数据
      * @return Column<R>
      */
-    public Column<R> dropdown(String[] dropDown) {
+    public OutColumn<R> dropdown(String... dropDown) {
         if (++verifyCount > 1) {
             throw new UnsupportedOperationException("同一列只能定义一个数据校验！");
         }
@@ -189,7 +189,7 @@ public class Column<R> extends AbsParent<OpsColumn<R>> implements Cloneable {
      * @param msgInfo    提示消息
      * @return Column<R>
      */
-    public Column<R> verifyDate(String verifyDate, String... msgInfo) {
+    public OutColumn<R> verifyDate(String verifyDate, String... msgInfo) {
         if (++verifyCount > 1) {
             throw new UnsupportedOperationException("同一列只能定义一个数据校验！");
         }
@@ -209,7 +209,7 @@ public class Column<R> extends AbsParent<OpsColumn<R>> implements Cloneable {
      * @param msgInfo      提示消息
      * @return Column<R>
      */
-    public Column<R> verifyIntNum(String verifyIntNum, String... msgInfo) {
+    public OutColumn<R> verifyIntNum(String verifyIntNum, String... msgInfo) {
         if (++verifyCount > 1) {
             throw new UnsupportedOperationException("同一列只能定义一个数据校验！");
         }
@@ -228,7 +228,7 @@ public class Column<R> extends AbsParent<OpsColumn<R>> implements Cloneable {
      * @param msgInfo        提示消息
      * @return Column<R>
      */
-    public Column<R> verifyFloatNum(String verifyFloatNum, String... msgInfo) {
+    public OutColumn<R> verifyFloatNum(String verifyFloatNum, String... msgInfo) {
         if (++verifyCount > 1) {
             throw new UnsupportedOperationException("同一列只能定义一个数据校验！");
         }
@@ -247,7 +247,7 @@ public class Column<R> extends AbsParent<OpsColumn<R>> implements Cloneable {
      * @param msgInfo      提示消息
      * @return Column<R>
      */
-    public Column<R> verifyCustom(String verifyCustom, String... msgInfo) {
+    public OutColumn<R> verifyCustom(String verifyCustom, String... msgInfo) {
         if (++verifyCount > 1) {
             throw new UnsupportedOperationException("同一列只能定义一个数据校验！");
         }
@@ -266,7 +266,7 @@ public class Column<R> extends AbsParent<OpsColumn<R>> implements Cloneable {
      * @param msgInfo    提示消息
      * @return Column<R>
      */
-    public Column<R> verifyText(String verifyText, String... msgInfo) {
+    public OutColumn<R> verifyText(String verifyText, String... msgInfo) {
         if (++verifyCount > 1) {
             throw new UnsupportedOperationException("同一列只能定义一个数据校验！");
         }
@@ -285,7 +285,7 @@ public class Column<R> extends AbsParent<OpsColumn<R>> implements Cloneable {
      * @param outHandle 处理内容
      * @return Column<R>
      */
-    public Column<R> outHandle(OutCallback<R> outHandle) {
+    public OutColumn<R> outHandle(OutCallback<R> outHandle) {
         this.outHandle = outHandle;
         return this;
     }
@@ -328,43 +328,14 @@ public class Column<R> extends AbsParent<OpsColumn<R>> implements Cloneable {
         /**
          * 导出日期格式
          */
-        String datePattern = PoiConstant.FMT_DATE_TIME;
-
-
-        public void setWidth(int width) {
-            this.width = width;
-        }
-
-        public void setHeight(int height) {
-            this.height = height;
-        }
-
-        public void setAlign(HorizontalAlignment align) {
-            this.align = align;
-        }
-
-        public void setValign(VerticalAlignment valign) {
-            this.valign = valign;
-        }
-
-        public void setColor(IndexedColors color) {
-            this.color = color;
-        }
-
-        public void setBackColor(IndexedColors backColor) {
-            this.backColor = backColor;
-        }
-
-        public void setDatePattern(String datePattern) {
-            this.datePattern = datePattern;
-        }
+        String datePattern;
 
         /**
          * 获取样式缓存
          *
          * @return
          */
-        String getStyleCacheKey() {
+        public String getStyleCacheKey() {
             if (
                     this.width == -1
                             && this.height == -1
@@ -402,5 +373,234 @@ public class Column<R> extends AbsParent<OpsColumn<R>> implements Cloneable {
             return style;
         }
 
+        @Override
+        protected Object clone() throws CloneNotSupportedException {
+            return super.clone();
+        }
+
+        /**
+         * 获取宽度
+         *
+         * @return int
+         */
+        public int getWidth() {
+            return width;
+        }
+
+        /**
+         * 获取高度
+         *
+         * @return int
+         */
+        public int getHeight() {
+            return height;
+        }
+
+        /**
+         * 获取水平定位
+         *
+         * @return HorizontalAlignment
+         */
+        public HorizontalAlignment getAlign() {
+            return align;
+        }
+
+        /**
+         * 获取垂直定位
+         *
+         * @return VerticalAlignment
+         */
+        public VerticalAlignment getValign() {
+            return valign;
+        }
+
+        /**
+         * 获取字体颜色
+         *
+         * @return IndexedColors
+         */
+        public IndexedColors getColor() {
+            return color;
+        }
+
+        /**
+         * 获取背景色
+         *
+         * @return IndexedColors
+         */
+        public IndexedColors getBackColor() {
+            return backColor;
+        }
+
+        /**
+         * 获取日期格式化 pattern
+         *
+         * @return String
+         */
+        public String getDatePattern() {
+            return datePattern;
+        }
+
+        /**
+         * 设置宽度
+         *
+         * @param width 宽度
+         */
+        public void setWidth(int width) {
+            this.width = width;
+        }
+
+        /**
+         * 设置高度
+         *
+         * @param height 宽度
+         */
+        public void setHeight(int height) {
+            this.height = height;
+        }
+
+        /**
+         * 设置水平
+         *
+         * @param align 水平样式
+         */
+        public void setAlign(HorizontalAlignment align) {
+            this.align = align;
+        }
+
+        /**
+         * 设置垂直
+         *
+         * @param valign 垂直样式
+         */
+        public void setValign(VerticalAlignment valign) {
+            this.valign = valign;
+        }
+
+        /**
+         * 设置字体颜色
+         *
+         * @param color 颜色
+         */
+        public void setColor(IndexedColors color) {
+            this.color = color;
+        }
+
+        /**
+         * 设置背景色
+         *
+         * @param backColor 背景色
+         */
+        public void setBackColor(IndexedColors backColor) {
+            this.backColor = backColor;
+        }
+
+        /**
+         * 设置日期格式化
+         *
+         * @param datePattern 格式
+         */
+        public void setDatePattern(String datePattern) {
+            this.datePattern = datePattern;
+        }
+    }
+
+    /**
+     * 获取导出字段
+     *
+     * @return String
+     */
+    public String getField() {
+        return field;
+    }
+
+    /**
+     * 获取下拉框
+     *
+     * @return String[]
+     */
+    public String[] getDropdown() {
+        return dropdown;
+    }
+
+    /**
+     * 获取日期校验
+     *
+     * @return String
+     */
+    public String getVerifyDate() {
+        return verifyDate;
+    }
+
+    /**
+     * 获取int校验
+     *
+     * @return String
+     */
+    public String getVerifyIntNum() {
+        return verifyIntNum;
+    }
+
+    /**
+     * 获取float校验
+     *
+     * @return String
+     */
+    public String getVerifyFloatNum() {
+        return verifyFloatNum;
+    }
+
+    /**
+     * 获取校验文字
+     *
+     * @return String
+     */
+    public String getVerifyText() {
+        return verifyText;
+    }
+
+    /**
+     * 获取自定义校验
+     *
+     * @return
+     */
+    public String getVerifyCustom() {
+        return verifyCustom;
+    }
+
+    /**
+     * 获取批注
+     *
+     * @return
+     */
+    public String getComment() {
+        return comment;
+    }
+
+    /**
+     * 获取校验数量
+     *
+     * @return
+     */
+    public int getVerifyCount() {
+        return verifyCount;
+    }
+
+    /**
+     * 获取样式
+     *
+     * @return
+     */
+    public Style getStyle() {
+        return style;
+    }
+
+    /**
+     * 获取输出回调
+     *
+     * @return
+     */
+    public OutCallback<R> getOutHandle() {
+        return outHandle;
     }
 }

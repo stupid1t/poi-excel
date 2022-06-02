@@ -1,10 +1,10 @@
 package com.github.stupdit1t.excel.handle;
 
+import com.github.stupdit1t.excel.common.PoiConstant;
 import com.github.stupdit1t.excel.common.PoiException;
-import com.github.stupdit1t.excel.handle.rule.AbsCellVerifyRule;
+import com.github.stupdit1t.excel.handle.rule.BaseVerifyRule;
 
 import java.math.BigDecimal;
-import java.util.function.Function;
 import java.util.regex.Pattern;
 
 
@@ -13,8 +13,11 @@ import java.util.regex.Pattern;
  *
  * @author 625
  */
-public class StringHandler extends AbsCellVerifyRule<String> {
+public class StringHandler extends BaseVerifyRule<String> {
 
+    /**
+     * 正则验证
+     */
     private String pattern;
 
     /**
@@ -24,16 +27,6 @@ public class StringHandler extends AbsCellVerifyRule<String> {
      */
     public StringHandler(boolean allowNull) {
         super(allowNull);
-    }
-
-    /**
-     * 自定义验证
-     *
-     * @param allowNull    是否可为空
-     * @param customVerify 自定义校验
-     */
-    public StringHandler(boolean allowNull, Function<Object, String> customVerify) {
-        super(allowNull, customVerify);
     }
 
     /**
@@ -48,14 +41,14 @@ public class StringHandler extends AbsCellVerifyRule<String> {
 
 
     @Override
-    public String doHandle(String fieldName, Object cellValue) throws Exception {
+    public String doHandle(String fieldName, String index, Object cellValue) throws Exception {
         String value = String.valueOf(cellValue);
         // 处理数值 转为 string包含E科学计数的问题
         if (cellValue instanceof Number) {
             value = new BigDecimal(value).toString();
         }
         if (pattern != null && !Pattern.matches(pattern, value)) {
-            throw PoiException.error(fieldName + "格式不正确");
+            throw PoiException.error(String.format(PoiConstant.INCORRECT_FORMAT_STR, fieldName, index));
         }
         return value;
     }
