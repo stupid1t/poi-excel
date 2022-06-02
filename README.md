@@ -90,79 +90,79 @@ class a {
                 .password("123456")
                 // sheet声明
                 .opsSheet(data)
-                // 自动生成序号, 此功能在复杂表头下, 需要自己定义序号列
-                .autoNum(true)
-                // 自定义数据行高度, 默认excel正常高度
-                .height(CellPosition.CELL, 300)
-                // 自定义序号列宽度, 默认2000
-                .autoNumColumnWidth(3000)
-                // sheet名字
-                .sheetName("简单导出")
-                // 表头标题声明
-                .opsHeader().simple()
-                // 大标题声明
-                .title("我是大标题")
-                // 副标题, 自定义样式
-                .text("项目名称", (font, style) -> {
-                    // 红色
-                    font.setColor(IndexedColors.RED.index);
-                    // 居顶
-                    style.setVerticalAlignment(VerticalAlignment.TOP);
-                })
-                // 副标题批量
-                .texts("项目图", "所属区域", "省份", "项目所属人", "市", "创建时间", "项目领导人", "得分", "平均分")
-                .done()
-                // 导出列声明
-                .opsColumn()
-                // 批量导出字段
-                .fields("projectName", "img", "areaName", "province", "people")
-                // 个性化导出字段设置
-                .field("city")
-                // 下拉框
-                .dropdown("北京", "西安", "上海", "广州")
-                // 行高单独设置
-                .height(500)
-                // 批注
-                .comment("城市选择下拉框内容哦")
-                // 宽度设置
-                .width(6000)
-                // 字段导出回调
-                .outHandle((val, row, style) -> {
-                    // 如果是北京, 设置背景色为黄色
-                    if (val.equals("北京")) {
-                        style.setBackColor(IndexedColors.YELLOW);
-                        style.setHeight(900);
-                        // 属性值自定义
-                        return val + "(自定义)";
-                    }
-                    return val;
-                })
-                .done()
-                .field("createTime")
-                // 日期格式化
-                .datePattern("yyyy-MM-dd")
-                // 居左
-                .align(HorizontalAlignment.LEFT)
-                // 居中
-                .valign(VerticalAlignment.CENTER)
-                // 背景黄色
-                .backColor(IndexedColors.YELLOW)
-                // 金色字体
-                .color(IndexedColors.GOLD)
-                .done()
-                .fields("leader", "scount", "avg")
-                .done()
-                // 尾行设计
-                .opsFooter()
-                // 字符合并
-                .text("合计", "1,1,A,H")
-                // 公式应用
-                .text(String.format("=SUM(J3:J%s)", 2 + data.size()), "1,1,J,J")
-                .text(String.format("=AVERAGE(K3:K%s)", 2 + data.size()), "1,1,K,K")
-                // 坐标合并
-                .textIndex("作者:625", new Integer[]{0, 0, 8, 8})
-                .done()
-                .done()
+                    // 自动生成序号, 此功能在复杂表头下, 需要自己定义序号列
+                    .autoNum(true)
+                    // 自定义数据行高度, 默认excel正常高度
+                    .height(CellPosition.CELL, 300)
+                    // 自定义序号列宽度, 默认2000
+                    .autoNumColumnWidth(3000)
+                    // sheet名字
+                    .sheetName("简单导出")
+                    // 表头标题声明
+                    .opsHeader().simple()
+                        // 大标题声明
+                        .title("我是大标题")
+                        // 副标题, 自定义样式
+                        .text("项目名称", (font, style) -> {
+                            // 红色
+                            font.setColor(IndexedColors.RED.index);
+                            // 居顶
+                            style.setVerticalAlignment(VerticalAlignment.TOP);
+                        })
+                        // 副标题批量
+                        .texts("项目图", "所属区域", "省份", "项目所属人", "市", "创建时间", "项目领导人", "得分", "平均分")
+                        .done()
+                    // 导出列声明
+                    .opsColumn()
+                        // 批量导出字段
+                        .fields("projectName", "img", "areaName", "province", "people")
+                        // 个性化导出字段设置
+                        .field("city")
+                            // 下拉框
+                            .dropdown("北京", "西安", "上海", "广州")
+                            // 行高单独设置
+                            .height(500)
+                            // 批注
+                            .comment("城市选择下拉框内容哦")
+                            // 宽度设置
+                            .width(6000)
+                            // 字段导出回调
+                            .outHandle((val, row, style) -> {
+                                // 如果是北京, 设置背景色为黄色
+                                if (val.equals("北京")) {
+                                    style.setBackColor(IndexedColors.YELLOW);
+                                    style.setHeight(900);
+                                    // 属性值自定义
+                                    return val + "(自定义)";
+                                }
+                                return val;
+                            })
+                            .done()
+                        .field("createTime")
+                            // 日期格式化
+                            .datePattern("yyyy-MM-dd")
+                            // 居左
+                            .align(HorizontalAlignment.LEFT)
+                            // 居中
+                            .valign(VerticalAlignment.CENTER)
+                            // 背景黄色
+                            .backColor(IndexedColors.YELLOW)
+                            // 金色字体
+                            .color(IndexedColors.GOLD)
+                            .done()
+                        .fields("leader", "scount", "avg")
+                        .done()
+                    // 尾行设计
+                    .opsFooter()
+                        // 字符合并
+                        .text("合计", "1,1,A,H")
+                        // 公式应用
+                        .text(String.format("=SUM(J3:J%s)", 2 + data.size()), "1,1,J,J")
+                        .text(String.format("=AVERAGE(K3:K%s)", 2 + data.size()), "1,1,K,K")
+                        // 坐标合并
+                        .textIndex("作者:625", new Integer[]{0, 0, 8, 8})
+                        .done()
+                    .done()
                 // 执行导出
                 .export("src/test/java/excel/export/excel/simpleExport2.xls")
         ;
