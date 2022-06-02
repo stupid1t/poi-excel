@@ -136,7 +136,8 @@ class a {
                         return val + "(自定义)";
                     }
                     return val;
-                }).done()
+                })
+                .done()
                 .field("createTime")
                 // 日期格式化
                 .datePattern("yyyy-MM-dd")
@@ -147,7 +148,8 @@ class a {
                 // 背景黄色
                 .backColor(IndexedColors.YELLOW)
                 // 金色字体
-                .color(IndexedColors.GOLD).done()
+                .color(IndexedColors.GOLD)
+                .done()
                 .fields("leader", "scount", "avg")
                 .done()
                 // 尾行设计
