@@ -41,6 +41,7 @@ class a {
 
     @Test
     public void simpleExport() {
+        // 指定导出XLSX格式
         ExcelHelper.opsExport(PoiWorkbookType.XLSX)
                 .opsSheet(data)
                 .opsHeader().simple().texts("项目名称", "项目图", "所属区域", "省份", "市", "项目所属人", "项目领导人", "得分", "平均分", "创建时间").done()
@@ -83,6 +84,7 @@ class a {
             }
         };
 
+        // 指定导出XLS格式, 只有这个格式支持密码设置
         ExcelHelper.opsExport(PoiWorkbookType.XLS)
                 // 全局样式覆盖
                 .style(titleStyle)
