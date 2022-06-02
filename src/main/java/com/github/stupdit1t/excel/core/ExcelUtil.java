@@ -291,6 +291,7 @@ public class ExcelUtil {
             for (int j = 0, n = 0; n < fields.size(); j++, n++) {
                 OutColumn<T> column = (OutColumn<T>) fields.get(n);
                 Cell cell = row.createCell(j);
+                cell.setCellStyle(cellStyleSource);
                 // 1.序号设置
                 if (exportRules.isAutoNum() && j == 0) {
                     cell.setCellValue(i + 1);
@@ -314,7 +315,6 @@ public class ExcelUtil {
                 setCellStyle(wb, cellFont, cacheStyle, cacheFont, style, cell, value);
 
                 // 5.设置单元格值
-                cell.setCellStyle(cellStyleSource);
                 setCellValue(createDrawingPatriarch, value, cell);
 
                 // 6.批注添加

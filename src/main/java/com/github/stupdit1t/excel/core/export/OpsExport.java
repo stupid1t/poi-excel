@@ -243,7 +243,9 @@ public class OpsExport {
         exportRules.freezeHeader = opsSheet.opsHeader.freeze;
         exportRules.password = this.password;
         exportRules.globalStyle = this.style;
-        exportRules.autoNumColumnWidth = opsSheet.autoNumColumnWidth;
+        if (opsSheet.autoNumColumnWidth != -1) {
+            exportRules.autoNumColumnWidth = opsSheet.autoNumColumnWidth;
+        }
         exportRules.setAutoNum(opsSheet.autoNum);
 
         // footer内容提取
