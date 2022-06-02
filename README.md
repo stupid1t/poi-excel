@@ -187,36 +187,36 @@ class a {
     public void complexExport() {
         ExcelHelper.opsExport(PoiWorkbookType.XLSX)
                 .opsSheet(data)
-                .autoNum(true)
-                .opsHeader()
-                // 不冻结表头
-                .freeze(false)
-                // 复杂表头模式
-                .complex()
-                .text("项目资源统计", "1,1,A,K")
-                .text("序号", "2,3,A,A")
-                .text("基本信息", "2,2,B,E")
-                .text("项目名称", "3,3,B,B")
-                .text("所属区域", "3,3,C,C")
-                .text("省份", "3,3,D,D")
-                .text("市", "3,3,E,E")
-                .text("项目所属人", "2,3,F,F")
-                .text("市项目领导人", "2,3,G,G")
-                .text("分值", "2,2,H,I")
-                .text("得分", "3,3,H,H")
-                .text("平均分", "3,3,I,I")
-                .text("项目图片", "2,3,K,K")
-                .text("创建时间", "2,3,J,J")
-                .done()
-                .opsColumn()
-                .fields("projectName", "areaName", "province", "city", "people", "leader", "scount", "avg", "img", "createTime")
-                .done()
-                .opsFooter()
-                .textIndex("合计:", new Integer[]{0, 1, 0, 2})
-                .textIndex("=SUM(H4:H13)", new Integer[]{0, 1, 3, 10})
-                .done()
-                .done()
-                .export("src/test/java/excel/export/excel/complexExport.xlsx");
+                    .autoNum(true)
+                    .opsHeader()
+                        // 不冻结表头
+                        .freeze(false)
+                        // 复杂表头模式
+                        .complex()
+                            .text("项目资源统计", "1,1,A,K")
+                            .text("序号", "2,3,A,A")
+                            .text("基本信息", "2,2,B,E")
+                            .text("项目名称", "3,3,B,B")
+                            .text("所属区域", "3,3,C,C")
+                            .text("省份", "3,3,D,D")
+                            .text("市", "3,3,E,E")
+                            .text("项目所属人", "2,3,F,F")
+                            .text("市项目领导人", "2,3,G,G")
+                            .text("分值", "2,2,H,I")
+                            .text("得分", "3,3,H,H")
+                            .text("平均分", "3,3,I,I")
+                            .text("项目图片", "2,3,K,K")
+                            .text("创建时间", "2,3,J,J")
+                            .done()
+                        .opsColumn()
+                            .fields("projectName", "areaName", "province", "city", "people", "leader", "scount", "avg", "img", "createTime")
+                            .done()
+                        .opsFooter()
+                            .textIndex("合计:", new Integer[]{0, 1, 0, 2})
+                            .textIndex("=SUM(H4:H13)", new Integer[]{0, 1, 3, 10})
+                            .done()
+                        .done()
+                    .export("src/test/java/excel/export/excel/complexExport.xlsx");
     }
 }
 ```
@@ -290,17 +290,17 @@ class a {
         name.set("templateExport");
         ExcelHelper.opsExport(PoiWorkbookType.XLSX)
                 .opsSheet(Collections.emptyList())
-                .opsHeader().simple().texts("宝宝姓名", "手机号码", "宝宝生日", "月龄", "宝宝性别", "来源渠道", "备注").done()
-                .opsColumn()
-                .field("宝宝姓名").done()
-                .field("手机号码").verifyText("11~11", "请输入11位的手机号码！").done()
-                .field("宝宝生日").datePattern("yyyy-MM-dd").verifyDate("2000-01-01~3000-12-31").done()
-                .field("月龄").width(4).verifyCustom("VALUE(F3:F6000)", "月齡格式：如1年2个月则输入14").done()
-                .field("宝宝性别").dropdown("男", "女").done()
-                .field("来源渠道").width(12).dropdown(new String[]{"品推", "市场"}).done()
-                .field("备注").done()
-                .done()
-                .done()
+                    .opsHeader().simple().texts("宝宝姓名", "手机号码", "宝宝生日", "月龄", "宝宝性别", "来源渠道", "备注").done()
+                    .opsColumn()
+                        .field("宝宝姓名").done()
+                        .field("手机号码").verifyText("11~11", "请输入11位的手机号码！").done()
+                        .field("宝宝生日").datePattern("yyyy-MM-dd").verifyDate("2000-01-01~3000-12-31").done()
+                        .field("月龄").width(4).verifyCustom("VALUE(F3:F6000)", "月齡格式：如1年2个月则输入14").done()
+                        .field("宝宝性别").dropdown("男", "女").done()
+                        .field("来源渠道").width(12).dropdown(new String[]{"品推", "市场"}).done()
+                        .field("备注").done()
+                        .done()
+                    .done()
                 .export("src/test/java/excel/export/excel/templateExport.xlsx");
     }
 }
@@ -325,20 +325,20 @@ class a {
                 // 多线程导出多sheet, 默认false
                 .parallelSheet(true)
                 .opsSheet(mapData)
-                .sheetName("sheet1")
-                .opsHeader().simple().texts("姓名", "年龄").done()
-                .opsColumn().fields("name", "age").done()
-                .done()
+                    .sheetName("sheet1")
+                    .opsHeader().simple().texts("姓名", "年龄").done()
+                    .opsColumn().fields("name", "age").done()
+                    .done()
                 .opsSheet(complexData)
-                .sheetName("sheet2")
-                .opsHeader().simple().texts("學生姓名", "所在班級", "所在學校", "更多父母姓名").done()
-                .opsColumn().fields("name", "classRoom.name", "classRoom.school.name", "moreInfo.parent.age").done()
-                .done()
+                    .sheetName("sheet2")
+                    .opsHeader().simple().texts("學生姓名", "所在班級", "所在學校", "更多父母姓名").done()
+                    .opsColumn().fields("name", "classRoom.name", "classRoom.school.name", "moreInfo.parent.age").done()
+                    .done()
                 .opsSheet(bigData)
-                .sheetName("sheet3")
-                .opsHeader().simple().texts("项目名称", "项目图", "所属区域", "省份", "市", "项目所属人", "项目领导人", "得分", "平均分", "创建时间").done()
-                .opsColumn().fields("projectName", "img", "areaName", "province", "city", "people", "leader", "scount", "avg", "createTime").done()
-                .done()
+                    .sheetName("sheet3")
+                    .opsHeader().simple().texts("项目名称", "项目图", "所属区域", "省份", "市", "项目所属人", "项目领导人", "得分", "平均分", "创建时间").done()
+                    .opsColumn().fields("projectName", "img", "areaName", "province", "city", "people", "leader", "scount", "avg", "createTime").done()
+                    .done()
                 .export("src/test/java/excel/export/excel/mulSheet.xlsx");
     }
 }
@@ -482,22 +482,22 @@ public class MainClass {
                 .opsSheet(0, 1, 0)
                 // 自定义列映射
                 .opsColumn()
-                // 强制输入字符串, 且不能为空
-                .field("A", "projectName", "项目名称").asString().notNull().done()
-                // img类型. 导入图片必须这样写, 且字段为byte[]
-                .field("B", "img", "项目图片").asImg().done()
-                .field("C", "areaName", "所属区域").done()
-                .field("D", "province", "省份").done()
-                .field("E", "city", "市").done()
-                // 不能为空
-                .field("F", "people", "项目所属人").notNull().done()
-                // 不能为空
-                .field("G", "leader", "项目领导人").notNull().done()
-                // 必须是数字
-                .field("H", "scount", "总分").asLong().done()
-                .field("I", "avg", "历史平均分").done()
-                .field("J", "createTime", "创建时间").asDate("yyyy-MM-dd").done()
-                .done()
+                    // 强制输入字符串, 且不能为空
+                    .field("A", "projectName", "项目名称").asString().notNull().done()
+                    // img类型. 导入图片必须这样写, 且字段为byte[]
+                    .field("B", "img", "项目图片").asImg().done()
+                    .field("C", "areaName", "所属区域").done()
+                    .field("D", "province", "省份").done()
+                    .field("E", "city", "市").done()
+                    // 不能为空
+                    .field("F", "people", "项目所属人").notNull().done()
+                    // 不能为空
+                    .field("G", "leader", "项目领导人").notNull().done()
+                    // 必须是数字
+                    .field("H", "scount", "总分").asLong().done()
+                    .field("I", "avg", "历史平均分").done()
+                    .field("J", "createTime", "创建时间").asDate("yyyy-MM-dd").done()
+                    .done()
                 .callBack((row, index) -> {
                     // 行回调, 可以在这里改数据
                     System.out.println("当前是第:" + index + " 数据是: " + row);
@@ -527,22 +527,22 @@ public class MainClass {
                 .opsSheet(0, 1, 0)
                 // 自定义列映射
                 .opsColumn()
-                // 强制输入字符串, 且不能为空
-                .field("A", "projectName", "项目名称").asString().notNull().done()
-                // img类型. 导入图片必须这样写, 且字段为byte[]
-                .field("B", "img", "项目图片").asImg().done()
-                .field("C", "areaName", "所属区域").done()
-                .field("D", "province", "省份").done()
-                .field("E", "city", "市").done()
-                // 不能为空
-                .field("F", "people", "项目所属人").notNull().done()
-                // 不能为空
-                .field("G", "leader", "项目领导人").notNull().done()
-                // 必须是数字
-                .field("H", "scount", "总分").asInt().done()
-                .field("I", "avg", "历史平均分").asDouble().done()
-                .field("J", "createTime", "创建时间").asDate("yyyy-MM-dd").done()
-                .done()
+                    // 强制输入字符串, 且不能为空
+                    .field("A", "projectName", "项目名称").asString().notNull().done()
+                    // img类型. 导入图片必须这样写, 且字段为byte[]
+                    .field("B", "img", "项目图片").asImg().done()
+                    .field("C", "areaName", "所属区域").done()
+                    .field("D", "province", "省份").done()
+                    .field("E", "city", "市").done()
+                    // 不能为空
+                    .field("F", "people", "项目所属人").notNull().done()
+                    // 不能为空
+                    .field("G", "leader", "项目领导人").notNull().done()
+                    // 必须是数字
+                    .field("H", "scount", "总分").asInt().done()
+                    .field("I", "avg", "历史平均分").asDouble().done()
+                    .field("J", "createTime", "创建时间").asDate("yyyy-MM-dd").done()
+                    .done()
                 .callBack((row, index) -> {
                     // 行回调, 可以在这里改数据
                     System.out.println("当前是第:" + index + " 数据是: " + row);
