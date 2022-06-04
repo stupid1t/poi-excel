@@ -162,7 +162,7 @@ class a {
                         .text(String.format("=SUM(J3:J%s)", 2 + data.size()), "1,1,J,J")
                         .text(String.format("=AVERAGE(K3:K%s)", 2 + data.size()), "1,1,K,K")
                         // 坐标合并
-                        .textIndex("作者:625", new Integer[]{0, 0, 8, 8})
+                        .text("作者:625", 0, 0, 8, 8)
                         .done()
                     .done()
                 // 执行导出
@@ -221,7 +221,7 @@ class a {
                             .text("=SUM(H4:H13)", "D1:K2")
                             .text("=SUM(H4:H13)", 0, 1, 3, 10)
                             .done()
-                        // 自定义合并sheet
+                        // 自定义合并单元格
                         .mergeCell("F4:G13")
                         .done()
                     .export("src/test/java/excel/export/excel/complexExport.xlsx");
@@ -231,7 +231,8 @@ class a {
 
 * 导出结果
 
-![image](https://user-images.githubusercontent.com/29246805/171567317-b8ecb10d-ec6b-4f71-b600-9006a98a8146.png)
+![image](https://user-images.githubusercontent.com/29246805/172006040-db5b4016-a54e-4816-8585-bf760a4f8e54.png)
+
 
 
 
