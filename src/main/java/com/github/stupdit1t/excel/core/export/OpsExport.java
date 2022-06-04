@@ -174,9 +174,10 @@ public class OpsExport {
 
     /**
      * 执行输出
+     *
      * @param workbook
      */
-    private void export(Workbook workbook){
+    private void export(Workbook workbook) {
         // 5.执行导出
         switch (this.toMode) {
             case 1:
@@ -245,18 +246,19 @@ public class OpsExport {
             exportRules = ExportRules.simpleRule(opsSheet.opsColumn.columns, simple.headers);
             exportRules.title(simple.title);
         }
-        exportRules.titleHeight = opsSheet.titleHeight;
-        exportRules.headerHeight = opsSheet.headerHeight;
-        exportRules.cellHeight = opsSheet.cellHeight;
-        exportRules.footerHeight = opsSheet.footerHeight;
-        exportRules.sheetName = opsSheet.sheetName;
-        exportRules.freezeHeader = opsSheet.opsHeader.freeze;
-        exportRules.password = this.password;
-        exportRules.globalStyle = this.style;
+        exportRules.setTitleHeight(opsSheet.titleHeight);
+        exportRules.setHeaderHeight(opsSheet.headerHeight);
+        exportRules.setCellHeight(opsSheet.cellHeight);
+        exportRules.setFooterHeight(opsSheet.footerHeight);
+        exportRules.setSheetName(opsSheet.sheetName);
+        exportRules.setFreezeHeader(opsSheet.opsHeader.freeze);
+        exportRules.setPassword(this.password);
+        exportRules.setGlobalStyle(this.style);
         if (opsSheet.autoNumColumnWidth != -1) {
-            exportRules.autoNumColumnWidth = opsSheet.autoNumColumnWidth;
+            exportRules.setAutoNumColumnWidth(opsSheet.autoNumColumnWidth);
         }
         exportRules.setAutoNum(opsSheet.autoNum);
+        exportRules.setMergerCells(opsSheet.mergerCells);
 
         // footer内容提取
         if (opsSheet.opsFooter != null) {

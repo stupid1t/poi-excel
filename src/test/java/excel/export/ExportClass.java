@@ -129,15 +129,14 @@ public class ExportClass {
      * @throws Exception
      */
     @Test
-    public void simpleExport() {
+    public void simpleExport() throws FileNotFoundException {
         name.set("simpleExport");
         ExcelHelper.opsExport(PoiWorkbookType.XLSX)
                 .opsSheet(data)
                 .opsHeader().simple().texts("项目名称", "项目图", "所属区域", "省份", "市", "项目所属人", "项目领导人", "得分", "平均分", "创建时间").done()
                 .opsColumn().fields("projectName", "img", "areaName", "province", "city", "people", "leader", "scount", "avg", "createTime").done()
                 .done()
-                .getWorkbook("src/test/java/excel/export/excel/simpleExport.xlsx")
-        ;
+                .export("src/test/java/excel/export/excel/simpleExport.xlsx");
     }
 
     /**
@@ -235,8 +234,8 @@ public class ExportClass {
                 .done()
                 // 尾行设计
                 .opsFooter()
-                // 字符合并
-                .text("合计", "1,1,A,H")
+                // 字符合并, 尾行合并, 行数从1开始, 会自动计算数据行
+                .text("合计", "A1:H1")
                 // 公式应用
                 .text(String.format("=SUM(J3:J%s)", 2 + data.size()), "1,1,J,J")
                 .text(String.format("=AVERAGE(K3:K%s)", 2 + data.size()), "1,1,K,K")
@@ -245,7 +244,7 @@ public class ExportClass {
                 .done()
                 .done()
                 // 执行导出
-                .getWorkbook("src/test/java/excel/export/excel/simpleExport2.xls")
+                .export("src/test/java/excel/export/excel/simpleExport2.xls")
         ;
     }
 
@@ -289,7 +288,7 @@ public class ExportClass {
                 .textIndex("=SUM(H4:H13)", new Integer[]{0, 1, 3, 10})
                 .done()
                 .done()
-                .getWorkbook("src/test/java/excel/export/excel/complexExport.xlsx");
+                .export("src/test/java/excel/export/excel/complexExport.xlsx");
     }
 
     /**
@@ -305,7 +304,7 @@ public class ExportClass {
                 .opsHeader().simple().texts("學生姓名", "所在班級", "所在學校", "更多父母姓名").done()
                 .opsColumn().fields("name", "classRoom.name", "classRoom.school.name", "moreInfo.parent.age").done()
                 .done()
-                .getWorkbook("src/test/java/excel/export/excel/complexObject.xlsx");
+                .export("src/test/java/excel/export/excel/complexObject.xlsx");
     }
 
     /**
@@ -321,7 +320,7 @@ public class ExportClass {
                 .opsHeader().simple().texts("姓名", "年龄").done()
                 .opsColumn().fields("name", "age").done()
                 .done()
-                .getWorkbook("src/test/java/excel/export/excel/mapExport.xlsx");
+                .export("src/test/java/excel/export/excel/mapExport.xlsx");
     }
 
     /**
@@ -345,7 +344,7 @@ public class ExportClass {
                 .field("备注").done()
                 .done()
                 .done()
-                .getWorkbook("src/test/java/excel/export/excel/templateExport.xlsx");
+                .export("src/test/java/excel/export/excel/templateExport.xlsx");
     }
 
     /**
@@ -374,7 +373,7 @@ public class ExportClass {
                 .opsHeader().simple().texts("项目名称", "项目图", "所属区域", "省份", "市", "项目所属人", "项目领导人", "得分", "平均分", "创建时间").done()
                 .opsColumn().fields("projectName", "img", "areaName", "province", "city", "people", "leader", "scount", "avg", "createTime").done()
                 .done()
-                .getWorkbook("src/test/java/excel/export/excel/mulSheet.xlsx");
+                .export("src/test/java/excel/export/excel/mulSheet.xlsx");
     }
 
     /**
@@ -391,7 +390,7 @@ public class ExportClass {
                 .opsHeader().simple().texts("项目名称", "项目图", "所属区域", "省份", "市", "项目所属人", "项目领导人", "得分", "平均分", "创建时间").done()
                 .opsColumn().fields("projectName", "img", "areaName", "province", "city", "people", "leader", "scount", "avg", "createTime").done()
                 .done()
-                .getWorkbook("src/test/java/excel/export/excel/bigData.xlsx");
+                .export("src/test/java/excel/export/excel/bigData.xlsx");
     }
 
     /**

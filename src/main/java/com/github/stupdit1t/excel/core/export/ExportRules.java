@@ -18,110 +18,115 @@ public class ExportRules {
      * sheetName
      */
 
-    String sheetName;
+    private String sheetName;
 
     /**
      * 是否带序号
      */
 
-    boolean autoNum;
+    private boolean autoNum;
 
     /**
      * 列数据规则定义
      */
-    final List<OutColumn<?>> column;
+    private final List<OutColumn<?>> column;
 
     /**
      * 表头名
      */
-    String title;
+    private String title;
 
     /**
      * 标题列
      */
-    LinkedHashMap<String, BiConsumer<Font, CellStyle>> simpleHeader;
+    private LinkedHashMap<String, BiConsumer<Font, CellStyle>> simpleHeader;
 
     /**
      * excel头：合并规则及值，rules.put("1,1,A,G", "其它应扣"); 对应excel位置
      */
-    List<ComplexCell> complexHeader;
+    private List<ComplexCell> complexHeader;
 
     /**
      * excel尾 ： 合并规则及值，rules.put("1,1,A,G", 值); 对应excel位置
      */
-    List<ComplexCell> footerRules;
+    private List<ComplexCell> footerRules;
 
     // --------------------无关设置字段-------------------------
 
     /**
      * 最大单元格列数
      */
-    int maxColumns = 0;
+    private int maxColumns = 0;
 
     /**
      * 表头最大行数
      */
-    int maxRows = 0;
+    private int maxRows = 0;
 
     /**
      * 是否合并表头
      */
-    boolean ifMerge;
+    private boolean ifMerge;
 
     /**
      * 是否有页脚
      */
-    boolean ifFooter;
+    private boolean ifFooter;
 
     /**
      * 是否简单导出
      */
-    boolean simple;
+    private boolean simple;
 
     /**
      * 是否导出xlsx
      */
-    boolean xlsx = true;
+    private boolean xlsx = true;
 
     /**
      * 全局单元格样式
      */
-    ICellStyle[] globalStyle = DefaultCellStyleEnum.values();
+    private ICellStyle[] globalStyle = DefaultCellStyleEnum.values();
 
     /**
      * Excel密码, 只支持xls 格式
      */
-    String password;
+    private String password;
 
     /**
      * 是否冻结表头
      */
-    boolean freezeHeader = true;
+    private boolean freezeHeader = true;
 
     /**
      * 标题高度
      */
-    short titleHeight = -1;
+    private short titleHeight = -1;
 
     /**
      * 表头高度
      */
-    short headerHeight = -1;
+    private short headerHeight = -1;
 
     /**
      * 单元格高度
      */
-    short cellHeight = -1;
+    private short cellHeight = -1;
 
     /**
      * 尾部高度
      */
-    short footerHeight = -1;
+    private short footerHeight = -1;
 
     /**
      * 自动排序列宽度
      */
-    int autoNumColumnWidth = 2000;
+    private int autoNumColumnWidth = 2000;
+
+    /**
+     * 自定义合并的单元格
+     */
+    private List<Integer[]> mergerCells;
 
     /**
      * 初始化规则，构建一个简单表头
@@ -425,5 +430,121 @@ public class ExportRules {
      */
     public int getAutoNumColumnWidth() {
         return autoNumColumnWidth;
+    }
+
+    /**
+     * 自定义合并单元格
+     *
+     * @return List<Integer[]>
+     */
+    public List<Integer[]> getMergerCells() {
+        return mergerCells;
+    }
+
+    /**
+     * 设置sheet名字
+     * @param sheetName sheet名字
+     */
+    public void setSheetName(String sheetName) {
+        this.sheetName = sheetName;
+    }
+
+    /**
+     * 大标题设置
+     *
+     * @param title 标题
+     */
+    public void setTitle(String title) {
+        this.title = title;
+    }
+
+    /**
+     * 是否导出07 xlsx
+     *
+     * @param xlsx true or false
+     */
+    public void setXlsx(boolean xlsx) {
+        this.xlsx = xlsx;
+    }
+
+    /**
+     * 设置全局样式
+     *
+     * @param globalStyle 样式
+     */
+    public void setGlobalStyle(ICellStyle... globalStyle) {
+        this.globalStyle = globalStyle;
+    }
+
+    /**
+     * 设置excel密码
+     *
+     * @param password 密码
+     */
+    public void setPassword(String password) {
+        this.password = password;
+    }
+
+    /**
+     * 是否冻结表头
+     *
+     * @param freezeHeader 冻结
+     */
+    public void setFreezeHeader(boolean freezeHeader) {
+        this.freezeHeader = freezeHeader;
+    }
+
+    /**
+     * 大标题高度
+     *
+     * @param titleHeight 高度
+     */
+    public void setTitleHeight(short titleHeight) {
+        this.titleHeight = titleHeight;
+    }
+
+    /**
+     * 表头高度
+     *
+     * @param headerHeight 高度
+     */
+    public void setHeaderHeight(short headerHeight) {
+        this.headerHeight = headerHeight;
+    }
+
+    /**
+     * 单元格高度
+     *
+     * @param cellHeight 高度
+     */
+    public void setCellHeight(short cellHeight) {
+        this.cellHeight = cellHeight;
+    }
+
+    /**
+     * 尾行高度
+     *
+     * @param footerHeight 高度
+     */
+    public void setFooterHeight(short footerHeight) {
+        this.footerHeight = footerHeight;
+    }
+
+    /**
+     * 序号列宽度
+     *
+     * @param autoNumColumnWidth 宽度
+     */
+    public void setAutoNumColumnWidth(int autoNumColumnWidth) {
+        this.autoNumColumnWidth = autoNumColumnWidth;
+    }
+
+    /**
+     * 设置合并单元格
+     *
+     * @param mergerCells 合并单元格
+     */
+    public void setMergerCells(List<Integer[]> mergerCells) {
+        this.mergerCells = mergerCells;
     }
 }

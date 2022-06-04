@@ -63,9 +63,9 @@ public class OpsFooter<R> extends AbsParent<OpsSheet<R>> {
             complexFooter = new ArrayList<>();
         }
         ComplexCell complexCell = new ComplexCell();
-        complexCell.text = text;
-        complexCell.locationIndex = locationIndex;
-        complexCell.style = style;
+        complexCell.setText(text);
+        complexCell.setLocationIndex(locationIndex);
+        complexCell.setStyle(style);
         complexFooter.add(complexCell);
         return this;
     }

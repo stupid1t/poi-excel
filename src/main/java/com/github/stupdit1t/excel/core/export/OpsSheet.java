@@ -1,8 +1,10 @@
 package com.github.stupdit1t.excel.core.export;
 
+import com.github.stupdit1t.excel.common.PoiCommon;
 import com.github.stupdit1t.excel.core.AbsParent;
 import com.github.stupdit1t.excel.style.CellPosition;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -39,6 +41,11 @@ public class OpsSheet<R> extends AbsParent<OpsExport> {
      * 自动排序列宽度
      */
     int autoNumColumnWidth = -1;
+
+    /**
+     * 自定义合并的单元格
+     */
+    List<Integer[]> mergerCells;
 
     /**
      * sheet名字
@@ -151,4 +158,29 @@ public class OpsSheet<R> extends AbsParent<OpsExport> {
         }
         return this;
     }
+
+    /**
+     * 合并单元格
+     *
+     * @param location 坐标 A1:B2 或 1,2,A,B 这样
+     * @return OpsSheet<R>
+     */
+    public OpsSheet<R> mergeCell(String location) {
+        return mergeCell(PoiCommon.coverRangeIndex(location));
+    }
+
+    /**
+     * 合并单元格
+     *
+     * @param locationIndex 数组下标 如 0,0,0,0
+     * @return OpsSheet<R>
+     */
+    public OpsSheet<R> mergeCell(Integer[] locationIndex) {
+        if (mergerCells == null) {
+            mergerCells = new ArrayList<>();
+        }
+        mergerCells.add(locationIndex);
+        return this;
+    }
+
 }

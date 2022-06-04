@@ -203,9 +203,9 @@ public class OpsHeader<R> extends AbsParent<OpsSheet<R>> {
          */
         public ComplexHeader<R> textIndex(String text, Integer[] locationIndex, BiConsumer<Font, CellStyle> style) {
             ComplexCell complexCell = new ComplexCell();
-            complexCell.text = text;
-            complexCell.locationIndex = locationIndex;
-            complexCell.style = style;
+            complexCell.setText(text);
+            complexCell.setLocationIndex(locationIndex);
+            complexCell.setStyle(style);
             headers.add(complexCell);
             return this;
         }

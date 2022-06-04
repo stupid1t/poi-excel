@@ -340,11 +340,20 @@ public class ExcelUtil {
                 }
             }
         }
-        // ----------------------- body设置 end     ------------------------
+        // ----------------------- body设置 end     -------------------------
 
         // ------------------------footer设置 start  ------------------------
         handleFooter(data, exportRules, footerFont, footerStyleSource, footerStyle, sheet);
-        // ------------------------footer设置 end ------------------------
+        // ------------------------footer设置 end ---------------------------
+
+        // ------------------------ 设置自定义合并 start ----------------------
+        List<Integer[]> mergerCells = exportRules.getMergerCells();
+        if (mergerCells != null) {
+            for (Integer[] mergerCell : mergerCells) {
+                cellMerge(sheet, mergerCell[0], mergerCell[1], mergerCell[2], mergerCell[3]);
+            }
+        }
+        // ------------------------ 设置自定义合并 end ------------------------
     }
 
     /**

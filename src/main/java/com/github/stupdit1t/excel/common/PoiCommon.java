@@ -4,6 +4,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.reflect.FieldUtils;
 import org.apache.poi.ss.usermodel.CellStyle;
 import org.apache.poi.ss.usermodel.Font;
+import org.apache.poi.ss.util.CellRangeAddress;
 
 import java.lang.reflect.Field;
 import java.util.Arrays;
@@ -19,19 +20,24 @@ public class PoiCommon {
     /**
      * 合并单元格转换
      *
-     * @param rule 合并规则 如将1,1,A,A 转换
+     * @param location 合并规则 如将1,1,A,A 或者 A1:3C  转换
      * @return Integer[]
      */
-    public static Integer[] coverRangeIndex(String rule) {
-        String[] range = rule.split(",");
+    public static Integer[] coverRangeIndex(String location) {
         Integer[] rangeInt = new Integer[4];
-        for (int i = 0; i < range.length; i++) {
-            if (i < 2) {
-                rangeInt[i] = Integer.parseInt(range[i]) - 1;
-            } else {
-                rangeInt[i] = PoiConstant.cellRefNums.get(range[i]);
+        boolean isExcelIndex = location.contains(":");
+        if (isExcelIndex) {
+            CellRangeAddress address = CellRangeAddress.valueOf(location);
+            rangeInt = new Integer[]{address.getFirstRow(), address.getLastRow(), address.getFirstColumn(), address.getLastColumn()};
+        } else {
+            String[] range = location.split(",");
+            for (int i = 0; i < range.length; i++) {
+                if (i < 2) {
+                    rangeInt[i] = Integer.parseInt(range[i]) - 1;
+                } else {
+                    rangeInt[i] = PoiConstant.cellRefNums.get(range[i]);
+                }
             }
-
         }
         return rangeInt;
     }
@@ -75,21 +81,6 @@ public class PoiCommon {
         }
         return new String(chars);
     }
-
-    /**
-     * 转换列坐标为数字
-     *
-     * @param cellRefs 列坐标
-     * @return int[]
-     */
-    public static int[] convertToCellNum(String[] cellRefs) {
-        int[] nums = new int[cellRefs.length];
-        for (int i = 0; i < cellRefs.length; i++) {
-            nums[i] = PoiConstant.cellRefNums.get(cellRefs[i]);
-        }
-        return nums;
-    }
-
 
     /**
      * 转换数字为坐标
