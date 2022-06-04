@@ -31,7 +31,7 @@ public class OpsFooter<R> extends AbsParent<OpsSheet<R>> {
      * @return List<ComplexHeader < R>>
      */
     public OpsFooter<R> text(String text, String location) {
-        return this.textIndex(text, PoiCommon.coverRangeIndex(location));
+        return this.text(text, PoiCommon.coverRangeIndex(location));
     }
 
     /**
@@ -40,7 +40,7 @@ public class OpsFooter<R> extends AbsParent<OpsSheet<R>> {
      * @return List<ComplexHeader < R>>
      */
     public OpsFooter<R> text(String text, String location, BiConsumer<Font, CellStyle> style) {
-        this.textIndex(text, PoiCommon.coverRangeIndex(location), style);
+        this.text(text, PoiCommon.coverRangeIndex(location), style);
         return this;
     }
 
@@ -49,8 +49,8 @@ public class OpsFooter<R> extends AbsParent<OpsSheet<R>> {
      *
      * @return List<ComplexHeader < R>>
      */
-    public OpsFooter<R> textIndex(String text, Integer[] locationIndex) {
-        return textIndex(text, locationIndex, null);
+    public OpsFooter<R> text(String text, Integer... locationIndex) {
+        return text(text, locationIndex, null);
     }
 
     /**
@@ -58,7 +58,7 @@ public class OpsFooter<R> extends AbsParent<OpsSheet<R>> {
      *
      * @return List<ComplexHeader < R>>
      */
-    public OpsFooter<R> textIndex(String text, Integer[] locationIndex, BiConsumer<Font, CellStyle> style) {
+    public OpsFooter<R> text(String text, Integer[] locationIndex, BiConsumer<Font, CellStyle> style) {
         if (complexFooter == null) {
             complexFooter = new ArrayList<>();
         }

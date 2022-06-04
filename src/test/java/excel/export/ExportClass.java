@@ -240,7 +240,7 @@ public class ExportClass {
                 .text(String.format("=SUM(J3:J%s)", 2 + data.size()), "1,1,J,J")
                 .text(String.format("=AVERAGE(K3:K%s)", 2 + data.size()), "1,1,K,K")
                 // 坐标合并
-                .textIndex("作者:625", new Integer[]{0, 0, 8, 8})
+                .text("作者:625", 0, 0, 8, 8)
                 .done()
                 .done()
                 // 执行导出
@@ -263,11 +263,14 @@ public class ExportClass {
                 .opsHeader()
                 // 不冻结表头
                 .freeze(false)
-                // 复杂表头模式
+                // 复杂表头模式, 支持三种合并方式, 1数字坐标 2字母坐标 3Excel坐标
                 .complex()
-                .text("项目资源统计", "1,1,A,K")
+                // excel坐标
+                .text("项目资源统计", "A1:K1")
+                // 字母坐标
                 .text("序号", "2,3,A,A")
-                .text("基本信息", "2,2,B,E")
+                // 数字坐标
+                .text("基本信息", 1,1,1,4)
                 .text("项目名称", "3,3,B,B")
                 .text("所属区域", "3,3,C,C")
                 .text("省份", "3,3,D,D")
@@ -284,8 +287,9 @@ public class ExportClass {
                 .fields("projectName", "areaName", "province", "city", "people", "leader", "scount", "avg", "img", "createTime")
                 .done()
                 .opsFooter()
-                .textIndex("合计:", new Integer[]{0, 1, 0, 2})
-                .textIndex("=SUM(H4:H13)", new Integer[]{0, 1, 3, 10})
+                .text("合计:", 0, 1, 0, 2)
+                // 尾行合计, 横坐标从1开始计算
+                .text("=SUM(H4:H13)", "D1:K2")
                 .done()
                 .done()
                 .export("src/test/java/excel/export/excel/complexExport.xlsx");

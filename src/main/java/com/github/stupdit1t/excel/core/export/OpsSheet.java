@@ -175,7 +175,7 @@ public class OpsSheet<R> extends AbsParent<OpsExport> {
      * @param locationIndex 数组下标 如 0,0,0,0
      * @return OpsSheet<R>
      */
-    public OpsSheet<R> mergeCell(Integer[] locationIndex) {
+    public OpsSheet<R> mergeCell(Integer... locationIndex) {
         if (mergerCells == null) {
             mergerCells = new ArrayList<>();
         }

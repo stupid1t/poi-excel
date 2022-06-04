@@ -175,7 +175,7 @@ public class OpsHeader<R> extends AbsParent<OpsSheet<R>> {
          * @return List<ComplexHeader < R>>
          */
         public ComplexHeader<R> text(String text, String location) {
-            return this.textIndex(text, PoiCommon.coverRangeIndex(location));
+            return this.text(text, PoiCommon.coverRangeIndex(location));
         }
 
         /**
@@ -184,7 +184,7 @@ public class OpsHeader<R> extends AbsParent<OpsSheet<R>> {
          * @return List<ComplexHeader < R>>
          */
         public ComplexHeader<R> text(String text, String location, BiConsumer<Font, CellStyle> style) {
-            return this.textIndex(text, PoiCommon.coverRangeIndex(location), style);
+            return this.text(text, PoiCommon.coverRangeIndex(location), style);
         }
 
         /**
@@ -192,8 +192,8 @@ public class OpsHeader<R> extends AbsParent<OpsSheet<R>> {
          *
          * @return List<ComplexHeader < R>>
          */
-        public ComplexHeader<R> textIndex(String text, Integer[] locationIndex) {
-            return textIndex(text, locationIndex, null);
+        public ComplexHeader<R> text(String text, Integer... locationIndex) {
+            return text(text, locationIndex, null);
         }
 
         /**
@@ -201,7 +201,7 @@ public class OpsHeader<R> extends AbsParent<OpsSheet<R>> {
          *
          * @return List<ComplexHeader < R>>
          */
-        public ComplexHeader<R> textIndex(String text, Integer[] locationIndex, BiConsumer<Font, CellStyle> style) {
+        public ComplexHeader<R> text(String text, Integer[] locationIndex, BiConsumer<Font, CellStyle> style) {
             ComplexCell complexCell = new ComplexCell();
             complexCell.setText(text);
             complexCell.setLocationIndex(locationIndex);
