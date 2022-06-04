@@ -306,7 +306,7 @@ class a {
                         .field("宝宝生日").datePattern("yyyy-MM-dd").verifyDate("2000-01-01~3000-12-31").done()
                         .field("月龄").width(4).verifyCustom("VALUE(F3:F6000)", "月齡格式：如1年2个月则输入14").done()
                         .field("宝宝性别").dropdown("男", "女").done()
-                        .field("来源渠道").width(12).dropdown(new String[]{"品推", "市场"}).done()
+                        .field("来源渠道").width(12).dropdown("品推", "市场").done()
                         .field("备注").done()
                         .done()
                     .done()
