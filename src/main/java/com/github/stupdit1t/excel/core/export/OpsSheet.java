@@ -183,4 +183,29 @@ public class OpsSheet<R> extends AbsParent<OpsExport> {
         return this;
     }
 
+    /**
+     * 合并单元格
+     *
+     * @param location 坐标 A1:B2 或 1,2,A,B 这样
+     * @return OpsSheet<R>
+     */
+    public OpsSheet<R> mergeCells(List<String> locations) {
+        for (String location : locations) {
+            mergeCell(location);
+        }
+        return this;
+    }
+
+    /**
+     * 合并单元格
+     *
+     * @param location 坐标 A1:B2 或 1,2,A,B 这样
+     * @return OpsSheet<R>
+     */
+    public OpsSheet<R> mergeCellsIndex(List<Integer[]> locations) {
+        for (Integer[] location : locations) {
+            mergeCell(location);
+        }
+        return this;
+    }
 }

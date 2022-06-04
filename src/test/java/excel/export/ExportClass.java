@@ -280,17 +280,19 @@ public class ExportClass {
                 .text("分值", "2,2,H,I")
                 .text("得分", "3,3,H,H")
                 .text("平均分", "3,3,I,I")
-                .text("项目图片", "2,3,K,K")
-                .text("创建时间", "2,3,J,J")
+                .text("项目图片", "2,3,J,J")
+                .text("创建时间", "2,3,K,K")
                 .done()
                 .opsColumn()
                 .fields("projectName", "areaName", "province", "city", "people", "leader", "scount", "avg", "img", "createTime")
                 .done()
                 .opsFooter()
                 .text("合计:", 0, 1, 0, 2)
-                // 尾行合计, 横坐标从1开始计算
+                // 尾行合计,D1,K2中的 纵坐标从1开始计算,会自动计算数据行高度!  切记! 切记! 切记!
                 .text("=SUM(H4:H13)", "D1:K2")
                 .done()
+                // 自定义合并sheet
+                .mergeCell("F4:G13")
                 .done()
                 .export("src/test/java/excel/export/excel/complexExport.xlsx");
     }
