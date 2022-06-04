@@ -186,7 +186,7 @@ public class OpsSheet<R> extends AbsParent<OpsExport> {
     /**
      * 合并单元格
      *
-     * @param location 坐标 A1:B2 或 1,2,A,B 这样
+     * @param locations 批量合并坐标
      * @return OpsSheet<R>
      */
     public OpsSheet<R> mergeCells(List<String> locations) {
@@ -199,7 +199,7 @@ public class OpsSheet<R> extends AbsParent<OpsExport> {
     /**
      * 合并单元格
      *
-     * @param location 坐标 A1:B2 或 1,2,A,B 这样
+     * @param locations 批量合并坐标
      * @return OpsSheet<R>
      */
     public OpsSheet<R> mergeCellsIndex(List<Integer[]> locations) {
