@@ -1,7 +1,5 @@
 # 小手star以表支持下~~~~
 
-![1](https://user-images.githubusercontent.com/29246805/172123161-c99a7df9-a5f1-4e6c-b0cf-df302453574c.png)
-
 # maven使用方式
 ```xml
 <!-- excel导入导出 -->
