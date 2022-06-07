@@ -159,7 +159,7 @@ public class ExportClass {
 
             @Override
             public void handleStyle(Font font, CellStyle cellStyle) {
-                font.setFontHeightInPoints((short) 100);
+                font.setFontHeightInPoints((short) 20);
                 // 红色字体
                 font.setColor(IndexedColors.RED.index);
                 // 居左
@@ -167,10 +167,10 @@ public class ExportClass {
             }
         };
 
-        ExcelHelper.opsExport(PoiWorkbookType.XLS)
+        ExcelHelper.opsExport(PoiWorkbookType.XLSX)
                 // 全局样式覆盖
                 .style(titleStyle)
-                // 导出添加密码, 仅支持xls格式, 默认无
+                // 导出添加密码
                 .password("123456")
                 // sheet声明
                 .opsSheet(data)
@@ -246,7 +246,7 @@ public class ExportClass {
                 .done()
                 .done()
                 // 执行导出
-                .export("src/test/java/excel/export/excel/simpleExport2.xls")
+                .export("src/test/java/excel/export/excel/simpleExport2.xlsx")
         ;
     }
 
@@ -446,5 +446,4 @@ public class ExportClass {
         }
         return buffer;
     }
-
 }

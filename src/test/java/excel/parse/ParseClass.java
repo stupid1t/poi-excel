@@ -7,7 +7,7 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
-import java.util.Map;
+import java.util.HashMap;
 
 public class ParseClass {
 
@@ -31,7 +31,7 @@ public class ParseClass {
     @Test
     public void parseMap1() {
         name.set("parseMap1");
-        PoiResult<Map> parse = ExcelHelper.opsParse(Map.class)
+        PoiResult<HashMap> parse = ExcelHelper.opsParse(HashMap.class)
                 .from("src/test/java/excel/export/excel/simpleExport.xlsx")
                 // 指定数据区域
                 .opsSheet(0, 1, 0)
@@ -47,7 +47,7 @@ public class ParseClass {
     @Test
     public void parseMap2() {
         name.set("parseMap2");
-        PoiResult<Map> parse = ExcelHelper.opsParse(Map.class)
+        PoiResult<HashMap> parse = ExcelHelper.opsParse(HashMap.class)
                 .from("src/test/java/excel/parse/excel/simpleExport.xlsx")
                 // 指定数据区域
                 .opsSheet(0, 1, 0)

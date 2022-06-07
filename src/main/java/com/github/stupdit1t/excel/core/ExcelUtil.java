@@ -18,6 +18,10 @@ import org.apache.logging.log4j.Logger;
 import org.apache.poi.hssf.record.crypto.Biff8EncryptionKey;
 import org.apache.poi.hssf.usermodel.*;
 import org.apache.poi.ooxml.POIXMLDocumentPart;
+import org.apache.poi.poifs.crypt.EncryptionInfo;
+import org.apache.poi.poifs.crypt.EncryptionMode;
+import org.apache.poi.poifs.crypt.Encryptor;
+import org.apache.poi.poifs.filesystem.POIFSFileSystem;
 import org.apache.poi.ss.usermodel.*;
 import org.apache.poi.ss.usermodel.DataValidationConstraint.OperatorType;
 import org.apache.poi.ss.usermodel.Row.MissingCellPolicy;
@@ -35,6 +39,7 @@ import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
+import java.security.GeneralSecurityException;
 import java.text.ParseException;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -73,17 +78,15 @@ public class ExcelUtil {
     }
 
     /**
-     * 给工作簿加密码 目前仅支持xlx
+     * 给工作簿加密码
      *
      * @param workbook 工作簿
      * @param password 密码
      */
-    public static void encryptWorkbook(Workbook workbook, String password) {
-        if (workbook instanceof HSSFWorkbook) {
-            // 2003
-            Biff8EncryptionKey.setCurrentUserPassword(password);
-            ((HSSFWorkbook) workbook).writeProtectWorkbook(password, StringUtils.EMPTY);
-        }
+    public static void encryptWorkbook03(Workbook workbook, String password) {
+        // 2003
+        Biff8EncryptionKey.setCurrentUserPassword(password);
+        ((HSSFWorkbook) workbook).writeProtectWorkbook(password, StringUtils.EMPTY);
     }
 
     /**
@@ -116,17 +119,6 @@ public class ExcelUtil {
     }
 
     /**
-     * 创建空的workBook，做循环填充用
-     *
-     * @param xlsx 是否为xlsx格式
-     */
-    public static Workbook createEmptyWorkbook(boolean xlsx, String password) {
-        Workbook emptyWorkbook = createEmptyWorkbook(xlsx);
-        encryptWorkbook(emptyWorkbook, password);
-        return emptyWorkbook;
-    }
-
-    /**
      * 获取导出Excel的流
      *
      * @param response 响应流
@@ -155,8 +147,8 @@ public class ExcelUtil {
      * @param response 响应
      * @param fileName 文件名
      */
-    public static void export(Workbook workbook, HttpServletResponse response, String fileName) {
-        export(workbook, getDownloadStream(response, fileName));
+    public static void export(Workbook workbook, HttpServletResponse response, String fileName, String password) {
+        export(workbook, getDownloadStream(response, fileName), password);
     }
 
     /**
@@ -168,25 +160,23 @@ public class ExcelUtil {
      */
     public static <T> void export(OutputStream out, List<T> data, ExportRules exportRules) {
         Workbook workbook = createEmptyWorkbook(exportRules.isXlsx());
-        if (StringUtils.isNotBlank(exportRules.getPassword())) {
-            encryptWorkbook(workbook, exportRules.getPassword());
-        }
         fillBook(workbook, data, exportRules);
-        export(workbook, out);
+        export(workbook, out, exportRules.getPassword());
     }
+
 
     /**
      * 导出
      *
-     * @param workbook     工作簿
-     * @param outputStream 流
+     * @param workbook 工作簿
+     * @param outPath  删除目录
      */
-    public static void export(Workbook workbook, OutputStream outputStream) {
+    public static void export(Workbook workbook, String outPath, String password) {
         try (
                 Workbook wb = workbook;
-                OutputStream out = outputStream
+                OutputStream out = new FileOutputStream(outPath)
         ) {
-            wb.write(out);
+            export(wb, out, password);
         } catch (IOException e) {
             LOG.error(e);
         }
@@ -195,14 +185,33 @@ public class ExcelUtil {
     /**
      * 导出
      *
-     * @param workbook 工作簿
-     * @param outPath  删除目录
+     * @param workbook     工作簿
+     * @param outputStream 流
      */
-    public static void export(Workbook workbook, String outPath) {
+    public static void export(Workbook workbook, OutputStream outputStream, String password) {
         try (
                 Workbook wb = workbook;
-                OutputStream out = new FileOutputStream(outPath)
+                OutputStream out = outputStream
         ) {
+            // 如果有密码, 且是03Excel
+            if (wb instanceof HSSFWorkbook && StringUtils.isNotBlank(password)) {
+                encryptWorkbook03(workbook, password);
+            } else {
+                // 其它版本excel
+                EncryptionInfo info = new EncryptionInfo(EncryptionMode.standard);
+                Encryptor enc = info.getEncryptor();
+                enc.confirmPassword(password);
+                POIFSFileSystem poifsFileSystem = new POIFSFileSystem();
+                try {
+                    OutputStream encOutStream = enc.getDataStream(poifsFileSystem);
+                    wb.write(encOutStream);
+                    encOutStream.close();
+                    poifsFileSystem.writeFilesystem(out);
+                    poifsFileSystem.close();
+                } catch (GeneralSecurityException e) {
+                    LOG.error(e);
+                }
+            }
             wb.write(out);
         } catch (IOException e) {
             LOG.error(e);
@@ -906,12 +915,7 @@ public class ExcelUtil {
         try {
             for (int j = rowStart; j <= rowEnd; j++) {
                 List<String> rowErrors = new ArrayList<>();
-                T data;
-                if (mapClass) {
-                    data = (T) new HashMap<String, Object>();
-                } else {
-                    data = rowClass.newInstance();
-                }
+                T data = rowClass.newInstance();
                 Row row = sheet.getRow(j);
                 if (row == null) {
                     continue;
@@ -1260,21 +1264,26 @@ public class ExcelUtil {
                 obj = cell.getBooleanCellValue();
                 break;
             case FORMULA:
-                // 拿到计算公式eval
-                CellValue evaluate = formulaEvaluator.evaluate(cell);
-                switch (evaluate.getCellType()) {
-                    case NUMERIC:
-                        if (DateUtil.isCellDateFormatted(cell)) {
-                            obj = cell.getDateCellValue();
-                        } else {
-                            obj = cell.getNumericCellValue();
-                        }
-                        break;
-                    case STRING:
-                        obj = evaluate.getStringValue();
-                        break;
-                    default:
-                        obj = cell.getRichStringCellValue().getString();
+                // 拿到计算公式eval, 捕捉公式错误异常
+                try {
+                    CellValue evaluate = formulaEvaluator.evaluate(cell);
+                    switch (evaluate.getCellType()) {
+                        case NUMERIC:
+                            if (DateUtil.isCellDateFormatted(cell)) {
+                                obj = cell.getDateCellValue();
+                            } else {
+                                obj = cell.getNumericCellValue();
+                            }
+                            break;
+                        case STRING:
+                            obj = evaluate.getStringValue();
+                            break;
+                        default:
+                            obj = cell.getRichStringCellValue().getString();
+                    }
+                } catch (Exception e) {
+                    obj = "";
+                    LOG.error("公式有误:{0}", e);
                 }
                 break;
             case BLANK:
@@ -1313,19 +1322,21 @@ public class ExcelUtil {
     private static Map<String, PictureData> getSheetPictures03(int sheetNum, HSSFSheet sheet) {
         Map<String, PictureData> sheetIndexPicMap = new HashMap<>();
         List<HSSFPictureData> pictures = sheet.getWorkbook().getAllPictures();
-        if (!pictures.isEmpty()) {
-            HSSFPatriarch drawingPatriarch = sheet.getDrawingPatriarch();
-            if (drawingPatriarch != null) {
-                for (HSSFShape shape : drawingPatriarch.getChildren()) {
-                    HSSFClientAnchor anchor = (HSSFClientAnchor) shape.getAnchor();
-                    if (shape instanceof HSSFPicture) {
-                        HSSFPicture pic = (HSSFPicture) shape;
-                        int pictureIndex = pic.getPictureIndex() - 1;
-                        HSSFPictureData picData = pictures.get(pictureIndex);
-                        String picIndex = sheetNum + "," + anchor.getRow1() + "," + anchor.getCol1();
-                        sheetIndexPicMap.put(picIndex, picData);
-                    }
-                }
+        if (pictures.isEmpty()) {
+            return sheetIndexPicMap;
+        }
+        HSSFPatriarch drawingPatriarch = sheet.getDrawingPatriarch();
+        if (drawingPatriarch == null) {
+            return sheetIndexPicMap;
+        }
+        for (HSSFShape shape : drawingPatriarch.getChildren()) {
+            HSSFClientAnchor anchor = (HSSFClientAnchor) shape.getAnchor();
+            if (shape instanceof HSSFPicture) {
+                HSSFPicture pic = (HSSFPicture) shape;
+                int pictureIndex = pic.getPictureIndex() - 1;
+                HSSFPictureData picData = pictures.get(pictureIndex);
+                String picIndex = sheetNum + "," + anchor.getRow1() + "," + anchor.getCol1();
+                sheetIndexPicMap.put(picIndex, picData);
             }
         }
         return sheetIndexPicMap;

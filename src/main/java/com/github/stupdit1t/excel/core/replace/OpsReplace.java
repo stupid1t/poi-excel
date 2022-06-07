@@ -31,6 +31,11 @@ public class OpsReplace {
     InputStream fromStream;
 
     /**
+     * 设置密码
+     */
+    String password;
+
+    /**
      * 要替换的变量
      */
     Map<String, String> variable = new HashMap<>();
@@ -66,6 +71,17 @@ public class OpsReplace {
     public OpsReplace from(InputStream inputStream) {
         checkSetFromMode(2);
         this.fromStream = inputStream;
+        return this;
+    }
+
+    /**
+     * 设置密码
+     *
+     * @param password 密码
+     * @return OpsReplace
+     */
+    public OpsReplace password(String password) {
+        this.password = password;
         return this;
     }
 
@@ -117,7 +133,7 @@ public class OpsReplace {
      */
     public void replaceTo(String path) {
         Workbook workbook = replace();
-        ExcelUtil.export(workbook, path);
+        ExcelUtil.export(workbook, path, this.password);
     }
 
     /**
@@ -127,7 +143,7 @@ public class OpsReplace {
      */
     public void replaceTo(OutputStream out) {
         Workbook workbook = replace();
-        ExcelUtil.export(workbook, out);
+        ExcelUtil.export(workbook, out, this.password);
     }
 
     /**
@@ -138,6 +154,6 @@ public class OpsReplace {
      */
     public void replaceTo(HttpServletResponse response, String filename) {
         Workbook workbook = replace();
-        ExcelUtil.export(workbook, response, filename);
+        ExcelUtil.export(workbook, response, filename, this.password);
     }
 }
