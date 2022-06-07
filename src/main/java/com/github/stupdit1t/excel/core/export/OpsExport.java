@@ -177,7 +177,7 @@ public class OpsExport {
      *
      * @param workbook
      */
-    private void export(Workbook workbook) {
+    public void export(Workbook workbook) {
         // 5.执行导出
         switch (this.toMode) {
             case 1:

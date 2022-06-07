@@ -134,7 +134,9 @@ public class ExportClass {
         ExcelHelper.opsExport(PoiWorkbookType.XLSX)
                 .opsSheet(data)
                 .opsHeader().simple().texts("项目名称", "项目图", "所属区域", "省份", "市", "项目所属人", "项目领导人", "得分", "平均分", "创建时间").done()
-                .opsColumn().fields("projectName", "img", "areaName", "province", "city", "people", "leader", "scount", "avg", "createTime").done()
+                .opsColumn().fields("projectName", "img", "areaName", "province", "city", "people", "leader", "scount")
+                .field( "avg").pattern("0.00%").done()
+                .fields("createTime").done()
                 .done()
                 .export("src/test/java/excel/export/excel/simpleExport.xlsx");
     }
@@ -221,7 +223,7 @@ public class ExportClass {
                 }).done()
                 .field("createTime")
                 // 日期格式化
-                .datePattern("yyyy-MM-dd")
+                .pattern("yyyy-MM-dd")
                 // 居左
                 .align(HorizontalAlignment.LEFT)
                 // 居中
@@ -343,7 +345,7 @@ public class ExportClass {
                 .opsColumn()
                 .field("宝宝姓名").done()
                 .field("手机号码").verifyText("11~11", "请输入11位的手机号码！").done()
-                .field("宝宝生日").datePattern("yyyy-MM-dd").verifyDate("2000-01-01~3000-12-31").done()
+                .field("宝宝生日").pattern("yyyy-MM-dd").verifyDate("2000-01-01~3000-12-31").done()
                 .field("月龄").width(4).verifyCustom("VALUE(F3:F6000)", "月齡格式：如1年2个月则输入14").done()
                 .field("宝宝性别").dropdown("男", "女").done()
                 .field("来源渠道").width(12).dropdown(new String[]{"品推", "市场"}).done()

@@ -435,8 +435,8 @@ public class ExcelUtil {
                     style.setFillPattern(FillPatternType.SOLID_FOREGROUND);
                 }
 
-                // 5. 日期格式化
-                String pattern = styleCustom.getDatePattern();
+                // 5. 格式化
+                String pattern = styleCustom.getPattern();
                 if (StringUtils.isNotBlank(pattern)) {
                     CreationHelper createHelper = wb.getCreationHelper();
                     style.setDataFormat(createHelper.createDataFormat().getFormat(pattern));
@@ -449,7 +449,7 @@ public class ExcelUtil {
 
         // 如果是日期, 且用户没有设置日期格式化, 默认年月日时分秒
         boolean dateValue = value instanceof Date || value instanceof LocalDate || value instanceof LocalDateTime;
-        if (dateValue && styleCustom.getDatePattern() == null) {
+        if (dateValue && styleCustom.getPattern() == null) {
             String cacheDateKey = "global-signal-date";
             CellStyle style = cacheStyle.get(cacheDateKey);
             if (style == null) {
@@ -590,13 +590,13 @@ public class ExcelUtil {
                 }
                 String[] split1 = split[0].split("~");
                 if (split1.length < 2) {
-                    throw new IllegalArgumentException("时间校验表达式不正确,请填写如" + column.getStyle().getDatePattern() + "的值!");
+                    throw new IllegalArgumentException("时间校验表达式不正确,请填写如" + column.getStyle().getPattern() + "的值!");
                 }
                 try {
-                    sheet.addValidationData(createDateValidation(sheet, column.getStyle().getDatePattern(), split1[0], split1[1], info, j, exportRules.getMaxRows(), lastRow));
+                    sheet.addValidationData(createDateValidation(sheet, column.getStyle().getPattern(), split1[0], split1[1], info, j, exportRules.getMaxRows(), lastRow));
                 } catch (ParseException e) {
                     LOG.error(e);
-                    throw new IllegalArgumentException("时间校验表达式不正确,请填写如" + column.getStyle().getDatePattern() + "的值!");
+                    throw new IllegalArgumentException("时间校验表达式不正确,请填写如" + column.getStyle().getPattern() + "的值!");
                 } catch (Exception e) {
                     LOG.error(e);
                 }
