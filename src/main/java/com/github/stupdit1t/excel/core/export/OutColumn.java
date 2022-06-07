@@ -159,12 +159,12 @@ public class OutColumn<R> extends AbsParent<OpsColumn<R>> implements Cloneable {
     /**
      * 日期格式化
      *
-     * @param datePattern 格式化内容
+     * @param pattern 格式化内容
      * @return Column<R>
      */
-    public OutColumn<R> pattern(String datePattern) {
+    public OutColumn<R> pattern(String pattern) {
 
-        style.pattern = datePattern;
+        style.pattern = pattern;
         return this;
     }
 
@@ -354,7 +354,7 @@ public class OutColumn<R> extends AbsParent<OpsColumn<R>> implements Cloneable {
                     ", valign=" + valign +
                     ", color=" + color +
                     ", backColor=" + backColor +
-                    ", datePattern='" + pattern + '\'' +
+                    ", pattern='" + pattern + '\'' +
                     '}';
         }
 
