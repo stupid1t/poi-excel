@@ -194,22 +194,24 @@ public class ExcelUtil {
                 OutputStream out = outputStream
         ) {
             // 如果有密码, 且是03Excel
-            if (wb instanceof HSSFWorkbook && StringUtils.isNotBlank(password)) {
-                encryptWorkbook03(workbook, password);
-            } else {
-                // 其它版本excel
-                EncryptionInfo info = new EncryptionInfo(EncryptionMode.standard);
-                Encryptor enc = info.getEncryptor();
-                enc.confirmPassword(password);
-                POIFSFileSystem poifsFileSystem = new POIFSFileSystem();
-                try {
-                    OutputStream encOutStream = enc.getDataStream(poifsFileSystem);
-                    wb.write(encOutStream);
-                    encOutStream.close();
-                    poifsFileSystem.writeFilesystem(out);
-                    poifsFileSystem.close();
-                } catch (GeneralSecurityException e) {
-                    LOG.error(e);
+            if (StringUtils.isNotBlank(password)) {
+                if (wb instanceof HSSFWorkbook) {
+                    encryptWorkbook03(workbook, password);
+                } else {
+                    // 其它版本excel
+                    EncryptionInfo info = new EncryptionInfo(EncryptionMode.standard);
+                    Encryptor enc = info.getEncryptor();
+                    enc.confirmPassword(password);
+                    POIFSFileSystem poifsFileSystem = new POIFSFileSystem();
+                    try {
+                        OutputStream encOutStream = enc.getDataStream(poifsFileSystem);
+                        wb.write(encOutStream);
+                        encOutStream.close();
+                        poifsFileSystem.writeFilesystem(out);
+                        poifsFileSystem.close();
+                    } catch (GeneralSecurityException e) {
+                        LOG.error(e);
+                    }
                 }
             }
             wb.write(out);
