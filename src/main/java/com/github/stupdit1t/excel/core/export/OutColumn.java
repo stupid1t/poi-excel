@@ -159,12 +159,12 @@ public class OutColumn<R> extends AbsParent<OpsColumn<R>> implements Cloneable {
     /**
      * 日期格式化
      *
-     * @param datePattern 格式化内容
+     * @param pattern 格式化内容
      * @return Column<R>
      */
-    public OutColumn<R> datePattern(String datePattern) {
+    public OutColumn<R> pattern(String pattern) {
 
-        style.datePattern = datePattern;
+        style.pattern = pattern;
         return this;
     }
 
@@ -328,7 +328,7 @@ public class OutColumn<R> extends AbsParent<OpsColumn<R>> implements Cloneable {
         /**
          * 导出日期格式
          */
-        String datePattern;
+        String pattern;
 
         /**
          * 获取样式缓存
@@ -343,7 +343,7 @@ public class OutColumn<R> extends AbsParent<OpsColumn<R>> implements Cloneable {
                             && this.valign == null
                             && this.color == null
                             && this.backColor == null
-                            && this.datePattern == null
+                            && this.pattern == null
             ) {
                 return null;
             }
@@ -354,7 +354,7 @@ public class OutColumn<R> extends AbsParent<OpsColumn<R>> implements Cloneable {
                     ", valign=" + valign +
                     ", color=" + color +
                     ", backColor=" + backColor +
-                    ", datePattern='" + datePattern + '\'' +
+                    ", pattern='" + pattern + '\'' +
                     '}';
         }
 
@@ -437,8 +437,8 @@ public class OutColumn<R> extends AbsParent<OpsColumn<R>> implements Cloneable {
          *
          * @return String
          */
-        public String getDatePattern() {
-            return datePattern;
+        public String getPattern() {
+            return pattern;
         }
 
         /**
@@ -498,10 +498,10 @@ public class OutColumn<R> extends AbsParent<OpsColumn<R>> implements Cloneable {
         /**
          * 设置日期格式化
          *
-         * @param datePattern 格式
+         * @param pattern 格式
          */
-        public void setDatePattern(String datePattern) {
-            this.datePattern = datePattern;
+        public void setPattern(String pattern) {
+            this.pattern = pattern;
         }
     }
 

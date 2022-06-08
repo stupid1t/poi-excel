@@ -4,7 +4,6 @@ import com.github.stupdit1t.excel.common.PoiWorkbookType;
 import com.github.stupdit1t.excel.core.ExcelUtil;
 import com.github.stupdit1t.excel.style.DefaultCellStyleEnum;
 import com.github.stupdit1t.excel.style.ICellStyle;
-import org.apache.commons.lang3.StringUtils;
 import org.apache.poi.ss.usermodel.Workbook;
 
 import javax.servlet.http.HttpServletResponse;
@@ -177,17 +176,17 @@ public class OpsExport {
      *
      * @param workbook
      */
-    private void export(Workbook workbook) {
+    public void export(Workbook workbook) {
         // 5.执行导出
         switch (this.toMode) {
             case 1:
-                ExcelUtil.export(workbook, this.path);
+                ExcelUtil.export(workbook, this.path, this.password);
                 break;
             case 2:
-                ExcelUtil.export(workbook, this.stream);
+                ExcelUtil.export(workbook, this.stream, this.password);
                 break;
             case 3:
-                ExcelUtil.export(workbook, this.response, this.responseName);
+                ExcelUtil.export(workbook, this.response, this.responseName, this.password);
                 break;
         }
     }
@@ -198,11 +197,6 @@ public class OpsExport {
     public Workbook createBook() {
         // 1.声明工作簿
         Workbook workbook = workbookType.create();
-
-        // 密码设置
-        if (StringUtils.isNotBlank(this.password)) {
-            ExcelUtil.encryptWorkbook(workbook, this.password);
-        }
 
         // 2.多sheet获取
         if (this.parallelSheet) {

@@ -1,12 +1,10 @@
-# 小手star以表支持下~~~~
-
 # maven使用方式
 ```xml
 <!-- excel导入导出 -->
 <dependency>
     <groupId>com.github.stupdit1t</groupId>
     <artifactId>poi-excel</artifactId>
-    <version>3.0.2</version>
+    <version>3.0.3</version>
 </dependency>
 ```
 
@@ -21,6 +19,12 @@
 ## 二. 更新记录
 
 > 有需求才有进步，这个轮子本身就是从0开始因为需求慢慢叠加起来的。有新需求提出来,我觉得合适会更新. 如有疑问可加群帮解答: 811606008
+
+### v3.0.3
+
+1. 日期格式化方法名修改 UPDATE
+2. 保留导出workbook, 提供灵活性 NEW
+3. 支持xlsx添加密码 NEW
 
 ### v3.0.2 ( 不兼容[1.x.x](README-1.x.md) 和 [2.x.x](README-2.x.md) 版本)
 
