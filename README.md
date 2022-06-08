@@ -469,7 +469,7 @@ public class MainClass {
 
     @Test
     public void parseMap1() {
-        PoiResult<Map> parse = ExcelHelper.opsParse(Map.class)
+        PoiResult<HashMap> parse = ExcelHelper.opsParse(HashMap.class)
                 .from("src/test/java/excel/export/excel/simpleExport.xlsx")
                 // 指定数据区域
                 .opsSheet(0, 1, 0)
@@ -491,7 +491,7 @@ public class MainClass {
 
     @Test
     public void parseMap2() {
-        PoiResult<Map> parse = ExcelHelper.opsParse(Map.class)
+        PoiResult<HashMap> parse = ExcelHelper.opsParse(HashMap.class)
                 .from("src/test/java/excel/parse/excel/simpleExport.xlsx")
                 // 指定数据区域
                 .opsSheet(0, 1, 0)
