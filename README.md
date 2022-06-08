@@ -94,7 +94,7 @@ class a {
         ExcelHelper.opsExport(PoiWorkbookType.XLS)
                 // 全局样式覆盖
                 .style(titleStyle)
-                // 导出添加密码, 仅支持xls格式, 默认无
+                // 导出添加密码
                 .password("123456")
                 // sheet声明
                 .opsSheet(data)
