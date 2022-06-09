@@ -148,7 +148,7 @@ class a {
                             .done()
                         .field("createTime")
                             // 日期格式化
-                            .datePattern("yyyy-MM-dd")
+                            .pattern("yyyy-MM-dd")
                             // 居左
                             .align(HorizontalAlignment.LEFT)
                             // 居中
