@@ -32,7 +32,7 @@ public class ParseClass {
     public void parseMap1() {
         name.set("parseMap1");
         PoiResult<HashMap> parse = ExcelHelper.opsParse(HashMap.class)
-                .from("src/test/java/excel/export/excel/simpleExport.xlsx")
+                .from("src/test/java/excel/parse/excel/simpleExport.xlsx")
                 // 指定数据区域
                 .opsSheet(0, 1, 0)
                 .parse();

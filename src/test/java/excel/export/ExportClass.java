@@ -133,11 +133,9 @@ public class ExportClass {
         name.set("simpleExport");
         ExcelHelper.opsExport(PoiWorkbookType.XLS)
                 .opsSheet(data)
-                .opsHeader().simple().texts("项目名称", "项目图", "所属区域", "省份", "市", "项目所属人", "项目领导人", "得分", "平均分", "创建时间").done()
-                .opsColumn().fields("projectName", "img", "areaName", "province", "city", "people", "leader")
-                .field("scount").width(10000).done()
-                .field( "avg").pattern("0.00%").done()
-                .fields("createTime").done()
+                .autoNum(true)
+                .opsHeader().simple().texts("序号","项目名称", "项目图", "所属区域", "省份", "市", "项目所属人", "项目领导人", "得分", "平均分", "创建时间").done()
+                .opsColumn().fields("projectName", "img", "areaName", "province", "city", "people", "leader").field("scount").width(10000).done().field( "avg").pattern("0.00%").done().fields("createTime").done()
                 .done()
                 .export("src/test/java/excel/export/excel/simpleExport.xls");
     }
