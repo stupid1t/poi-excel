@@ -64,7 +64,7 @@ public class ExportClass {
             }
             obj.setPeople("张三");
             obj.setLeader("李四");
-            obj.setScount((int) (Math.random() * 1000));
+            obj.setScount(Long.MAX_VALUE + "");
             obj.setAvg(Math.random());
             obj.setCreateTime(new Date());
             obj.setImg(imageParseBytes(new File("src/test/java/excel/export/data/1.png")));
@@ -79,7 +79,7 @@ public class ExportClass {
             obj.setCity("保定市");
             obj.setPeople("张三");
             obj.setLeader("李四");
-            obj.setScount((int) (Math.random() * 1000));
+            obj.setScount((long) (Math.random() * 1000) + "");
             obj.setAvg(Math.random());
             obj.setCreateTime(new Date());
             bigData.add(obj);
@@ -131,14 +131,15 @@ public class ExportClass {
     @Test
     public void simpleExport() throws FileNotFoundException {
         name.set("simpleExport");
-        ExcelHelper.opsExport(PoiWorkbookType.XLSX)
+        ExcelHelper.opsExport(PoiWorkbookType.XLS)
                 .opsSheet(data)
                 .opsHeader().simple().texts("项目名称", "项目图", "所属区域", "省份", "市", "项目所属人", "项目领导人", "得分", "平均分", "创建时间").done()
-                .opsColumn().fields("projectName", "img", "areaName", "province", "city", "people", "leader", "scount")
+                .opsColumn().fields("projectName", "img", "areaName", "province", "city", "people", "leader")
+                .field("scount").width(10000).done()
                 .field( "avg").pattern("0.00%").done()
                 .fields("createTime").done()
                 .done()
-                .export("src/test/java/excel/export/excel/simpleExport.xlsx");
+                .export("src/test/java/excel/export/excel/simpleExport.xls");
     }
 
     /**
@@ -307,12 +308,12 @@ public class ExportClass {
     @Test
     public void complexObject() {
         name.set("complexObject");
-        ExcelHelper.opsExport(PoiWorkbookType.XLSX)
+        ExcelHelper.opsExport(PoiWorkbookType.XLS)
                 .opsSheet(complexData)
                 .opsHeader().simple().texts("學生姓名", "所在班級", "所在學校", "更多父母姓名").done()
                 .opsColumn().fields("name", "classRoom.name", "classRoom.school.name", "moreInfo.parent.age").done()
                 .done()
-                .export("src/test/java/excel/export/excel/complexObject.xlsx");
+                .export("src/test/java/excel/export/excel/complexObject.xls");
     }
 
     /**
@@ -393,6 +394,7 @@ public class ExportClass {
     public void bigData() {
         name.set("bigData 大数据类型");
         ExcelHelper.opsExport(PoiWorkbookType.BIG_XLSX)
+                .password("123")
                 .opsSheet(bigData)
                 .sheetName("1")
                 .opsHeader().simple().texts("项目名称", "项目图", "所属区域", "省份", "市", "项目所属人", "项目领导人", "得分", "平均分", "创建时间").done()

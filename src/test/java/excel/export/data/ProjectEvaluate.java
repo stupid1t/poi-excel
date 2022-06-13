@@ -56,7 +56,7 @@ public class ProjectEvaluate implements Serializable {
 	/**
 	 * 总分
 	 */
-	private Integer scount;
+	private String scount;
 
 	/**
 	 * 历史平均分
@@ -159,11 +159,11 @@ public class ProjectEvaluate implements Serializable {
 		this.img = img;
 	}
 
-	public int getScount() {
+	public String getScount() {
 		return scount;
 	}
 
-	public void setScount(int scount) {
+	public void setScount(String scount) {
 		this.scount = scount;
 	}
 
