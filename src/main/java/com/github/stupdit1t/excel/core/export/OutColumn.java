@@ -157,7 +157,7 @@ public class OutColumn<R> extends AbsParent<OpsColumn<R>> implements Cloneable {
     }
 
     /**
-     * 日期格式化
+     * 格式化单元格内人, 参考 BuiltinFormats 类
      *
      * @param pattern 格式化内容
      * @return Column<R>

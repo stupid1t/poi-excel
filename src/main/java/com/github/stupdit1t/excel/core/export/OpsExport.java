@@ -14,6 +14,8 @@ import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.Executor;
+import java.util.concurrent.ForkJoinPool;
 import java.util.function.BiConsumer;
 
 /**
@@ -40,6 +42,11 @@ public class OpsExport {
 	 * Excel密码, 只支持xls 格式
 	 */
 	String password;
+
+	/**
+	 * 并行导出线程数
+	 */
+	Executor executor = ForkJoinPool.commonPool();
 
 	/**
 	 * 并行导出sheet
@@ -129,11 +136,22 @@ public class OpsExport {
 	/**
 	 * 并行导出sheet
 	 *
-	 * @param parallelSheet
+	 * @param executor 自定义线程池导出
 	 * @return OpsExport
 	 */
-	public OpsExport parallelSheet(boolean parallelSheet) {
-		this.parallelSheet = parallelSheet;
+	public OpsExport parallelSheet(Executor executor) {
+		this.parallelSheet = true;
+		this.executor = executor;
+		return this;
+	}
+
+	/**
+	 * 并行导出sheet, 默认fork join线程池
+	 *
+	 * @return OpsExport
+	 */
+	public OpsExport parallelSheet() {
+		this.parallelSheet = true;
 		return this;
 	}
 
@@ -178,7 +196,7 @@ public class OpsExport {
 	/**
 	 * 执行输出
 	 *
-	 * @param workbook
+	 * @param workbook 导出workbook
 	 */
 	public void export(Workbook workbook) {
 		// 5.执行导出

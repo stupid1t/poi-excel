@@ -338,20 +338,24 @@ public class ExportClass {
     @Test
     public void templateExport() {
         name.set("templateExport");
-        ExcelHelper.opsExport(PoiWorkbookType.XLSX)
+        List<String> list = new ArrayList<>();
+        for (int i = 0; i < 20; i++) {
+            list.add(i +"平推");
+        }
+        ExcelHelper.opsExport(PoiWorkbookType.XLS)
                 .opsSheet(Collections.emptyList())
                 .opsHeader().simple().texts("宝宝姓名", "手机号码", "宝宝生日", "月龄", "宝宝性别", "来源渠道", "备注").done()
                 .opsColumn()
                 .field("宝宝姓名").done()
                 .field("手机号码").verifyText("11~11", "请输入11位的手机号码！").done()
                 .field("宝宝生日").pattern("yyyy-MM-dd").verifyDate("2000-01-01~3000-12-31").done()
-                .field("月龄").width(4).verifyCustom("VALUE(F3:F6000)", "月齡格式：如1年2个月则输入14").done()
+                .field("月龄").verifyCustom("VALUE(F3:F6000)", "月齡格式：如1年2个月则输入14").done()
                 .field("宝宝性别").dropdown("男", "女").done()
-                .field("来源渠道").width(12).dropdown(new String[]{"品推", "市场"}).done()
+                .field("来源渠道").dropdown(list.toArray(new String[]{})).done()
                 .field("备注").done()
                 .done()
                 .done()
-                .export("src/test/java/excel/export/excel/templateExport.xlsx");
+                .export("src/test/java/excel/export/excel/templateExport.xls");
     }
 
     /**
@@ -363,8 +367,8 @@ public class ExportClass {
     public void mulSheet() {
         name.set("mulSheet");
         ExcelHelper.opsExport(PoiWorkbookType.XLSX)
-                // 多线程导出多sheet, 默认false
-                .parallelSheet(true)
+                // 多线程导出多sheet, 默认为forkjoin线程池
+                .parallelSheet()
                 .opsSheet(mapData)
                 .sheetName("sheet1")
                 .opsHeader().simple().texts("姓名", "年龄").done()
