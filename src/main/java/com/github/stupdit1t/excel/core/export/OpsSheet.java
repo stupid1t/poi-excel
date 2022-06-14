@@ -119,12 +119,12 @@ public class OpsSheet<R> extends AbsParent<OpsExport> {
 
 	/**
 	 * sheetName 定义
+	 * 自动生成序号, 此功能在复杂表头下, 需要自己定义序号列表头
 	 *
-	 * @param autoNum 自动生成序号, 此功能在复杂表头下, 需要自己定义序号列表头
 	 * @return OpsSheet<R>
 	 */
-	public OpsSheet<R> autoNum(boolean autoNum) {
-		this.autoNum = autoNum;
+	public OpsSheet<R> autoNum() {
+		this.autoNum = true;
 		return this;
 	}
 
@@ -141,10 +141,9 @@ public class OpsSheet<R> extends AbsParent<OpsExport> {
 
 	/**
 	 * 全局高度定义
-     *
-     * @param cellPosition 单元格类型
-     * @param height 高度
 	 *
+	 * @param cellPosition 单元格类型
+	 * @param height       高度
 	 * @return OpsSheet<R>
 	 */
 	public OpsSheet<R> height(CellPosition cellPosition, int height) {

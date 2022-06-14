@@ -55,13 +55,12 @@ public class OpsHeader<R> extends AbsParent<OpsSheet<R>> {
 	}
 
 	/**
-	 * 冻结表头
+	 * 不冻结表头
 	 *
-	 * @param freeze 冻结表头
 	 * @return OpsHeader<R>
 	 */
-	public OpsHeader<R> freeze(boolean freeze) {
-		this.freeze = freeze;
+	public OpsHeader<R> noFreeze() {
+		this.freeze = false;
 		return this;
 	}
 
