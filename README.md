@@ -23,7 +23,7 @@
 ### v3.0.5
 
 1. 导出参数为空检验
-2. 导入参数为空检验
+2. 部分方法名调整
 
 ### v3.0.4
 
@@ -104,7 +104,7 @@ class a {
                 // sheet声明
                 .opsSheet(data)
                     // 自动生成序号, 此功能在复杂表头下, 需要自己定义序号列
-                    .autoNum(true)
+                    .autoNum()
                     // 自定义数据行高度, 默认excel正常高度
                     .height(CellPosition.CELL, 300)
                     // 自定义序号列宽度, 默认2000
@@ -202,8 +202,8 @@ class a {
                 .opsSheet(data)
                     .autoNum(true)
                     .opsHeader()
-                        // 不冻结表头
-                        .freeze(false)
+                        // 不冻结表头, 默认冻结
+                        .noFreeze()
                         // 复杂表头模式, 支持三种合并方式, 1数字坐标 2字母坐标 3Excel坐标
                         .complex()
                             // excel坐标
@@ -342,8 +342,8 @@ class a {
     @Test
     public void mulSheet() {
         ExcelHelper.opsExport(PoiWorkbookType.XLSX)
-                // 多线程导出多sheet, 默认false
-                .parallelSheet(true)
+                // 多线程导出多sheet, 默认单线程
+                .parallelSheet()
                 .opsSheet(mapData)
                     .sheetName("sheet1")
                     .opsHeader().simple().texts("姓名", "年龄").done()
