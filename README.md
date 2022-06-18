@@ -208,7 +208,7 @@ class a {
     public void complexExport() {
         ExcelHelper.opsExport(PoiWorkbookType.XLSX)
                 .opsSheet(data)
-                    .autoNum(true)
+                    .autoNum()
                     .opsHeader()
                         // 不冻结表头, 默认冻结
                         .noFreeze()
