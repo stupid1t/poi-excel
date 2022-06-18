@@ -293,7 +293,7 @@ public class ExcelUtil {
 		Map<String, Integer[]> mergerRepeatCellsMap = new HashMap<>();
 		List<Integer[]> mergerRepeatCells = new ArrayList<>();
 		// 上一次行数据
-		Map<String,String> lastRepeatKeyMap = new HashMap<>();
+		Map<String, String> lastRepeatKeyMap = new HashMap<>();
 		for (int i = 0; i < data.size(); i++) {
 			Row row = sheet.createRow(i + exportRules.getMaxRows());
 			if (cellStyle.getHeight() != -1) {
@@ -357,20 +357,24 @@ public class ExcelUtil {
 
 				// 7. 纵向合并判断
 				if (column.getMergerRepeatFieldValue() != null) {
-                    Object repeatValue = value;
-                    if(!column.getMergerRepeatFieldValue().equals(column.getField())){
-                        repeatValue = readField(clsInfo, t, column.getMergerRepeatFieldValue());
-                    }
+					StringBuilder repeatValue = new StringBuilder();
+					if (column.getMergerRepeatFieldValue().length == 1 && column.getMergerRepeatFieldValue()[0].equals(column.getField())){
+						repeatValue.append(value);
+					}else{
+						for (String repeatField : column.getMergerRepeatFieldValue()) {
+							repeatValue.append(readField(clsInfo, t, repeatField));
+						}
+					}
 					String nowKey = column.getField() + repeatValue;
-                    String lastRepeatKey = lastRepeatKeyMap.getOrDefault(column.getField(),"");
-                    if (!nowKey.equals(lastRepeatKey)) {
+					String lastRepeatKey = lastRepeatKeyMap.getOrDefault(column.getField(), "");
+					if (!nowKey.equals(lastRepeatKey)) {
 						// 内容不相同, 则重置上一次单元格数据, 存放合并数据
 						Integer[] mergerRepeatCell = mergerRepeatCellsMap.remove(lastRepeatKey);
 						if (mergerRepeatCell != null) {
 							mergerRepeatCells.add(mergerRepeatCell);
 						}
 						lastRepeatKey = nowKey;
-                        lastRepeatKeyMap.put(column.getField(), lastRepeatKey);
+						lastRepeatKeyMap.put(column.getField(), lastRepeatKey);
 					}
 					Integer[] mergerCell = mergerRepeatCellsMap.getOrDefault(lastRepeatKey, new Integer[4]);
 					mergerCell[2] = j;

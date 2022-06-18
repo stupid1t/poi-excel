@@ -26,7 +26,7 @@ public class OutColumn<R> extends AbsParent<OpsColumn<R>> implements Cloneable {
     /**
      * 纵向数据相同合并
      */
-    String mergerRepeatFieldValue;
+    String[] mergerRepeatFieldValue;
 
     /**
      * 日期校验,请填写例如2018-08-09~2019-08-09
@@ -193,7 +193,7 @@ public class OutColumn<R> extends AbsParent<OpsColumn<R>> implements Cloneable {
      * @return
      */
     public OutColumn<R> mergerRepeat() {
-        this.mergerRepeatFieldValue = this.field;
+        this.mergerRepeatFieldValue = new String[]{this.field};
         return this;
     }
 
@@ -202,7 +202,7 @@ public class OutColumn<R> extends AbsParent<OpsColumn<R>> implements Cloneable {
      *
      * @return
      */
-    public OutColumn<R> mergerRepeat(String field) {
+    public OutColumn<R> mergerRepeat(String... field) {
         this.mergerRepeatFieldValue = field;
         return this;
     }
@@ -633,7 +633,7 @@ public class OutColumn<R> extends AbsParent<OpsColumn<R>> implements Cloneable {
      * 行重复合并
      *
      */
-    public String getMergerRepeatFieldValue() {
+    public String[] getMergerRepeatFieldValue() {
         return mergerRepeatFieldValue;
     }
 
