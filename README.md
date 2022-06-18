@@ -4,7 +4,7 @@
 <dependency>
     <groupId>com.github.stupdit1t</groupId>
     <artifactId>poi-excel</artifactId>
-    <version>3.0.5</version>
+    <version>3.0.6</version>
 </dependency>
 ```
 
@@ -19,6 +19,10 @@
 ## 二. 更新记录
 
 > 有需求才有进步，这个轮子本身就是从0开始因为需求慢慢叠加起来的。有新需求提出来,我觉得合适会更新. 如有疑问可加群帮解答: 811606008
+
+### v3.0.6
+
+1. 增加导出自动感知行数据合并行功能, 方法为mergerRepeat, 参考简单导出示例
 
 ### v3.0.5
 
@@ -131,6 +135,8 @@ class a {
                         .fields("projectName", "img", "areaName", "province", "people")
                         // 个性化导出字段设置
                         .field("city")
+                            // 当前行数据相同合并
+                            .mergerRepeat()
                             // 下拉框
                             .dropdown("北京", "西安", "上海", "广州")
                             // 行高单独设置
@@ -152,6 +158,8 @@ class a {
                             })
                             .done()
                         .field("createTime")
+                            // 区域相同, 合并时间
+                            .mergerRepeat("areaName")
                             // 日期格式化
                             .pattern("yyyy-MM-dd")
                             // 居左

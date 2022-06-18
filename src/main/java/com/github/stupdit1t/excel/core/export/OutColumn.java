@@ -24,6 +24,11 @@ public class OutColumn<R> extends AbsParent<OpsColumn<R>> implements Cloneable {
     String[] dropdown;
 
     /**
+     * 纵向数据相同合并
+     */
+    String mergerRepeatFieldValue;
+
+    /**
      * 日期校验,请填写例如2018-08-09~2019-08-09
      */
     String verifyDate;
@@ -179,6 +184,26 @@ public class OutColumn<R> extends AbsParent<OpsColumn<R>> implements Cloneable {
             throw new UnsupportedOperationException("同一列只能定义一个数据校验！");
         }
         this.dropdown = dropDown;
+        return this;
+    }
+
+    /**
+     * 当前行重复合并当前行
+     *
+     * @return
+     */
+    public OutColumn<R> mergerRepeat() {
+        this.mergerRepeatFieldValue = this.field;
+        return this;
+    }
+
+    /**
+     * 指定字段值重复合并当前行
+     *
+     * @return
+     */
+    public OutColumn<R> mergerRepeat(String field) {
+        this.mergerRepeatFieldValue = field;
         return this;
     }
 
@@ -603,4 +628,13 @@ public class OutColumn<R> extends AbsParent<OpsColumn<R>> implements Cloneable {
     public OutCallback<R> getOutHandle() {
         return outHandle;
     }
+
+    /**
+     * 行重复合并
+     *
+     */
+    public String getMergerRepeatFieldValue() {
+        return mergerRepeatFieldValue;
+    }
+
 }

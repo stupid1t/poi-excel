@@ -198,11 +198,13 @@ public class ExportClass {
 				// 导出列声明
 				.opsColumn()
 				// 批量导出字段
-				.fields("projectName", "img", "areaName", "province", "people")
+				.fields("projectName", "img","areaName","province", "people")
 				// 个性化导出字段设置
 				.field("city")
 				// 下拉框
 				.dropdown("北京", "西安", "上海", "广州")
+				// 行数据相同合并
+				.mergerRepeat()
 				// 行高单独设置
 				.height(500)
 				// 批注
@@ -221,7 +223,8 @@ public class ExportClass {
 					return val;
 				}).done()
 				.field("createTime")
-				// 日期格式化
+				// 区域相同, 合并时间
+				.mergerRepeat("areaName")
 				.pattern("yyyy-MM-dd")
 				// 居左
 				.align(HorizontalAlignment.LEFT)
