@@ -22,7 +22,7 @@
 
 ### v3.0.6
 
-1. 增加导出自动感知行数据合并行功能, 方法为mergerRepeat, 参考简单导出示例
+1. 增加导出自动感知行数据合并行功能, 方法为mergerRepeat, 参考  简单导出 + 自定义属性完整示例
 
 ### v3.0.5
 
@@ -193,7 +193,8 @@ class a {
 
 * 导出结果
 
-![image](https://user-images.githubusercontent.com/29246805/171567183-b3e3b2ca-0bd9-42b5-b521-6167fa9f8279.png)
+![image](https://user-images.githubusercontent.com/29246805/174421969-b570cd36-a012-4035-a3f1-45a84bdd2be2.png)
+
 
 
 
