@@ -1,13 +1,26 @@
 # maven使用方式
 ```xml
-<!-- excel导入导出 -->
+<!-- excel导入导出 POI版本为5.2.2 -->
 <dependency>
     <groupId>com.github.stupdit1t</groupId>
     <artifactId>poi-excel</artifactId>
-    <version>3.0.6</version>
+    <version>3.0.7</version>
+</dependency>
+
+<!-- excel导入导出 POI版本为3.17 -->
+<dependency>
+<groupId>com.github.stupdit1t</groupId>
+<artifactId>poi-excel</artifactId>
+<version>poi317.0</version>
+</dependency>
+
+<!-- excel导入导出 POI版本为4.1.2 -->
+<dependency>
+<groupId>com.github.stupdit1t</groupId>
+<artifactId>poi-excel</artifactId>
+<version>poi412.0</version>
 </dependency>
 ```
-直接引入,确保项目中没有其他POI依赖, POI版本为5.1.0
 ## 一. 项目优势
 
 - 简单快速上手，且满足绝大多数业务场景
