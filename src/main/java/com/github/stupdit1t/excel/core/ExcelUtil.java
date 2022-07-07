@@ -1237,8 +1237,8 @@ public class ExcelUtil {
             cell.setCellValue(((Number) value).doubleValue());
         } else if (value instanceof Date || value instanceof LocalDate || value instanceof LocalDateTime) {
             if (value instanceof Date) {
-                Date date = (Date) value;
-                cell.setCellValue(date);
+            Date date = (Date) value;
+            cell.setCellValue(date);
             } else if (value instanceof LocalDateTime) {
                 LocalDateTime date = (LocalDateTime) value;
                 cell.setCellValue(date);
