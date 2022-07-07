@@ -45,6 +45,11 @@ public class ExportClass {
 	 */
 	private List<List<?>> moreSheetData = new ArrayList<>();
 
+	/**
+	 * 下拉框数据
+	 */
+	private List<String> dropdownList = new ArrayList<>();
+
 	ThreadLocal<Long> time = new ThreadLocal<>();
 
 	ThreadLocal<String> name = new ThreadLocal<>();
@@ -108,6 +113,11 @@ public class ExportClass {
 		moreSheetData.add(data);
 		moreSheetData.add(mapData);
 		moreSheetData.add(complexData);
+
+		// 下拉框数据
+		for (int i = 0; i < 1000; i++) {
+			dropdownList.add("示例"+ i);
+		}
 	}
 
 	@Before
@@ -202,7 +212,7 @@ public class ExportClass {
 				// 个性化导出字段设置
 				.field("city")
 				// 下拉框
-				.dropdown("北京", "西安", "上海", "广州")
+				.dropdown(dropdownList.toArray(new String[]{}))
 				// 行数据相同合并
 				.mergerRepeat()
 				// 行高单独设置
@@ -342,10 +352,10 @@ public class ExportClass {
 	public void templateExport() {
 		name.set("templateExport");
 		List<String> list = new ArrayList<>();
-		for (int i = 0; i < 20; i++) {
+		for (int i = 0; i < 53; i++) {
 			list.add(i + "平推");
 		}
-		ExcelHelper.opsExport(PoiWorkbookType.XLSX)
+		ExcelHelper.opsExport(PoiWorkbookType.XLS)
 				.opsSheet(Collections.emptyList())
 				.opsHeader().simple().texts("宝宝姓名", "手机号码", "宝宝生日", "月龄", "宝宝性别", "来源渠道", "备注").done()
 				.opsColumn()
