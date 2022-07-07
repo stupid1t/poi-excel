@@ -1,6 +1,6 @@
 [![OSCS Status](https://www.oscs1024.com/platform/badge/stupdit1t/poi-excel.svg?size=small)](https://www.oscs1024.com/project/stupdit1t/poi-excel?ref=badge_small)
 
-# 最新POI版本为5.2.2
+# maven直接引入
 ```xml
 <!-- excel导入导出 POI版本为5.2.2 -->
 <dependency>
