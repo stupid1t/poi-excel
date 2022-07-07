@@ -1,4 +1,4 @@
-# maven使用方式
+# 最新POI版本为5.2.2
 ```xml
 <!-- excel导入导出 POI版本为5.2.2 -->
 <dependency>
@@ -6,7 +6,10 @@
     <artifactId>poi-excel</artifactId>
     <version>3.0.7</version>
 </dependency>
+```
 
+# 兼容两个低版本POI 
+```xml
 <!-- excel导入导出 POI版本为3.17 -->
 <dependency>
 <groupId>com.github.stupdit1t</groupId>
