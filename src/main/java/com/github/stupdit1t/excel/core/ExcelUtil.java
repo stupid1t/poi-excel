@@ -15,9 +15,9 @@ import org.apache.commons.lang3.reflect.FieldUtils;
 import org.apache.commons.lang3.time.DateUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.apache.poi.POIXMLDocumentPart;
 import org.apache.poi.hssf.record.crypto.Biff8EncryptionKey;
 import org.apache.poi.hssf.usermodel.*;
-import org.apache.poi.ooxml.POIXMLDocumentPart;
 import org.apache.poi.poifs.crypt.EncryptionInfo;
 import org.apache.poi.poifs.crypt.EncryptionMode;
 import org.apache.poi.poifs.crypt.Encryptor;
@@ -207,7 +207,6 @@ public class ExcelUtil {
                     try {
                         OutputStream encOutStream = enc.getDataStream(poifsFileSystem);
                         wb.write(encOutStream);
-                        encOutStream.close();
                         poifsFileSystem.writeFilesystem(out);
                         poifsFileSystem.close();
                     } catch (GeneralSecurityException e) {
@@ -1064,7 +1063,7 @@ public class ExcelUtil {
         try {
             Workbook wb = WorkbookFactory.create(is);
             return readExcelWrite(wb, variable);
-        } catch (IOException e) {
+        } catch (Exception e) {
             LOG.error(e);
         }
         return null;
@@ -1133,7 +1132,7 @@ public class ExcelUtil {
             int blankCell = 0;
             for (int i = 0; i < lastCellNum; i++) {
                 Cell cell = row.getCell(i);
-                if (cell == null || cell.getCellType() == CellType.BLANK) {
+                if (cell == null || cell.getCellType() == CellType.BLANK.getCode()) {
                     blankCell++;
                 }
             }
@@ -1235,17 +1234,9 @@ public class ExcelUtil {
         } else if (value instanceof Number) {
             // 处理整形自动不展示小数点
             cell.setCellValue(((Number) value).doubleValue());
-        } else if (value instanceof Date || value instanceof LocalDate || value instanceof LocalDateTime) {
-            if (value instanceof Date) {
-                Date date = (Date) value;
-                cell.setCellValue(date);
-            } else if (value instanceof LocalDateTime) {
-                LocalDateTime date = (LocalDateTime) value;
-                cell.setCellValue(date);
-            } else {
-                LocalDate date = (LocalDate) value;
-                cell.setCellValue(date);
-            }
+        } else if (value instanceof Date) {
+            Date date = (Date) value;
+            cell.setCellValue(date);
         } else if (value instanceof byte[]) {
             byte[] data = (byte[]) value;
             // 5.1anchor主要用于设置图片的属性
@@ -1306,34 +1297,35 @@ public class ExcelUtil {
         // 缺失列处理政策
         Cell cell = r.getCell(cellNum, MissingCellPolicy.CREATE_NULL_AS_BLANK);
         Object obj = null;
-        CellType cellType = cell.getCellType();
+        int cellType = cell.getCellType();
         switch (cellType) {
-            case STRING:
+            case 1:
                 obj = cell.getRichStringCellValue().getString();
                 break;
-            case NUMERIC:
+            case 0:
                 if (DateUtil.isCellDateFormatted(cell)) {
                     obj = cell.getDateCellValue();
                 } else {
                     obj = cell.getNumericCellValue();
                 }
                 break;
-            case BOOLEAN:
+            case 4:
                 obj = cell.getBooleanCellValue();
                 break;
-            case FORMULA:
+            case 2:
                 // 拿到计算公式eval, 捕捉公式错误异常
                 try {
                     CellValue evaluate = formulaEvaluator.evaluate(cell);
-                    switch (evaluate.getCellType()) {
-                        case NUMERIC:
+                    int cellTypeFormula = evaluate.getCellType();
+                    switch (cellTypeFormula) {
+                        case 0:
                             if (DateUtil.isCellDateFormatted(cell)) {
                                 obj = cell.getDateCellValue();
                             } else {
                                 obj = cell.getNumericCellValue();
                             }
                             break;
-                        case STRING:
+                        case 1:
                             obj = evaluate.getStringValue();
                             break;
                         default:
@@ -1344,7 +1336,7 @@ public class ExcelUtil {
                     LOG.error("公式有误:{0}", e);
                 }
                 break;
-            case BLANK:
+            case 3:
                 obj = "";
                 break;
             default:
@@ -1453,7 +1445,7 @@ public class ExcelUtil {
             int dataLength = dataSource.length;
             int rowNum = hidden.getLastRowNum();
             char colLetter = 'A';
-            if (rowNum == -1) {
+            if (rowNum == 0) {
                 // 第一次创建下拉框数据
                 for (int i = 0; i < dataLength; i++, rowNum++) {
                     hidden.createRow(i).createCell(0).setCellValue(dataSource[i]);
