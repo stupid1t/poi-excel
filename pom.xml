@@ -3,7 +3,7 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>com.github.stupdit1t</groupId>
     <artifactId>poi-excel</artifactId>
-    <version>3.0.6</version>
+    <version>3.0.7</version>
     <packaging>jar</packaging>
     <name>poi-excel</name>
     <url>http://maven.apache.org</url>
@@ -44,11 +44,6 @@
             <groupId>org.apache.poi</groupId>
             <artifactId>poi-ooxml</artifactId>
             <version>5.2.2</version>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.commons</groupId>
-            <artifactId>commons-lang3</artifactId>
-            <version>3.12.0</version>
         </dependency>
         <dependency>
             <groupId>javax.servlet</groupId>
