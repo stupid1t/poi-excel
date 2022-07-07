@@ -71,7 +71,7 @@ public class ExportClass {
 			data.add(obj);
 		}
 		// 1.单sheet数据填充
-		for (int i = 0; i < 100000; i++) {
+		for (int i = 0; i < 10000; i++) {
 			ProjectEvaluate obj = new ProjectEvaluate();
 			obj.setProjectName("中青旅" + i);
 			obj.setAreaName("华东长三角");

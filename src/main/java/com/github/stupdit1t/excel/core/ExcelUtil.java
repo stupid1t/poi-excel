@@ -209,6 +209,7 @@ public class ExcelUtil {
 						encOutStream.close();
 						poifsFileSystem.writeFilesystem(out);
 						poifsFileSystem.close();
+						return;
 					} catch (GeneralSecurityException e) {
 						LOG.error(e);
 					}
