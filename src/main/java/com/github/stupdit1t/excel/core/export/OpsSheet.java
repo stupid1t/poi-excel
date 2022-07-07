@@ -132,7 +132,7 @@ public class OpsSheet<R> extends AbsParent<OpsExport> {
 	 * 自动序号列宽度
 	 *
 	 * @param autoNumColumnWidth 默认2000
-	 * @return
+	 * @return OpsSheet<R>
 	 */
 	public OpsSheet<R> autoNumColumnWidth(int autoNumColumnWidth) {
 		this.autoNumColumnWidth = autoNumColumnWidth;

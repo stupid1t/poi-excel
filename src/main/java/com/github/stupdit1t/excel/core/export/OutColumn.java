@@ -190,7 +190,7 @@ public class OutColumn<R> extends AbsParent<OpsColumn<R>> implements Cloneable {
     /**
      * 当前行重复合并当前行
      *
-     * @return
+     * @return OutColumn<R>
      */
     public OutColumn<R> mergerRepeat() {
         this.mergerRepeatFieldValue = new String[]{this.field};
@@ -200,7 +200,7 @@ public class OutColumn<R> extends AbsParent<OpsColumn<R>> implements Cloneable {
     /**
      * 指定字段值重复合并当前行
      *
-     * @return
+     * @return OutColumn<R>
      */
     public OutColumn<R> mergerRepeat(String... field) {
         this.mergerRepeatFieldValue = field;
