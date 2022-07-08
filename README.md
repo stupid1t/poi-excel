@@ -5,8 +5,9 @@
 <a target="_blank" href="https://poi.apache.org/download.html"><img src="https://img.shields.io/badge/POI-5.2.2+-green.svg" /></a>
 <a target="_blank" href='https://github.com/stupdit1t/poi-excel'><img src="https://img.shields.io/github/stars/stupdit1t/poi-excel.svg?style=social"/>
 <a href='https://gitee.com/stupid1t/poi-excel/stargazers'><img src='https://gitee.com/stupid1t/poi-excel/badge/star.svg?theme=white' alt='star'></img></a>
-## 快速开始
-### maven直接引入
+## 一. 快速开始
+**已上传maven中央仓库, 无需下载此项目**
+### POM中maven直接引入
 ```xml
 <!-- excel导入导出 POI版本为5.2.2 -->
 <dependency>
@@ -52,7 +53,7 @@ public void export(HttpServletResponse response, SysErrorLogQueryParam queryPara
             .export(response, "异常日志.xlsx");
 }
 ```
-## 一. 项目优势
+## 二. 项目优势
 
 - 简单快速上手，且满足绝大多数业务场景
 - 屏蔽POI细节，学习成本低。
@@ -60,7 +61,7 @@ public void export(HttpServletResponse response, SysErrorLogQueryParam queryPara
 - 功能强大，导入支持严格的单元格校验，导出支持公式，复杂表头和尾部设计，以及单元格样式自定义支持
 - 支持读取复杂Excel模板,替换变量输出Excel,变量用${}替代
 
-## 二. 更新记录
+## 三. 更新记录
 
 > 有需求才有进步，这个轮子本身就是从0开始因为需求慢慢叠加起来的。有新需求提出来,我觉得合适会更新. 如有疑问可加群帮解答: 811606008
 
@@ -88,7 +89,7 @@ public void export(HttpServletResponse response, SysErrorLogQueryParam queryPara
 2. 优化代码结构和层次
 3. 提供更精确的单元格样式控制
 
-## 三. 导出
+## 四. 导出
 
 ##### 选择xls还是xlsx？
 
@@ -476,7 +477,7 @@ class a {
 ![image](https://user-images.githubusercontent.com/29246805/171568276-76572937-b483-441c-bc53-10ea3eea0b4d.png)
 
 
-## 四. 解析导入
+## 五. 解析导入
 ##### 1. 支持严格的单元格校验,可以定位到单元格坐标校验
 ##### 2. 支持数据行的图片导入
 ##### 3. 支持导入过程中,对数据处理添加回调逻辑,满足其他业务场景
