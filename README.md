@@ -5,7 +5,8 @@
 <a target="_blank" href="https://poi.apache.org/download.html"><img src="https://img.shields.io/badge/POI-5.2.2+-green.svg" /></a>
 <a target="_blank" href='https://github.com/stupdit1t/poi-excel'><img src="https://img.shields.io/github/stars/stupdit1t/poi-excel.svg?style=social"/>
 <a href='https://gitee.com/stupid1t/poi-excel/stargazers'><img src='https://gitee.com/stupid1t/poi-excel/badge/star.svg?theme=white' alt='star'></img></a>
-# maven直接引入
+## 快速开始
+### maven直接引入
 ```xml
 <!-- excel导入导出 POI版本为5.2.2 -->
 <dependency>
@@ -15,7 +16,7 @@
 </dependency>
 ```
 
-# 兼容两个低版本POI 
+### 兼容两个低版本POI 
 ```xml
 <!-- excel导入导出 POI版本为3.17 -->
 <dependency>
@@ -30,6 +31,26 @@
 <artifactId>poi-excel</artifactId>
 <version>poi412.0</version>
 </dependency>
+```
+
+### Spring使用示例
+```java
+@ApiOperation("导出异常日志")
+@GetMapping("/export")
+public void export(HttpServletResponse response, SysErrorLogQueryParam queryParams) {
+    // 1.获取列表数据
+    List<SysErrorLog> data = sysErrorLogService.selectListPC(queryParams);
+    
+    // 2.执行导出
+    ExcelHelper.opsExport(PoiWorkbookType.XLSX)
+            .opsSheet(data)
+            .opsHeader().simple()
+                .texts("请求地址", "请求方式", "IP地址", "简要信息", "异常时间", "创建人").done()
+            .opsColumn()
+                .fields("requestUri","requestMethod","ip","errorSimpleInfo","createDate","creatorName").done()
+            .done()
+            .export(response, "异常日志.xlsx");
+}
 ```
 ## 一. 项目优势
 
