@@ -2,6 +2,7 @@
 <img alt="GitHub code size in bytes" src="https://img.shields.io/github/languages/code-size/stupdit1t/poi-excel">
 <a target="_blank" href="LICENSE"><img src="https://img.shields.io/:license-MIT-blue.svg"></a>
 <a target="_blank" href="https://www.oracle.com/technetwork/java/javase/downloads/index.html"><img src="https://img.shields.io/badge/JDK-1.8+-green.svg" /></a>
+<a target="_blank" href="https://poi.apache.org/download.html"><img src="https://img.shields.io/badge/POI-5.2.2+-green.svg" /></a>
 <a target="_blank" href='https://github.com/stupdit1t/poi-excel'><img src="https://img.shields.io/github/stars/stupdit1t/poi-excel.svg?style=social"/>
 <a href='https://gitee.com/stupid1t/poi-excel/stargazers'><img src='https://gitee.com/stupid1t/poi-excel/badge/star.svg?theme=white' alt='star'></img></a>
 # maven直接引入
