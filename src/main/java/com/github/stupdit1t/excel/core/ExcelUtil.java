@@ -611,6 +611,7 @@ public class ExcelUtil {
     private static <T> void handleColumnProperty(List<T> data, ExportRules exportRules, Sheet sheet) {
         // ----------------------- 列属性设置 start--------------------
         List<OutColumn<?>> fields = exportRules.getColumn();
+        int columnWidth = exportRules.getColumnWidth();
         int autoNumColumnWidth = exportRules.getAutoNumColumnWidth();
         for (int i = 0, j = 0; i < fields.size(); i++, j++) {
             // 0.每一列默认单元格样式设置
@@ -627,13 +628,17 @@ public class ExcelUtil {
             } else {
                 try {
                     // 1.2根据maxRows，获取表头的值设置宽度
-                    Row row = sheet.getRow(exportRules.getMaxRows() - 1);
-                    String headerValue = row.getCell(j).getStringCellValue();
-                    if (StringUtils.isBlank(headerValue)) {
-                        row = sheet.getRow(exportRules.getMaxRows() - 2);
-                        headerValue = row.getCell(j).getStringCellValue();
+                    if (columnWidth != -1) {
+                        sheet.setColumnWidth(j, columnWidth);
+                    } else {
+                        Row row = sheet.getRow(exportRules.getMaxRows() - 1);
+                        String headerValue = row.getCell(j).getStringCellValue();
+                        if (StringUtils.isBlank(headerValue)) {
+                            row = sheet.getRow(exportRules.getMaxRows() - 2);
+                            headerValue = row.getCell(j).getStringCellValue();
+                        }
+                        sheet.setColumnWidth(j, headerValue.getBytes().length * 256);
                     }
-                    sheet.setColumnWidth(j, headerValue.getBytes().length * 256);
                 } catch (Exception e) {
                     if (exportRules.isAutoNum()) {
                         LOG.error("请确认表头数量和列数量一致! ");
