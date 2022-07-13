@@ -63,7 +63,7 @@ public class ExportClass {
 			obj.setAreaName("华东长三角");
 			obj.setProvince("陕西省");
 			if (i % 3 == 0) {
-				obj.setCity("北京");
+				obj.setCity("北京北京北京北京北京北京北京北京北京北京北京北京北京北京北京北京北京北京北京北京北京北京北京北京");
 			} else {
 				obj.setCity("西安");
 			}
