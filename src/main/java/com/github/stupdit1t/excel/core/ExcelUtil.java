@@ -507,6 +507,12 @@ public class ExcelUtil {
                     CreationHelper createHelper = wb.getCreationHelper();
                     style.setDataFormat(createHelper.createDataFormat().getFormat(pattern));
                 }
+
+                // 6. 换行显示
+                Boolean wrapText = styleCustom.getWrapText();
+                if (wrapText != null) {
+                    style.setWrapText(wrapText);
+                }
                 cacheStyle.put(styleCacheKey, style);
             }
             // 最终样式设置

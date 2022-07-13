@@ -1,14 +1,59 @@
-# maven使用方式
+[![OSCS Status](https://www.oscs1024.com/platform/badge/stupdit1t/poi-excel.svg?size=small)](https://www.oscs1024.com/project/stupdit1t/poi-excel?ref=badge_small)
+<img alt="GitHub code size in bytes" src="https://img.shields.io/github/languages/code-size/stupdit1t/poi-excel">
+<a target="_blank" href="LICENSE"><img src="https://img.shields.io/:license-MIT-blue.svg"></a>
+<a target="_blank" href="https://www.oracle.com/technetwork/java/javase/downloads/index.html"><img src="https://img.shields.io/badge/JDK-1.8+-green.svg" /></a>
+<a target="_blank" href="https://poi.apache.org/download.html"><img src="https://img.shields.io/badge/POI-5.2.2+-green.svg" /></a>
+<a target="_blank" href='https://github.com/stupdit1t/poi-excel'><img src="https://img.shields.io/github/stars/stupdit1t/poi-excel.svg?style=social"/>
+<a href='https://gitee.com/stupid1t/poi-excel/stargazers'><img src='https://gitee.com/stupid1t/poi-excel/badge/star.svg?theme=white' alt='star'></img></a>
+## 一. 快速开始
+**已上传maven中央仓库, 无需下载此项目**
+### POM中maven直接引入
 ```xml
-<!-- excel导入导出 -->
+<!-- excel导入导出 POI版本为5.2.2 -->
 <dependency>
     <groupId>com.github.stupdit1t</groupId>
     <artifactId>poi-excel</artifactId>
-    <version>3.0.6</version>
+    <version>3.0.8</version>
 </dependency>
 ```
-直接引入,确保项目中没有其他POI依赖, POI版本为5.1.0
-## 一. 项目优势
+
+### 兼容两个低版本POI 
+```xml
+<!-- excel导入导出 POI版本为3.17 -->
+<dependency>
+<groupId>com.github.stupdit1t</groupId>
+<artifactId>poi-excel</artifactId>
+<version>poi317.1</version>
+</dependency>
+
+<!-- excel导入导出 POI版本为4.1.2 -->
+<dependency>
+<groupId>com.github.stupdit1t</groupId>
+<artifactId>poi-excel</artifactId>
+<version>poi412.1</version>
+</dependency>
+```
+
+### Spring使用示例
+```java
+@ApiOperation("导出异常日志")
+@GetMapping("/export")
+public void export(HttpServletResponse response, SysErrorLogQueryParam queryParams) {
+    // 1.获取列表数据
+    List<SysErrorLog> data = sysErrorLogService.selectListPC(queryParams);
+    
+    // 2.执行导出
+    ExcelHelper.opsExport(PoiWorkbookType.XLSX)
+            .opsSheet(data)
+            .opsHeader().simple()
+                .texts("请求地址", "请求方式", "IP地址", "简要信息", "异常时间", "创建人").done()
+            .opsColumn()
+                .fields("requestUri","requestMethod","ip","errorSimpleInfo","createDate","creatorName").done()
+            .done()
+            .export(response, "异常日志.xlsx");
+}
+```
+## 二. 项目优势
 
 - 简单快速上手，且满足绝大多数业务场景
 - 屏蔽POI细节，学习成本低。
@@ -16,9 +61,13 @@
 - 功能强大，导入支持严格的单元格校验，导出支持公式，复杂表头和尾部设计，以及单元格样式自定义支持
 - 支持读取复杂Excel模板,替换变量输出Excel,变量用${}替代
 
-## 二. 更新记录
+## 三. 更新记录
 
 > 有需求才有进步，这个轮子本身就是从0开始因为需求慢慢叠加起来的。有新需求提出来,我觉得合适会更新. 如有疑问可加群帮解答: 811606008
+
+### v3.0.8
+1. 导出添加设置列换行显示属性   参考简单导出simpleExport2
+2. 添加sheet设置全局的单元格宽度属性  参考简单导出simpleExport2
 
 ### v3.0.7
 1. POI版本升级 5.1.0 ----- 5.2.2
@@ -44,7 +93,7 @@
 2. 优化代码结构和层次
 3. 提供更精确的单元格样式控制
 
-## 三. 导出
+## 四. 导出
 
 ##### 选择xls还是xlsx？
 
@@ -114,6 +163,8 @@ class a {
                     .autoNum()
                     // 自定义数据行高度, 默认excel正常高度
                     .height(CellPosition.CELL, 300)
+                    // 全局单元格宽度100000
+                    .width(10000)
                     // 自定义序号列宽度, 默认2000
                     .autoNumColumnWidth(3000)
                     // sheet名字
@@ -140,6 +191,8 @@ class a {
                         .field("city")
                             // 当前行数据相同合并
                             .mergerRepeat()
+                            // 超出宽度换行显示
+                            .wrapText()
                             // 下拉框
                             .dropdown("北京", "西安", "上海", "广州")
                             // 行高单独设置
@@ -432,7 +485,7 @@ class a {
 ![image](https://user-images.githubusercontent.com/29246805/171568276-76572937-b483-441c-bc53-10ea3eea0b4d.png)
 
 
-## 四. 解析导入
+## 五. 解析导入
 ##### 1. 支持严格的单元格校验,可以定位到单元格坐标校验
 ##### 2. 支持数据行的图片导入
 ##### 3. 支持导入过程中,对数据处理添加回调逻辑,满足其他业务场景
