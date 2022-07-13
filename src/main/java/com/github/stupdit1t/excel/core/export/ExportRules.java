@@ -124,6 +124,11 @@ public class ExportRules {
     private int autoNumColumnWidth = 2000;
 
     /**
+     * 列宽度
+     */
+    private int columnWidth = -1;
+
+    /**
      * 自定义合并的单元格
      */
     private List<Integer[]> mergerCells;
@@ -540,11 +545,28 @@ public class ExportRules {
     }
 
     /**
+     * 全部列宽度
+     *
+     * @param columnWidth 宽度
+     */
+    public void setColumnWidth(int columnWidth) {
+        this.columnWidth = columnWidth;
+    }
+
+    /**
      * 设置合并单元格
      *
      * @param mergerCells 合并单元格
      */
     public void setMergerCells(List<Integer[]> mergerCells) {
         this.mergerCells = mergerCells;
+    }
+
+    /**
+     * 获取全局列宽
+     *
+     */
+    public int getColumnWidth() {
+        return columnWidth;
     }
 }
