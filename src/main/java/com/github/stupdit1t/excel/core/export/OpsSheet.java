@@ -33,6 +33,11 @@ public class OpsSheet<R> extends AbsParent<OpsExport> {
 	short footerHeight = -1;
 
 	/**
+	 * 列宽自定义
+	 */
+	int width = -1;
+
+	/**
 	 * 是否自动带序号
 	 */
 	boolean autoNum;
@@ -161,6 +166,17 @@ public class OpsSheet<R> extends AbsParent<OpsExport> {
 				this.headerHeight = (short) height;
 				break;
 		}
+		return this;
+	}
+
+	/**
+	 *  全局列宽自定义
+	 *
+	 * @param width       宽度
+	 * @return OpsSheet<R>
+	 */
+	public OpsSheet<R> width(int width) {
+		this.width = width;
 		return this;
 	}
 

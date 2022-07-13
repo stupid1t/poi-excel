@@ -13,7 +13,7 @@
 <dependency>
     <groupId>com.github.stupdit1t</groupId>
     <artifactId>poi-excel</artifactId>
-    <version>3.0.7</version>
+    <version>3.0.8</version>
 </dependency>
 ```
 
@@ -23,14 +23,14 @@
 <dependency>
 <groupId>com.github.stupdit1t</groupId>
 <artifactId>poi-excel</artifactId>
-<version>poi317.0</version>
+<version>poi317.1</version>
 </dependency>
 
 <!-- excel导入导出 POI版本为4.1.2 -->
 <dependency>
 <groupId>com.github.stupdit1t</groupId>
 <artifactId>poi-excel</artifactId>
-<version>poi412.0</version>
+<version>poi412.1</version>
 </dependency>
 ```
 
@@ -64,6 +64,10 @@ public void export(HttpServletResponse response, SysErrorLogQueryParam queryPara
 ## 三. 更新记录
 
 > 有需求才有进步，这个轮子本身就是从0开始因为需求慢慢叠加起来的。有新需求提出来,我觉得合适会更新. 如有疑问可加群帮解答: 811606008
+
+### v3.0.8
+1. 导出添加设置列换行显示属性   参考简单导出simpleExport2
+2. 添加sheet设置全局的单元格宽度属性  参考简单导出simpleExport2
 
 ### v3.0.7
 1. POI版本升级 5.1.0 ----- 5.2.2
@@ -159,6 +163,8 @@ class a {
                     .autoNum()
                     // 自定义数据行高度, 默认excel正常高度
                     .height(CellPosition.CELL, 300)
+                    // 全局单元格宽度100000
+                    .width(10000)
                     // 自定义序号列宽度, 默认2000
                     .autoNumColumnWidth(3000)
                     // sheet名字
@@ -185,6 +191,8 @@ class a {
                         .field("city")
                             // 当前行数据相同合并
                             .mergerRepeat()
+                            // 超出宽度换行显示
+                            .wrapText()
                             // 下拉框
                             .dropdown("北京", "西安", "上海", "广州")
                             // 行高单独设置
