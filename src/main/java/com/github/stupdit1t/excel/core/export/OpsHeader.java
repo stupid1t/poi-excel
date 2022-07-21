@@ -6,6 +6,7 @@ import org.apache.poi.ss.usermodel.CellStyle;
 import org.apache.poi.ss.usermodel.Font;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.function.BiConsumer;
@@ -132,6 +133,16 @@ public class OpsHeader<R> extends AbsParent<OpsSheet<R>> {
 				this.headers.put(text, null);
 			}
 			return this;
+		}
+
+		/**
+		 * 表头设置
+		 *
+		 * @param texts 表头
+		 * @return SimpleHeader<R>
+		 */
+		public SimpleHeader<R> texts(Collection<String> texts) {
+			return texts(texts.toArray(new String[]{}));
 		}
 
 		/**

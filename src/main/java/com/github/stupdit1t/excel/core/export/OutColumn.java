@@ -6,6 +6,8 @@ import org.apache.poi.ss.usermodel.HorizontalAlignment;
 import org.apache.poi.ss.usermodel.IndexedColors;
 import org.apache.poi.ss.usermodel.VerticalAlignment;
 
+import java.util.Collection;
+
 /**
  * 列的定义
  *
@@ -184,6 +186,20 @@ public class OutColumn<R> extends AbsParent<OpsColumn<R>> implements Cloneable {
             throw new UnsupportedOperationException("同一列只能定义一个数据校验！");
         }
         this.dropdown = dropDown;
+        return this;
+    }
+
+    /**
+     * 下拉列表数据
+     *
+     * @param dropDown 下拉列表数据
+     * @return Column<R>
+     */
+    public OutColumn<R> dropdown(Collection<String> dropDown) {
+        if (++verifyCount > 1) {
+            throw new UnsupportedOperationException("同一列只能定义一个数据校验！");
+        }
+        this.dropdown = dropDown.toArray(new String[]{});
         return this;
     }
 

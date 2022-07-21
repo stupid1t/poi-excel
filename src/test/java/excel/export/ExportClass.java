@@ -368,7 +368,7 @@ public class ExportClass {
 				.field("宝宝生日").pattern("yyyy-MM-dd").verifyDate("2000-01-01~3000-12-31").done()
 				.field("月龄").verifyCustom("VALUE(F3:F6000)", "月齡格式：如1年2个月则输入14").done()
 				.field("宝宝性别").dropdown("男", "女").done()
-				.field("来源渠道").dropdown(list.toArray(new String[]{})).done()
+				.field("来源渠道").dropdown(list).done()
 				.field("备注").done()
 				.done()
 				.done()
