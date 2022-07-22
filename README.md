@@ -56,161 +56,164 @@ public void export(HttpServletResponse response, SysErrorLogQueryParam queryPara
 }
 ```
 ## 二. 项目优势
-<details open="true">
-    <summary>ExcelHelper <em style="color: red">展开查看类结构</em></summary>
-    <ul style="list-style:none;">
-        <li style="list-style:none; margin-left: -15px">
+<div style="margin-left: 12px">
+<details>
+    <summary>ExcelHelper 结构概览 <a>点击展开</a></summary>
+    <dl>
+        <dd>
             <details>
-                <summary>opsExport <em style="color: red">导出Excel</em></summary>
-                <ul style="list-style:none;">
-                    <li style="list-style:none; margin-left: -15px">
+                <summary>opsExport <a>导出Excel</a></summary>
+                <dl>
+                    <dd>
                         <details>
-                            <summary>opsSheet <em style="color: red">声明sheet</em></summary>
-                            <ul style="list-style:none;">
-                                <li style="list-style:none; margin-left: -15px">
+                            <summary>opsSheet <a>声明sheet</a></summary>
+                            <dl>
+                                <dd>
                                     <details>
-                                        <summary>opsHeader <em style="color: red">设置表头</em></summary>
-                                        <ul style="list-style:none;">
-                                            <li style="list-style:none; margin-left: -15px">
+                                        <summary>opsHeader <a>设置表头</a></summary>
+                                        <dl>
+                                            <dd>
                                                 <details>
-                                                    <summary>complex <em style="color: red">复杂表头</em></summary>
-                                                    <ul style="list-style:none;">
-                                                        <li style="list-style:none; margin-left: -15px">text <em style="color: red">单元格声明</em></li>
-                                                    </ul>
+                                                    <summary>complex <a>复杂表头</a></summary>
+                                                    <dl>
+                                                        <dd>text <a>单元格声明</a></dd>
+                                                    </dl>
                                                 </details>
-                                            </li>
-                                            <li style="list-style:none; margin-left: -15px">
+                                            </dd>
+                                            <dd>
                                                 <details>
-                                                    <summary>simple <em style="color: red">简单表头</em></summary>
-                                                    <ul style="list-style:none;">
-                                                        <li style="list-style:none; margin-left: -15px">title <em style="color: red">大标题</em></li>
-                                                        <li style="list-style:none; margin-left: -15px">text <em style="color: red">列标题</em></li>
-                                                        <li style="list-style:none; margin-left: -15px">texts <em style="color: red">列标题批量</em></li>
-                                                    </ul>
+                                                    <summary>simple <a>简单表头</a></summary>
+                                                    <dl>
+                                                        <dd>title <a>大标题</a></dd>
+                                                        <dd>text <a>列标题</a></dd>
+                                                        <dd>texts <a>列标题批量</a></dd>
+                                                    </dl>
                                                 </details>
-                                            </li>
-                                            <li style="list-style:none; margin-left: -15px">noFreeze <em style="color: red">不冻结表头</em></li>
-                                        </ul>
+                                            </dd>
+                                            <dd>noFreeze <a>不冻结表头</a></dd>
+                                        </dl>
                                     </details>
-                                </li>
-                                <li style="list-style:none; margin-left: -15px">
+                                </dd>
+                                <dd>
                                     <details>
-                                        <summary>opsColumn <em style="color: red">设置导出字段</em></summary>
-                                        <ul style="list-style:none;">
-                                            <li style="list-style:none; margin-left: -15px">
+                                        <summary>opsColumn <a>设置导出字段</a></summary>
+                                        <dl>
+                                            <dd>
                                                 <details>
-                                                    <summary>field <em style="color: red">字段设置</em></summary>
-                                                    <ul style="list-style:none;">
-                                                        <li style="list-style:none; margin-left: -15px">color <em style="color: red">字体颜色</em></li>
-                                                        <li style="list-style:none; margin-left: -15px">width <em style="color: red">宽度</em></li>
-                                                        <li style="list-style:none; margin-left: -15px">height <em style="color: red">高度</em></li>
-                                                        <li style="list-style:none; margin-left: -15px">wrapText <em style="color: red">自动换行</em></li>
-                                                        <li style="list-style:none; margin-left: -15px">align <em style="color: red">水平定位</em></li>
-                                                        <li style="list-style:none; margin-left: -15px">backColor <em style="color: red">背景色</em></li>
-                                                        <li style="list-style:none; margin-left: -15px">pattern <em style="color: red">内容格式化</em></li>
-                                                        <li style="list-style:none; margin-left: -15px">dropdown <em style="color: red">下拉框</em></li>
-                                                        <li style="list-style:none; margin-left: -15px">comment <em style="color: red">注释</em></li>
-                                                        <li style="list-style:none; margin-left: -15px">mergerRepeat <em style="color: red">纵向自动合并</em></li>
-                                                        <li style="list-style:none; margin-left: -15px">valign <em style="color: red">垂直定位</em></li>
-                                                        <li style="list-style:none; margin-left: -15px">verifyIntNum <em style="color: red">验证整数</em></li>
-                                                        <li style="list-style:none; margin-left: -15px">verifyFloatNum <em style="color: red">验证浮点数字</em></li>
-                                                        <li style="list-style:none; margin-left: -15px">verifyDate <em style="color: red">验证日期</em></li>
-                                                        <li style="list-style:none; margin-left: -15px">verifyText <em style="color: red">验证单元格</em></li>
-                                                        <li style="list-style:none; margin-left: -15px">verifyCustom <em style="color: red">自定义验证</em></li>
-                                                        <li style="list-style:none; margin-left: -15px">outHandle <em style="color: red">输出回调钩子</em></li>                                                   
-                                                     </ul>
+                                                    <summary>field <a>字段设置</a></summary>
+                                                    <dl>
+                                                        <dd>color <a>字体颜色</a></dd>
+                                                        <dd>width <a>宽度</a></dd>
+                                                        <dd>height <a>高度</a></dd>
+                                                        <dd>wrapText <a>自动换行</a></dd>
+                                                        <dd>addgn <a>水平定位</a></dd>
+                                                        <dd>backColor <a>背景色</a></dd>
+                                                        <dd>pattern <a>内容格式化</a></dd>
+                                                        <dd>dropdown <a>下拉框</a></dd>
+                                                        <dd>comment <a>注释</a></dd>
+                                                        <dd>mergerRepeat <a>纵向自动合并</a></dd>
+                                                        <dd>vaddgn <a>垂直定位</a></dd>
+                                                        <dd>verifyIntNum <a>验证整数</a></dd>
+                                                        <dd>verifyFloatNum <a>验证浮点数字</a></dd>
+                                                        <dd>verifyDate <a>验证日期</a></dd>
+                                                        <dd>verifyText <a>验证单元格</a></dd>
+                                                        <dd>verifyCustom <a>自定义验证</a></dd>
+                                                        <dd>outHandle <a>输出回调钩子</a></dd>
+                                                    </dl>
                                                 </details>
-                                            </li>
-                                            <li style="list-style:none; margin-left: -15px">fields <em style="color: red">批量字段设置</em></li>
-                                        </ul>
+                                            </dd>
+                                            <dd>fields <a>批量字段设置</a></dd>
+                                        </dl>
                                     </details>
-                                </li>
-                                <li style="list-style:none; margin-left: -15px">
+                                </dd>
+                                <dd>
                                     <details>
-                                        <summary>opsFooter <em style="color: red">设置表尾</em></summary>
-                                        <ul style="list-style:none;">
-                                            <li style="list-style:none; margin-left: -15px">text <em style="color: red">单元格内容</em></li>
-                                        </ul>
+                                        <summary>opsFooter <a>设置表尾</a></summary>
+                                        <dl>
+                                            <dd>text <a>单元格内容</a></dd>
+                                        </dl>
                                     </details>
-                                </li>
-                                <li style="list-style:none; margin-left: -15px">sheetName <em style="color: red">sheet名称</em></li>
-                                <li style="list-style:none; margin-left: -15px">width <em style="color: red">统一宽度</em></li>
-                                <li style="list-style:none; margin-left: -15px">height <em style="color: red">统一高度</em></li>
-                                <li style="list-style:none; margin-left: -15px">autoNum <em style="color: red">自动序号</em></li>
-                                <li style="list-style:none; margin-left: -15px">autoNumColumnWidth <em style="color: red">自动序号列宽度</em></li>
-                                <li style="list-style:none; margin-left: -15px">mergeCells <em style="color: red">批量合并单元格</em></li>
-                                <li style="list-style:none; margin-left: -15px">mergeCellsIndex <em style="color: red">批量合并单元格(下标形式)</em></li>
-                                <li style="list-style:none; margin-left: -15px">mergeCell <em style="color: red">合并单元格</em></li>
-                            </ul>
+                                </dd>
+                                <dd>sheetName <a>sheet名称</a></dd>
+                                <dd>width <a>统一宽度</a></dd>
+                                <dd>height <a>统一高度</a></dd>
+                                <dd>autoNum <a>自动序号</a></dd>
+                                <dd>autoNumColumnWidth <a>自动序号列宽度</a></dd>
+                                <dd>mergeCells <a>批量合并单元格</a></dd>
+                                <dd>mergeCellsIndex <a>批量合并单元格(下标形式)</a></dd>
+                                <dd>mergeCell <a>合并单元格</a></dd>
+                            </dl>
                         </details>
-                    </li>
-                    <li style="list-style:none; margin-left: -15px">createBook <em style="color: red">memo</em></li>
-                    <li style="list-style:none; margin-left: -15px">fillBook <em style="color: red">memo</em></li>
-                    <li style="list-style:none; margin-left: -15px">parallelSheet <em style="color: red">memo</em></li>
-                    <li style="list-style:none; margin-left: -15px">style <em style="color: red">memo</em></li>
-                    <li style="list-style:none; margin-left: -15px">export <em style="color: red">memo</em></li>
-                    <li style="list-style:none; margin-left: -15px">password <em style="color: red">memo</em></li>
-                </ul>
+                    </dd>
+                    <dd>parallelSheet <a>并行导出sheet</a></dd>
+                    <dd>style <a>全局样式覆盖</a></dd>
+                    <dd>password <a>密码设置</a></dd>
+                    <dd>createBook <a>输出Workbook</a></dd>
+                    <dd>fillBook <a>填充Workbook</a></dd>
+                    <dd>export <a>执行导出</a></dd>
+                </dl>
             </details>
-        </li>
-        <li style="list-style:none; margin-left: -15px">
+        </dd>
+        <dd>
             <details>
-                <summary>opsReplace <em style="color: red">读模板导出Excel</em></summary>
-                <ul style="list-style:none;">
-                    <li style="list-style:none; margin-left: -15px">from <em style="color: red">文件源</em></li>
-                    <li style="list-style:none; margin-left: -15px">variable <em style="color: red">变量替换</em></li>                    
-                    <li style="list-style:none; margin-left: -15px">variables <em style="color: red">批量变量替换</em></li>
-                    <li style="list-style:none; margin-left: -15px">password <em style="color: red">设置密码</em></li>
-                    <li style="list-style:none; margin-left: -15px">replace <em style="color: red">输出workbook</em></li>
-                    <li style="list-style:none; margin-left: -15px">replaceTo <em style="color: red">输出文件</em></li>
-                </ul>
+                <summary>opsReplace <a>读模板导出Excel</a></summary>
+                <dl>
+                    <dd>from <a>文件源</a></dd>
+                    <dd>variable <a>变量替换</a></dd>
+                    <dd>variables <a>批量变量替换</a></dd>
+                    <dd>password <a>设置密码</a></dd>
+                    <dd>replace <a>输出workbook</a></dd>
+                    <dd>replaceTo <a>输出文件</a></dd>
+                </dl>
             </details>
-        </li>
-        <li style="list-style:none; margin-left: -15px">
+        </dd>
+        <dd>
             <details>
-                <summary>opsParse <em style="color: red">解析Excel声明</em></summary>
-                <ul style="list-style:none;">
-                    <li style="list-style:none; margin-left: -15px">from <em style="color: red">文件源</em></li>
-                    <li style="list-style:none; margin-left: -15px">
+                <summary>opsParse <a>解析Excel声明</a></summary>
+                <dl>
+                    <dd>from <a>文件源</a></dd>
+                    <dd>
                         <details>
-                            <summary>opsSheet <em style="color: red">解析sheet区域声明</em></summary>
-                            <ul style="list-style:none;">
-                                <li style="list-style:none; margin-left: -15px">
+                            <summary>opsSheet <a>解析sheet区域声明</a></summary>
+                            <dl>
+                                <dd>
                                     <details>
-                                        <summary>opsColumn <em style="color: red">解析列定义</em></summary>
-                                        <ul style="list-style:none;">
-                                            <li style="list-style:none; margin-left: -15px">
+                                        <summary>opsColumn <a>解析列定义</a></summary>
+                                        <dl>
+                                            <dd>
                                                 <details>
-                                                    <summary>field <em style="color: red">字段</em></summary>
-                                                    <ul style="list-style:none;">
-                                                        <li style="list-style:none; margin-left: -15px">notNull <em style="color: red">不能为空</em></li>
-                                                        <li style="list-style:none; margin-left: -15px">asInt <em style="color: red">类型int</em></li>
-                                                        <li style="list-style:none; margin-left: -15px">asBoolean <em style="color: red">类型boolean</em></li>
-                                                        <li style="list-style:none; margin-left: -15px">asString <em style="color: red">类型string</em></li>
-                                                        <li style="list-style:none; margin-left: -15px">asLong <em style="color: red">类型Long</em></li>
-                                                        <li style="list-style:none; margin-left: -15px">asBigDecimal <em style="color: red">类型Bigdecimal</em></li>
-                                                        <li style="list-style:none; margin-left: -15px">asDate <em style="color: red">类型Date</em></li>
-                                                        <li style="list-style:none; margin-left: -15px">asDouble <em style="color: red">类型Double</em></li>
-                                                        <li style="list-style:none; margin-left: -15px">asFloat <em style="color: red">类型Float</em></li>
-                                                        <li style="list-style:none; margin-left: -15px">asImg <em style="color: red">类型Img</em></li>
-                                                        <li style="list-style:none; margin-left: -15px">asShort <em style="color: red">类型Short</em></li>
-                                                        <li style="list-style:none; margin-left: -15px">asChar <em style="color: red">类型Char</em></li> <li style="list-style:none; margin-left: -15px">asByCustom <em style="color: red">自定义类型</em></li>
-                                                    </ul>
+                                                    <summary>field <a>字段</a></summary>
+                                                    <dl>
+                                                        <dd>notNdll <a>不能为空</a></dd>
+                                                        <dd>asInt <a>类型int</a></dd>
+                                                        <dd>asBoolean <a>类型boolean</a></dd>
+                                                        <dd>asString <a>类型string</a></dd>
+                                                        <dd>asLong <a>类型Long</a></dd>
+                                                        <dd>asBigDecimal <a>类型Bigdecimal</a></dd>
+                                                        <dd>asDate <a>类型Date</a></dd>
+                                                        <dd>asDouble <a>类型Double</a></dd>
+                                                        <dd>asFloat <a>类型Float</a></dd>
+                                                        <dd>asImg <a>类型Img</a></dd>
+                                                        <dd>asShort <a>类型Short</a></dd>
+                                                        <dd>asChar <a>类型Char</a></dd>
+                                                        <dd>asByCustom <a>自定义类型</a></dd>
+                                                    </dl>
                                                 </details>
-                                            </li>
-                                        </ul>
+                                            </dd>
+                                        </dl>
                                     </details>
-                                </li>
-                                <li style="list-style:none; margin-left: -15px">callBack <em style="color: red">解析回调钩子</em></li>
-                                <li style="list-style:none; margin-left: -15px">parse <em style="color: red">解析文件</em></li>
-                            </ul>
+                                </dd>
+                                <dd>callBack <a>解析回调钩子</a></dd>
+                                <dd>parse <a>解析文件</a></dd>
+                            </dl>
                         </details>
-                    </li>
-                </ul>
+                    </dd>
+                </dl>
             </details>
-        </li>
-    </ul>
+        </dd>
+    </dl>
 </details>
+</div>
 
 - 简单快速上手，且满足绝大多数业务场景
 - 屏蔽POI细节，学习成本低。
