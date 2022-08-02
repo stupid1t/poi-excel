@@ -6,6 +6,8 @@ import org.apache.poi.ss.usermodel.HorizontalAlignment;
 import org.apache.poi.ss.usermodel.IndexedColors;
 import org.apache.poi.ss.usermodel.VerticalAlignment;
 
+import java.util.Collection;
+
 /**
  * 列的定义
  *
@@ -188,6 +190,30 @@ public class OutColumn<R> extends AbsParent<OpsColumn<R>> implements Cloneable {
     }
 
     /**
+     * 下拉列表数据
+     *
+     * @param dropDown 下拉列表数据
+     * @return Column<R>
+     */
+    public OutColumn<R> dropdown(Collection<String> dropDown) {
+        if (++verifyCount > 1) {
+            throw new UnsupportedOperationException("同一列只能定义一个数据校验！");
+        }
+        this.dropdown = dropDown.toArray(new String[]{});
+        return this;
+    }
+
+    /**
+     * 换行显示
+     *
+     * @return Column<R>
+     */
+    public OutColumn<R> wrapText() {
+        style.wrapText = true;
+        return this;
+    }
+
+    /**
      * 当前行重复合并当前行
      *
      * @return OutColumn<R>
@@ -356,6 +382,11 @@ public class OutColumn<R> extends AbsParent<OpsColumn<R>> implements Cloneable {
         String pattern;
 
         /**
+         * 换行显示
+         */
+        Boolean wrapText;
+
+        /**
          * 获取样式缓存
          *
          * @return String
@@ -369,6 +400,7 @@ public class OutColumn<R> extends AbsParent<OpsColumn<R>> implements Cloneable {
                             && this.color == null
                             && this.backColor == null
                             && this.pattern == null
+                            && this.wrapText == null
             ) {
                 return null;
             }
@@ -380,6 +412,7 @@ public class OutColumn<R> extends AbsParent<OpsColumn<R>> implements Cloneable {
                     ", color=" + color +
                     ", backColor=" + backColor +
                     ", pattern='" + pattern + '\'' +
+                    ", wrapText='" + wrapText + '\'' +
                     '}';
         }
 
@@ -527,6 +560,23 @@ public class OutColumn<R> extends AbsParent<OpsColumn<R>> implements Cloneable {
          */
         public void setPattern(String pattern) {
             this.pattern = pattern;
+        }
+
+        /**
+         * 获取换行显示
+         *
+         */
+        public Boolean getWrapText() {
+            return wrapText;
+        }
+
+        /**
+         * 设置换行显示
+         *
+         * @param wrapText 是否换行显示
+         */
+        public void setWrapText(Boolean wrapText) {
+            this.wrapText = wrapText;
         }
     }
 

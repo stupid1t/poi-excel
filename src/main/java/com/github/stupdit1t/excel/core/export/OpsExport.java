@@ -258,6 +258,7 @@ public class OpsExport {
 		exportRules.setFreezeHeader(opsSheet.opsHeader.freeze);
 		exportRules.setPassword(this.password);
 		exportRules.setGlobalStyle(this.style);
+		exportRules.setColumnWidth(opsSheet.width);
 		if (opsSheet.autoNumColumnWidth != -1) {
 			exportRules.setAutoNumColumnWidth(opsSheet.autoNumColumnWidth);
 		}

@@ -1,5 +1,3 @@
-  ![logo](https://user-images.githubusercontent.com/29246805/180177278-d83c1d09-5714-4f4f-8e88-4202a584b872.png)
-
 [![OSCS Status](https://www.oscs1024.com/platform/badge/stupdit1t/poi-excel.svg?size=small)](https://www.oscs1024.com/project/stupdit1t/poi-excel?ref=badge_small)
 <img alt="GitHub code size in bytes" src="https://img.shields.io/github/languages/code-size/stupdit1t/poi-excel">
 <a target="_blank" href="LICENSE"><img src="https://img.shields.io/:license-MIT-blue.svg"></a>
@@ -15,7 +13,7 @@
 <dependency>
     <groupId>com.github.stupdit1t</groupId>
     <artifactId>poi-excel</artifactId>
-    <version>3.0.7</version>
+    <version>3.0.8</version>
 </dependency>
 ```
 
@@ -25,14 +23,14 @@
 <dependency>
 <groupId>com.github.stupdit1t</groupId>
 <artifactId>poi-excel</artifactId>
-<version>poi-317.0</version>
+<version>poi317.1</version>
 </dependency>
 
 <!-- excel导入导出 POI版本为4.1.2 -->
 <dependency>
 <groupId>com.github.stupdit1t</groupId>
 <artifactId>poi-excel</artifactId>
-<version>poi-412.0</version>
+<version>poi412.1</version>
 </dependency>
 ```
 
@@ -56,164 +54,6 @@ public void export(HttpServletResponse response, SysErrorLogQueryParam queryPara
 }
 ```
 ## 二. 项目优势
-<div style="margin-left: 12px">
-<details>
-    <summary>ExcelHelper 结构概览 <em>点击展开</em></summary>
-    <dl>
-        <dd>
-            <details>
-                <summary>opsExport <em>导出Excel</em></summary>
-                <dl>
-                    <dd>
-                        <details>
-                            <summary>opsSheet <em>声明sheet</em></summary>
-                            <dl>
-                                <dd>
-                                    <details>
-                                        <summary>opsHeader <em>设置表头</em></summary>
-                                        <dl>
-                                            <dd>
-                                                <details>
-                                                    <summary>complex <em>复杂表头</em></summary>
-                                                    <dl>
-                                                        <dd>text <em>单元格声明</em></dd>
-                                                    </dl>
-                                                </details>
-                                            </dd>
-                                            <dd>
-                                                <details>
-                                                    <summary>simple <em>简单表头</em></summary>
-                                                    <dl>
-                                                        <dd>title <em>大标题</em></dd>
-                                                        <dd>text <em>列标题</em></dd>
-                                                        <dd>texts <em>列标题批量</em></dd>
-                                                    </dl>
-                                                </details>
-                                            </dd>
-                                            <dd>noFreeze <em>不冻结表头</em></dd>
-                                        </dl>
-                                    </details>
-                                </dd>
-                                <dd>
-                                    <details>
-                                        <summary>opsColumn <em>设置导出字段</em></summary>
-                                        <dl>
-                                            <dd>
-                                                <details>
-                                                    <summary>field <em>字段设置</em></summary>
-                                                    <dl>
-                                                        <dd>color <em>字体颜色</em></dd>
-                                                        <dd>width <em>宽度</em></dd>
-                                                        <dd>height <em>高度</em></dd>
-                                                        <dd>wrapText <em>自动换行</em></dd>
-                                                        <dd>addgn <em>水平定位</em></dd>
-                                                        <dd>backColor <em>背景色</em></dd>
-                                                        <dd>pattern <em>内容格式化</em></dd>
-                                                        <dd>dropdown <em>下拉框</em></dd>
-                                                        <dd>comment <em>注释</em></dd>
-                                                        <dd>mergerRepeat <em>纵向自动合并</em></dd>
-                                                        <dd>vaddgn <em>垂直定位</em></dd>
-                                                        <dd>verifyIntNum <em>验证整数</em></dd>
-                                                        <dd>verifyFloatNum <em>验证浮点数字</em></dd>
-                                                        <dd>verifyDate <em>验证日期</em></dd>
-                                                        <dd>verifyText <em>验证单元格</em></dd>
-                                                        <dd>verifyCustom <em>自定义验证</em></dd>
-                                                        <dd>outHandle <em>输出回调钩子</em></dd>
-                                                    </dl>
-                                                </details>
-                                            </dd>
-                                            <dd>fields <em>批量字段设置</em></dd>
-                                        </dl>
-                                    </details>
-                                </dd>
-                                <dd>
-                                    <details>
-                                        <summary>opsFooter <em>设置表尾</em></summary>
-                                        <dl>
-                                            <dd>text <em>单元格内容</em></dd>
-                                        </dl>
-                                    </details>
-                                </dd>
-                                <dd>sheetName <em>sheet名称</em></dd>
-                                <dd>width <em>统一宽度</em></dd>
-                                <dd>height <em>统一高度</em></dd>
-                                <dd>autoNum <em>自动序号</em></dd>
-                                <dd>autoNumColumnWidth <em>自动序号列宽度</em></dd>
-                                <dd>mergeCells <em>批量合并单元格</em></dd>
-                                <dd>mergeCellsIndex <em>批量合并单元格(下标形式)</em></dd>
-                                <dd>mergeCell <em>合并单元格</em></dd>
-                            </dl>
-                        </details>
-                    </dd>
-                    <dd>parallelSheet <em>并行导出sheet</em></dd>
-                    <dd>style <em>全局样式覆盖</em></dd>
-                    <dd>password <em>密码设置</em></dd>
-                    <dd>createBook <em>输出Workbook</em></dd>
-                    <dd>fillBook <em>填充Workbook</em></dd>
-                    <dd>export <em>执行导出</em></dd>
-                </dl>
-            </details>
-        </dd>
-        <dd>
-            <details>
-                <summary>opsReplace <em>读模板导出Excel</em></summary>
-                <dl>
-                    <dd>from <em>文件源</em></dd>
-                    <dd>variable <em>变量替换</em></dd>
-                    <dd>variables <em>批量变量替换</em></dd>
-                    <dd>password <em>设置密码</em></dd>
-                    <dd>replace <em>输出workbook</em></dd>
-                    <dd>replaceTo <em>输出文件</em></dd>
-                </dl>
-            </details>
-        </dd>
-        <dd>
-            <details>
-                <summary>opsParse <em>解析Excel声明</em></summary>
-                <dl>
-                    <dd>from <em>文件源</em></dd>
-                    <dd>
-                        <details>
-                            <summary>opsSheet <em>解析sheet区域声明</em></summary>
-                            <dl>
-                                <dd>
-                                    <details>
-                                        <summary>opsColumn <em>解析列定义</em></summary>
-                                        <dl>
-                                            <dd>
-                                                <details>
-                                                    <summary>field <em>字段</em></summary>
-                                                    <dl>
-                                                        <dd>notNdll <em>不能为空</em></dd>
-                                                        <dd>asInt <em>类型int</em></dd>
-                                                        <dd>asBoolean <em>类型boolean</em></dd>
-                                                        <dd>asString <em>类型string</em></dd>
-                                                        <dd>asLong <em>类型Long</em></dd>
-                                                        <dd>asBigDecimal <em>类型Bigdecimal</em></dd>
-                                                        <dd>asDate <em>类型Date</em></dd>
-                                                        <dd>asDouble <em>类型Double</em></dd>
-                                                        <dd>asFloat <em>类型Float</em></dd>
-                                                        <dd>asImg <em>类型Img</em></dd>
-                                                        <dd>asShort <em>类型Short</em></dd>
-                                                        <dd>asChar <em>类型Char</em></dd>
-                                                        <dd>asByCustom <em>自定义类型</em></dd>
-                                                    </dl>
-                                                </details>
-                                            </dd>
-                                        </dl>
-                                    </details>
-                                </dd>
-                                <dd>callBack <em>解析回调钩子</em></dd>
-                                <dd>parse <em>解析文件</em></dd>
-                            </dl>
-                        </details>
-                    </dd>
-                </dl>
-            </details>
-        </dd>
-    </dl>
-</details>
-</div>
 
 - 简单快速上手，且满足绝大多数业务场景
 - 屏蔽POI细节，学习成本低。
@@ -224,6 +64,10 @@ public void export(HttpServletResponse response, SysErrorLogQueryParam queryPara
 ## 三. 更新记录
 
 > 有需求才有进步，这个轮子本身就是从0开始因为需求慢慢叠加起来的。有新需求提出来,我觉得合适会更新. 如有疑问可加群帮解答: 811606008
+
+### v3.0.8
+1. 导出添加设置列换行显示属性   参考简单导出simpleExport2
+2. 添加sheet设置全局的单元格宽度属性  参考简单导出simpleExport2
 
 ### v3.0.7
 1. POI版本升级 5.1.0 ----- 5.2.2
@@ -319,6 +163,8 @@ class a {
                     .autoNum()
                     // 自定义数据行高度, 默认excel正常高度
                     .height(CellPosition.CELL, 300)
+                    // 全局单元格宽度100000
+                    .width(10000)
                     // 自定义序号列宽度, 默认2000
                     .autoNumColumnWidth(3000)
                     // sheet名字
@@ -345,6 +191,8 @@ class a {
                         .field("city")
                             // 当前行数据相同合并
                             .mergerRepeat()
+                            // 超出宽度换行显示
+                            .wrapText()
                             // 下拉框
                             .dropdown("北京", "西安", "上海", "广州")
                             // 行高单独设置

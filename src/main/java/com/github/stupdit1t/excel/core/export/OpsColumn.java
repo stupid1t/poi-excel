@@ -3,6 +3,7 @@ package com.github.stupdit1t.excel.core.export;
 import com.github.stupdit1t.excel.core.AbsParent;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 
 /**
@@ -56,5 +57,15 @@ public class OpsColumn<R> extends AbsParent<OpsSheet<R>> {
             columns.add(column);
         }
         return this;
+    }
+
+    /**
+     * 字段
+     *
+     * @param fields 字段
+     * @return OpsColumn
+     */
+    public OpsColumn<R> fields(Collection<String> fields) {
+        return fields(fields.toArray(new String[]{}));
     }
 }

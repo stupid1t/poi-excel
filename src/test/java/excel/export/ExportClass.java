@@ -177,6 +177,8 @@ public class ExportClass {
 				.autoNum()
 				// 自定义数据行高度, 默认excel正常高度
 				.height(CellPosition.CELL, 300)
+				// 全局单元格宽度100000
+				.width(10000)
 				// 自定义序号列宽度, 默认2000
 				.autoNumColumnWidth(3000)
 				// sheet名字
@@ -201,6 +203,8 @@ public class ExportClass {
 				.fields("projectName", "img","areaName","province", "people")
 				// 个性化导出字段设置
 				.field("city")
+				// 超出宽度换行显示
+				.wrapText()
 				// 下拉框
 				.dropdown("北京", "西安", "上海", "广州")
 				// 行数据相同合并
@@ -354,7 +358,7 @@ public class ExportClass {
 				.field("宝宝生日").pattern("yyyy-MM-dd").verifyDate("2000-01-01~3000-12-31").done()
 				.field("月龄").verifyCustom("VALUE(F3:F6000)", "月齡格式：如1年2个月则输入14").done()
 				.field("宝宝性别").dropdown("男", "女").done()
-				.field("来源渠道").dropdown(list.toArray(new String[]{})).done()
+				.field("来源渠道").dropdown(list).done()
 				.field("备注").done()
 				.done()
 				.done()
