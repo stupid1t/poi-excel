@@ -243,10 +243,10 @@ public class ExcelUtil {
 		CellStyle headerStyleSource = wb.createCellStyle();
 		ICellStyle headerStyle = handleGlobalStyle(globalStyle, headerFont, headerStyleSource, CellPosition.HEADER);
 
-		// 单元格样式
-		Font cellFont = wb.createFont();
-		CellStyle cellStyleSource = wb.createCellStyle();
-		ICellStyle cellStyle = handleGlobalStyle(globalStyle, cellFont, cellStyleSource, CellPosition.CELL);
+        // 单元格样式
+        Font cellFont = wb.createFont();
+        CellStyle cellStyleSource = wb.createCellStyle();
+        ICellStyle cellStyle = handleGlobalStyle(globalStyle, cellFont, cellStyleSource, CellPosition.CELL);
 
 		// 尾行样式
 		Font footerFont = wb.createFont();
@@ -770,34 +770,39 @@ public class ExcelUtil {
 			cellMerge(sheet, 0, 0, 0, exportRules.getMaxColumns());
 		}
 
-		// 3.header设置和行高
-		int headerIndex = exportRules.getTitle() == null ? 0 : 1;
-		// header全局行高
-		if (headerStyle.getHeight() != -1) {
-			sheet.getRow(headerIndex).setHeight(headerStyle.getHeight());
-		}
-		// header行高自定义设置
-		if (exportRules.getHeaderHeight() != -1) {
-			sheet.getRow(headerIndex).setHeight(exportRules.getHeaderHeight());
-		}
-		LinkedHashMap<String, BiConsumer<Font, CellStyle>> headerMap = exportRules.getSimpleHeader();
-		List<String> header = new ArrayList<>(headerMap.keySet());
-		for (int i = 0; i < header.size(); i++) {
-			String text = header.get(i);
-			CellStyle styleNew;
-			BiConsumer<Font, CellStyle> fontCellStyle = headerMap.get(text);
-			if (fontCellStyle != null) {
-				// 自定义header单元格样式
-				styleNew = sheet.getWorkbook().createCellStyle();
-				Font fontNew = sheet.getWorkbook().createFont();
-				PoiCommon.copyStyleAndFont(styleNew, fontNew, headerStyleSource, headerFont);
-				fontCellStyle.accept(fontNew, styleNew);
-			} else {
-				styleNew = headerStyleSource;
-			}
-			CellUtil.createCell(sheet.getRow(headerIndex), i, text, styleNew);
-		}
-	}
+        // 3.header设置和行高
+        int headerIndex = exportRules.getTitle() == null ? 0 : 1;
+        // header全局行高
+        if (headerStyle.getHeight() != -1) {
+            sheet.getRow(headerIndex).setHeight(headerStyle.getHeight());
+        }
+        // header行高自定义设置
+        if (exportRules.getHeaderHeight() != -1) {
+            sheet.getRow(headerIndex).setHeight(exportRules.getHeaderHeight());
+        }
+        LinkedHashMap<String, BiConsumer<Font, CellStyle>> headerMap = exportRules.getSimpleHeader();
+        List<String> header = new ArrayList<>(headerMap.keySet());
+        for (int i = 0; i < header.size(); i++) {
+            String text = header.get(i);
+            CellStyle styleNew;
+            BiConsumer<Font, CellStyle> fontCellStyle = headerMap.get(text);
+            if (fontCellStyle != null) {
+                // 自定义header单元格样式
+                styleNew = sheet.getWorkbook().createCellStyle();
+                Font fontNew = sheet.getWorkbook().createFont();
+                PoiCommon.copyStyleAndFont(styleNew, fontNew, headerStyleSource, headerFont);
+                fontCellStyle.accept(fontNew, styleNew);
+            } else {
+                styleNew = headerStyleSource;
+            }
+
+            // 处理重复表头
+            if(text.startsWith("$")){
+                text = text.replaceAll("\\$_\\d+_","");
+            }
+            CellUtil.createCell(sheet.getRow(headerIndex), i, text, styleNew);
+        }
+    }
 
 	/**
 	 * 复杂表头设计
