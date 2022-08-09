@@ -15,7 +15,7 @@
 <dependency>
     <groupId>com.github.stupdit1t</groupId>
     <artifactId>poi-excel</artifactId>
-    <version>3.0.8</version>
+    <version>3.0.9</version>
 </dependency>
 ```
 
@@ -25,14 +25,14 @@
 <dependency>
 <groupId>com.github.stupdit1t</groupId>
 <artifactId>poi-excel</artifactId>
-<version>poi317.1</version>
+<version>poi317.2</version>
 </dependency>
 
 <!-- excel导入导出 POI版本为4.1.2 -->
 <dependency>
 <groupId>com.github.stupdit1t</groupId>
 <artifactId>poi-excel</artifactId>
-<version>poi412.1</version>
+<version>poi412.2</version>
 </dependency>
 ```
 
@@ -224,6 +224,9 @@ public void export(HttpServletResponse response, SysErrorLogQueryParam queryPara
 ## 三. 更新记录
 
 > 有需求才有进步，这个轮子本身就是从0开始因为需求慢慢叠加起来的。有新需求提出来,我觉得合适会更新. 如有疑问可加群帮解答: 811606008
+
+### v3.0.9
+1. 表头相同名字重复设置报错, fixbug
 
 ### v3.0.8
 1. 导出添加设置列换行显示属性   参考简单导出simpleExport2
