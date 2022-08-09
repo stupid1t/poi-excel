@@ -798,12 +798,12 @@ public class ExcelUtil {
 
             // 处理重复表头
             if(text.startsWith("$")){
-                text = text.replaceAll("\\$_\\d+_","");
+                text = text.replaceAll("^\\$_\\d+_","");
             }
             CellUtil.createCell(sheet.getRow(headerIndex), i, text, styleNew);
         }
     }
-
+	
 	/**
 	 * 复杂表头设计
 	 *
