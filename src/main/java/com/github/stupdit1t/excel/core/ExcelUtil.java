@@ -794,6 +794,11 @@ public class ExcelUtil {
             } else {
                 styleNew = headerStyleSource;
             }
+
+            // 处理重复表头
+            if(text.startsWith("$")){
+                text = text.replaceAll("\\$_\\d+_","");
+            }
             CellUtil.createCell(sheet.getRow(headerIndex), i, text, styleNew);
         }
     }

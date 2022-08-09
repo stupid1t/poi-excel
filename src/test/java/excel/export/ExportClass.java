@@ -315,8 +315,8 @@ public class ExportClass {
 		name.set("complexObject");
 		ExcelHelper.opsExport(PoiWorkbookType.XLS)
 				.opsSheet(complexData)
-				.opsHeader().simple().texts("學生姓名", "所在班級", "所在學校", "更多父母姓名").done()
-				.opsColumn().fields("name", "classRoom.name", "classRoom.school.name", "moreInfo.parent.age").done()
+				.opsHeader().simple().texts("學生姓名","學生姓名","學生姓名", "所在班級", "所在學校", "更多父母姓名").done()
+				.opsColumn().fields("name", "name").field("name").color(IndexedColors.GOLD).done().fields( "classRoom.name", "classRoom.school.name", "moreInfo.parent.age").done()
 				.done()
 				.export("src/test/java/excel/export/excel/complexObject.xls");
 	}

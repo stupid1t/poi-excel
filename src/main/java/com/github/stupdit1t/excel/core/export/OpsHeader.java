@@ -129,8 +129,13 @@ public class OpsHeader<R> extends AbsParent<OpsSheet<R>> {
 		 * @return SimpleHeader<R>
 		 */
 		public SimpleHeader<R> texts(String... texts) {
-			for (String text : texts) {
-				this.headers.put(text, null);
+			for (int i = 0; i < texts.length; i++) {
+				String text = texts[i];
+				if (this.headers.containsKey(text)) {
+					this.headers.put(String.format("$_%d_%s", i, text), null);
+				} else {
+					this.headers.put(text, null);
+				}
 			}
 			return this;
 		}
@@ -153,7 +158,11 @@ public class OpsHeader<R> extends AbsParent<OpsSheet<R>> {
 		 * @return SimpleHeader<R>
 		 */
 		public SimpleHeader<R> text(String text, BiConsumer<Font, CellStyle> style) {
-			this.headers.put(text, style);
+			if (this.headers.containsKey(text)) {
+				this.headers.put(String.format("$_%d_%s", this.headers.size(), text), style);
+			} else {
+				this.headers.put(text, style);
+			}
 			return this;
 		}
 
