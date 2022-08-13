@@ -228,7 +228,7 @@ public class ExportClass {
 				// 字段导出回调
 				.outHandle((val, row, style) -> {
 					// 如果是北京, 设置背景色为黄色
-					if (val.equals("北京")) {
+					if (val.equals("西安")) {
 						style.setBackColor(IndexedColors.YELLOW);
 						style.setHeight(900);
 						style.setComment("北京搞红色");
