@@ -335,25 +335,9 @@ public class ExcelUtil {
                 setCellValue(createDrawingPatriarch, value, cell);
 
                 // 6.批注添加
-                String comment = column.getComment();
+                String comment = style.getComment() != null ? style.getComment() : column.getComment();
                 if (StringUtils.isNotBlank(comment)) {
-                    // 表示需要用户添加批注
-                    ClientAnchor clientAnchor;
-                    RichTextString richTextString;
-                    if (wb instanceof XSSFWorkbook) {
-                        clientAnchor = new XSSFClientAnchor();
-                        richTextString = new XSSFRichTextString(comment);
-                    } else if (wb instanceof HSSFWorkbook) {
-                        clientAnchor = new HSSFClientAnchor();
-                        richTextString = new HSSFRichTextString(comment);
-                    } else {
-                        clientAnchor = new XSSFClientAnchor();
-                        richTextString = new XSSFRichTextString(comment);
-                    }
-                    Comment cellComment = createDrawingPatriarch.createCellComment(clientAnchor);
-                    cellComment.setAddress(cell.getAddress());
-                    cellComment.setString(richTextString);
-                    cell.setCellComment(cellComment);
+                    setCellComment(createDrawingPatriarch, cell, comment);
                 }
 
                 // 7. 纵向合并判断
@@ -420,6 +404,34 @@ public class ExcelUtil {
         }
 
         // ------------------------ 设置自定义合并 end ------------------------
+    }
+
+    /**
+     * 设置单元格的批注
+     *
+     * @param createDrawingPatriarch 画图器
+     * @param cell                   单元格
+     * @param comment                批注内容
+     */
+    private static void setCellComment(Drawing<?> createDrawingPatriarch, Cell cell, String comment) {
+        Workbook wb = cell.getSheet().getWorkbook();
+        // 表示需要用户添加批注
+        ClientAnchor clientAnchor;
+        RichTextString richTextString;
+        if (wb instanceof XSSFWorkbook) {
+            clientAnchor = new XSSFClientAnchor();
+            richTextString = new XSSFRichTextString(comment);
+        } else if (wb instanceof HSSFWorkbook) {
+            clientAnchor = new HSSFClientAnchor();
+            richTextString = new HSSFRichTextString(comment);
+        } else {
+            clientAnchor = new XSSFClientAnchor();
+            richTextString = new XSSFRichTextString(comment);
+        }
+        Comment cellComment = createDrawingPatriarch.createCellComment(clientAnchor);
+        cellComment.setAddress(cell.getAddress());
+        cellComment.setString(richTextString);
+        cell.setCellComment(cellComment);
     }
 
     /**
