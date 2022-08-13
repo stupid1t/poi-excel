@@ -387,6 +387,28 @@ public class OutColumn<R> extends AbsParent<OpsColumn<R>> implements Cloneable {
         Boolean wrapText;
 
         /**
+         * 批注
+         */
+        String comment;
+
+
+        /**
+         * 获取批注
+         * @return
+         */
+        public String getComment() {
+            return comment;
+        }
+
+        /**
+         * 设置批注
+         * @param comment
+         */
+        public void setComment(String comment) {
+            this.comment = comment;
+        }
+
+        /**
          * 获取样式缓存
          *
          * @return String
