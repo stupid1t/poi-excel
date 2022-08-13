@@ -231,6 +231,7 @@ public class ExportClass {
 					if (val.equals("北京")) {
 						style.setBackColor(IndexedColors.YELLOW);
 						style.setHeight(900);
+						style.setComment("北京搞红色");
 						// 属性值自定义
 						return val + "(自定义)";
 					}
