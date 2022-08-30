@@ -394,7 +394,6 @@ public class OutColumn<R> extends AbsParent<OpsColumn<R>> implements Cloneable {
 
         /**
          * 获取批注
-         * @return
          */
         public String getComment() {
             return comment;
