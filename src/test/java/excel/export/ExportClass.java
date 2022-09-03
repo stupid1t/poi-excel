@@ -146,7 +146,7 @@ public class ExportClass {
 	 * @throws Exception
 	 */
 	@Test
-	public void simpleExport2() {
+	public void simpleExport2() throws Exception{
 		name.set("simpleExport2");
 
 		// 覆盖title全局默认样式
@@ -166,7 +166,8 @@ public class ExportClass {
 			}
 		};
 
-		ExcelHelper.opsExport(PoiWorkbookType.XLSX)
+		Workbook workbook = WorkbookFactory.create(new File("src/test/java/excel/export/excel/simpleExport2.xlsx"),"123456");
+		ExcelHelper.opsExport(workbook)
 				// 全局样式覆盖
 				.style(titleStyle)
 				// 导出添加密码
@@ -178,7 +179,6 @@ public class ExportClass {
 				// 自定义数据行高度, 默认excel正常高度
 				.height(CellPosition.CELL, 300)
 				// 全局单元格宽度100000
-				.width(10000)
 				// 自定义序号列宽度, 默认2000
 				.autoNumColumnWidth(3000)
 				// sheet名字
@@ -239,7 +239,8 @@ public class ExportClass {
 				.backColor(IndexedColors.YELLOW)
 				// 金色字体
 				.color(IndexedColors.GOLD).done()
-				.fields("leader", "scount", "avg")
+				.fields("leader", "scount")
+				.field("avg").pattern("0.00").done()
 				.done()
 				// 尾行设计
 				.opsFooter()

@@ -17,7 +17,7 @@ public enum PoiWorkbookType {
      * <p>
      * 速度慢, 可以解决VM内存不够用问题, 单sheet最大1048576行
      */
-    BIG_XLSX(XSSFWorkbook::new),
+    BIG_XLSX(SXSSFWorkbook::new),
 
     /**
      * 07 EXCEL

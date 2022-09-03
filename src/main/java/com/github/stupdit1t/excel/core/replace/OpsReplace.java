@@ -119,9 +119,17 @@ public class OpsReplace {
         }
         final Workbook workbook;
         if (this.fromMode == 1) {
-            workbook = ExcelUtil.readExcelWrite(fromPath, variable);
+            if(this.password != null){
+                workbook = ExcelUtil.readExcelWrite(fromPath, this.password, variable);
+            }else{
+                workbook = ExcelUtil.readExcelWrite(fromPath, variable);
+            }
         } else {
-            workbook = ExcelUtil.readExcelWrite(fromStream, variable);
+            if(this.password != null){
+                workbook = ExcelUtil.readExcelWrite(fromStream, this.password, variable);
+            }else{
+                workbook = ExcelUtil.readExcelWrite(fromStream, variable);
+            }
         }
         return workbook;
     }

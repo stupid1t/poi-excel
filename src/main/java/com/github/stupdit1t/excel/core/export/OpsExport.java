@@ -4,9 +4,12 @@ import com.github.stupdit1t.excel.common.PoiWorkbookType;
 import com.github.stupdit1t.excel.core.ExcelUtil;
 import com.github.stupdit1t.excel.style.DefaultCellStyleEnum;
 import com.github.stupdit1t.excel.style.ICellStyle;
+import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.ss.usermodel.CellStyle;
 import org.apache.poi.ss.usermodel.Font;
 import org.apache.poi.ss.usermodel.Workbook;
+import org.apache.poi.xssf.streaming.SXSSFWorkbook;
+import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
 import javax.servlet.http.HttpServletResponse;
 import java.io.OutputStream;
@@ -30,6 +33,11 @@ public class OpsExport {
 	 * 文件格式
 	 */
 	PoiWorkbookType workbookType;
+
+	/**
+	 * 当前工作簿
+	 */
+	Workbook workbook;
 
 	/**
 	 * 全局单元格样式
@@ -76,6 +84,17 @@ public class OpsExport {
 
 	public OpsExport(PoiWorkbookType workbookType) {
 		this.workbookType = workbookType;
+	}
+
+	public OpsExport(Workbook workbook) {
+		this.workbook = workbook;
+		if( workbook instanceof SXSSFWorkbook){
+			this.workbookType = PoiWorkbookType.BIG_XLSX;
+		}else if(workbook instanceof XSSFWorkbook){
+			this.workbookType = PoiWorkbookType.XLSX;
+		}else if(workbook instanceof HSSFWorkbook){
+			this.workbookType = PoiWorkbookType.XLS;
+		}
 	}
 
 	/**
@@ -144,7 +163,7 @@ public class OpsExport {
 	public void export(String toPath) {
 		checkSetToMode(1);
 		this.path = toPath;
-		final Workbook workbook = this.createBook();
+		final Workbook workbook = this.getWorkBook();
 		this.export(workbook);
 	}
 
@@ -156,7 +175,7 @@ public class OpsExport {
 	public void export(OutputStream toStream) {
 		checkSetToMode(2);
 		this.stream = toStream;
-		final Workbook workbook = this.createBook();
+		final Workbook workbook = this.getWorkBook();
 		this.export(workbook);
 	}
 
@@ -170,7 +189,7 @@ public class OpsExport {
 		checkSetToMode(3);
 		this.response = toResponse;
 		this.responseName = fileName;
-		final Workbook workbook = this.createBook();
+		final Workbook workbook = this.getWorkBook();
 		this.export(workbook);
 	}
 
@@ -197,9 +216,11 @@ public class OpsExport {
 	/**
 	 * 创建workbook
 	 */
-	public Workbook createBook() {
+	public Workbook getWorkBook() {
 		// 1.声明工作簿
-		Workbook workbook = workbookType.create();
+		if(this.workbook == null){
+			this.workbook =  workbookType.create();
+		}
 
 		// 2.多sheet获取
 		if (this.parallelSheet) {
