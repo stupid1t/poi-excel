@@ -15,7 +15,7 @@
 <dependency>
     <groupId>com.github.stupdit1t</groupId>
     <artifactId>poi-excel</artifactId>
-    <version>3.1.0</version>
+    <version>3.1.1</version>
 </dependency>
 ```
 
@@ -225,6 +225,8 @@ public void export(HttpServletResponse response, SysErrorLogQueryParam queryPara
 
 > 有需求才有进步，这个轮子本身就是从0开始因为需求慢慢叠加起来的。有新需求提出来,我觉得合适会更新. 如有疑问可加群帮解答: 811606008
 
+### v3.1.1
+1. 导出支持读取Excel追加sheet页
 
 ### v3.1.0
 1. 支持单元格级别的批注功能, 参考simpleExport2
