@@ -1063,7 +1063,15 @@ public class ExcelUtil {
                         if (inColumn != null) {
                             fieldName = inColumn.getField();
                         } else {
-                            fieldName = columnIndexChar;
+                            // 只有map的情况下, 才使用列字符串
+                            if (mapClass) {
+                                fieldName = columnIndexChar;
+                            }else{
+                                fieldName = null;
+                            }
+                        }
+                        if(fieldName == null){
+                            continue;
                         }
 
                         if (pictures != null && hasImgField.contains(fieldName)) {
