@@ -131,8 +131,14 @@ public class OpsSheet<R> extends AbsParent<OpsParse<R>> {
             poiSheetArea = new PoiSheetDataArea(this.sheetIndex, this.headerCount, this.footerCount);
         }
         if (this.parent.fromMode == 1) {
+            if(this.parent.password != null){
+                return ExcelUtil.readSheet(this.parent.fromPath, this.parent.password, poiSheetArea, columns, this.callback, this.parent.rowClass);
+            }
             return ExcelUtil.readSheet(this.parent.fromPath, poiSheetArea, columns, this.callback, this.parent.rowClass);
         } else if (this.parent.fromMode == 2) {
+            if(this.parent.password != null){
+                return ExcelUtil.readSheet(this.parent.fromStream, this.parent.password, poiSheetArea, columns, this.callback, this.parent.rowClass);
+            }
             return ExcelUtil.readSheet(this.parent.fromStream, poiSheetArea, columns, this.callback, this.parent.rowClass);
         }
         return PoiResult.fail();

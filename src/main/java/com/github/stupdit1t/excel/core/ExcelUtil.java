@@ -145,6 +145,7 @@ public class ExcelUtil {
      *
      * @param workbook 工作簿
      * @param response 响应
+     * @param password 文件密码
      * @param fileName 文件名
      */
     public static void export(Workbook workbook, HttpServletResponse response, String fileName, String password) {
@@ -170,6 +171,7 @@ public class ExcelUtil {
      *
      * @param workbook 工作簿
      * @param outPath  删除目录
+     * @param password 文件密码
      */
     public static void export(Workbook workbook, String outPath, String password) {
         try (
@@ -941,6 +943,25 @@ public class ExcelUtil {
     /**
      * 读取规则excel数据内容为map
      *
+     * @param filePath     文件路径
+     * @param poiSheetArea 数据区域
+     * @param columns      数据列定义
+     * @param callBack     回调数据行
+     * @param rowClass     数据类
+     * @return PoiResult
+     */
+    public static <T> PoiResult<T> readSheet(String filePath, String password, PoiSheetDataArea poiSheetArea, Map<String, InColumn<?>> columns, InCallback<T> callBack, Class<T> rowClass) {
+        try (InputStream is = new FileInputStream(filePath)) {
+            return readSheet(is, password, poiSheetArea, columns, callBack, rowClass);
+        } catch (IOException e) {
+            LOG.error(e);
+        }
+        return new PoiResult<>();
+    }
+
+    /**
+     * 读取规则excel数据内容为map
+     *
      * @param is           文件流
      * @param poiSheetArea 数据区域
      * @param columns      数据列定义
@@ -950,6 +971,32 @@ public class ExcelUtil {
      */
     public static <T> PoiResult<T> readSheet(InputStream is, PoiSheetDataArea poiSheetArea, Map<String, InColumn<?>> columns, InCallback<T> callBack, Class<T> rowClass) {
         try (Workbook wb = WorkbookFactory.create(is)) {
+            String sheetName = poiSheetArea.getSheetName();
+            Sheet sheet;
+            if (StringUtils.isBlank(sheetName)) {
+                sheet = wb.getSheetAt(poiSheetArea.getSheetIndex());
+            } else {
+                sheet = wb.getSheet(sheetName);
+            }
+            return readSheet(sheet, poiSheetArea.getHeaderRowCount(), poiSheetArea.getFooterRowCount(), columns, callBack, rowClass);
+        } catch (Exception e) {
+            LOG.error(e);
+        }
+        return new PoiResult<>();
+    }
+
+    /**
+     * 读取规则excel数据内容为map
+     *
+     * @param is           文件流
+     * @param poiSheetArea 数据区域
+     * @param columns      数据列定义
+     * @param callBack     回调数据行
+     * @param rowClass     数据类
+     * @return PoiResult
+     */
+    public static <T> PoiResult<T> readSheet(InputStream is, String password, PoiSheetDataArea poiSheetArea, Map<String, InColumn<?>> columns, InCallback<T> callBack, Class<T> rowClass) {
+        try (Workbook wb = WorkbookFactory.create(is, password)) {
             String sheetName = poiSheetArea.getSheetName();
             Sheet sheet;
             if (StringUtils.isBlank(sheetName)) {
@@ -1016,7 +1063,15 @@ public class ExcelUtil {
                         if (inColumn != null) {
                             fieldName = inColumn.getField();
                         } else {
-                            fieldName = columnIndexChar;
+                            // 只有map的情况下, 才使用列字符串
+                            if (mapClass) {
+                                fieldName = columnIndexChar;
+                            }else{
+                                fieldName = null;
+                            }
+                        }
+                        if(fieldName == null){
+                            continue;
                         }
 
                         if (pictures != null && hasImgField.contains(fieldName)) {
@@ -1084,6 +1139,22 @@ public class ExcelUtil {
     /**
      * 读取excel,替换内置变量
      *
+     * @param filePath 文件路径
+     * @param password 文件密码
+     * @param variable 内置变量
+     */
+    public static Workbook readExcelWrite(String filePath, String password, Map<String, String> variable) {
+        try (FileInputStream is = new FileInputStream(filePath)) {
+            return readExcelWrite(is, password, variable);
+        } catch (IOException e) {
+            LOG.error(e);
+        }
+        return null;
+    }
+
+    /**
+     * 读取excel,替换内置变量
+     *
      * @param is       excel文件流
      * @param variable 内置变量
      */
@@ -1092,6 +1163,26 @@ public class ExcelUtil {
             Workbook wb = WorkbookFactory.create(is);
             return readExcelWrite(wb, variable);
         } catch (Exception e) {
+            LOG.error(e);
+        }
+        return null;
+    }
+
+    /**
+     * 读取excel,替换内置变量
+     *
+     * @param is       excel文件流
+     * @param password 文件密码
+     * @param variable 内置变量
+     */
+    public static Workbook readExcelWrite(InputStream is, String password, Map<String, String> variable) {
+        try {
+            Workbook wb = WorkbookFactory.create(is);
+            if (password != null) {
+                wb = WorkbookFactory.create(is, password);
+            }
+            return readExcelWrite(wb, variable);
+        } catch (IOException e) {
             LOG.error(e);
         }
         return null;

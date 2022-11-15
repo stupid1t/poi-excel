@@ -35,6 +35,11 @@ public class OpsParse<R> {
     int fromMode;
 
     /**
+     * 密码
+     */
+    String password;
+
+    /**
      * 导入来源
      */
     String fromPath;
@@ -83,6 +88,34 @@ public class OpsParse<R> {
     public OpsParse<R> from(InputStream inputStream) {
         checkSetFromMode(2);
         this.fromStream = inputStream;
+        return this;
+    }
+
+    /**
+     * 导入来源文件
+     *
+     * @param path 文件地址
+     * @param password 密码
+     * @return OpsParse
+     */
+    public OpsParse<R> from(String path, String password) {
+        checkSetFromMode(1);
+        this.fromPath = path;
+        this.password = password;
+        return this;
+    }
+
+    /**
+     * 导入来源文件
+     *
+     * @param inputStream 文件流
+     * @param password 密码
+     * @return OpsRead
+     */
+    public OpsParse<R> from(InputStream inputStream, String password) {
+        checkSetFromMode(2);
+        this.fromStream = inputStream;
+        this.password = password;
         return this;
     }
 

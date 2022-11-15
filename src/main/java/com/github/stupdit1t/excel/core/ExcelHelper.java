@@ -4,6 +4,7 @@ import com.github.stupdit1t.excel.common.PoiWorkbookType;
 import com.github.stupdit1t.excel.core.export.OpsExport;
 import com.github.stupdit1t.excel.core.parse.OpsParse;
 import com.github.stupdit1t.excel.core.replace.OpsReplace;
+import org.apache.poi.ss.usermodel.Workbook;
 
 /**
  * 快速构建导出导入类
@@ -21,6 +22,15 @@ public final class ExcelHelper {
      */
     public static OpsExport opsExport(PoiWorkbookType workbookType) {
         return new OpsExport(workbookType);
+    }
+
+    /**
+     * 导出入口
+     *
+     * @return OpsExport
+     */
+    public static OpsExport opsExport(Workbook workbook) {
+        return new OpsExport(workbook);
     }
 
     /**
