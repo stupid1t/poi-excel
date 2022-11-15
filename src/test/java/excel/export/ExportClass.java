@@ -166,8 +166,8 @@ public class ExportClass {
 			}
 		};
 
-		Workbook workbook = WorkbookFactory.create(new File("src/test/java/excel/export/excel/simpleExport2.xlsx"),"123456");
-		ExcelHelper.opsExport(workbook)
+		//Workbook workbook = WorkbookFactory.create(new File("src/test/java/excel/export/excel/simpleExport2.xlsx"),"123456");
+		ExcelHelper.opsExport(PoiWorkbookType.XLSX)
 				// 全局样式覆盖
 				.style(titleStyle)
 				// 导出添加密码
