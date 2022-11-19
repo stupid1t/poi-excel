@@ -1,5 +1,6 @@
 package com.github.stupdit1t.excel.handle;
 
+import com.github.stupdit1t.excel.common.PoiConstant;
 import com.github.stupdit1t.excel.handle.rule.BaseVerifyRule;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.math.NumberUtils;
@@ -67,7 +68,7 @@ public class DateHandler extends BaseVerifyRule<Date> {
                 }
             } else {
                 // 如果是字符串
-                return DateUtils.parseDate(value, pattern);
+                return StringUtils.isBlank(pattern) ? DateUtils.parseDate(value, PoiConstant.FMT_DATE_TIME): DateUtils.parseDate(value, pattern);
             }
         }
     }

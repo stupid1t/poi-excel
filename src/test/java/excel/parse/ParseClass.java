@@ -67,7 +67,7 @@ public class ParseClass {
                 // 必须是数字
                 .field("H", "scount", "总分").asLong().done()
                 .field("I", "avg", "历史平均分").done()
-                .field("J", "createTime", "创建时间").asDate("yyyy/MM/dd").trim().done()
+                .field("J", "createTime", "创建时间").asDate().trim().done()
                 .done()
                 .callBack((row, index) -> {
                     // 行回调, 可以在这里改数据
@@ -106,7 +106,7 @@ public class ParseClass {
                 // 必须是数字
                 .field("H", "scount", "总分").asInt().done()
                 .field("I", "avg", "历史平均分").asDouble().done()
-                .field("J", "createTime", "创建时间").asDate("yyyy-MM-dd").done()
+                .field("J", "createTime", "创建时间").asDate("yyyy/MM/dd").trim().done()
                 .done()
                 .callBack((row, index) -> {
                     // 行回调, 可以在这里改数据
