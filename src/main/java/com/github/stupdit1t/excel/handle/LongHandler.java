@@ -25,11 +25,16 @@ public class LongHandler extends BaseVerifyRule<Long> {
 
     @Override
     public Long doHandle(String fieldName, String index, Object cellValue) throws Exception {
-        String value = String.valueOf(cellValue);
         if (cellValue instanceof Long) {
             return (Long) cellValue;
-        } else if (NumberUtils.isCreatable(value)) {
-            return new BigDecimal(value).longValue();
+        } else {
+            String value = String.valueOf(cellValue);
+            if (this.trim) {
+                value = value.trim();
+            }
+            if (NumberUtils.isCreatable(value)) {
+                return new BigDecimal(value).longValue();
+            }
         }
         throw PoiException.error(String.format(PoiConstant.INCORRECT_FORMAT_STR, fieldName, index));
     }

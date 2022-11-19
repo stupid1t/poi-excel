@@ -21,6 +21,11 @@ public abstract class BaseVerifyRule<T> {
     protected boolean allowNull;
 
     /**
+     * 是否去空格
+     */
+    protected boolean trim;
+
+    /**
      * 构建校验规则
      *
      * @param allowNull 是否为空
@@ -85,6 +90,14 @@ public abstract class BaseVerifyRule<T> {
      */
     public void setAllowNull(boolean allowNull) {
         this.allowNull = allowNull;
+    }
+
+    /**
+     * 是否去空格
+     * @param trim 是 去除两边空格 否  不去除
+     */
+    public void setTrim(boolean trim) {
+        this.trim = trim;
     }
 
 }

@@ -26,11 +26,16 @@ public class BigDecimalHandler extends BaseVerifyRule<BigDecimal> {
 
     @Override
     public BigDecimal doHandle(String fieldName, String index, Object cellValue) throws Exception {
-        String value = String.valueOf(cellValue);
         if (cellValue instanceof BigDecimal) {
             return (BigDecimal) cellValue;
-        } else if (NumberUtils.isCreatable(value)) {
-            return new BigDecimal(value);
+        } else {
+            String value = String.valueOf(cellValue);
+            if (this.trim) {
+                value = value.trim();
+            }
+            if (NumberUtils.isCreatable(value)) {
+                return new BigDecimal(value);
+            }
         }
         throw PoiException.error(String.format(PoiConstant.INCORRECT_FORMAT_STR, fieldName, index));
     }

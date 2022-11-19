@@ -1066,11 +1066,11 @@ public class ExcelUtil {
                             // 只有map的情况下, 才使用列字符串
                             if (mapClass) {
                                 fieldName = columnIndexChar;
-                            }else{
+                            } else {
                                 fieldName = null;
                             }
                         }
-                        if(fieldName == null){
+                        if (fieldName == null) {
                             continue;
                         }
 
@@ -1096,14 +1096,18 @@ public class ExcelUtil {
                         rowErrors.add(e.getMessage());
                     }
                 }
+                // 有效, 回调处理加入
+                if (callBack != null) {
+                    try {
+                        callBack.callback(data, j + 1);
+                    } catch (PoiException e) {
+                        rowErrors.add(e.getMessage());
+                    }
+                }
                 // 如果行错误不为空, 添加错误
                 if (!rowErrors.isEmpty()) {
                     errors.add(String.format(PoiConstant.ROW_INDEX_STR, j + 1, String.join(" ", rowErrors)));
                 } else {
-                    // 有效, 回调处理加入
-                    if (callBack != null) {
-                        callBack.callback(data, j + 1);
-                    }
                     beans.add(data);
                 }
             }

@@ -26,11 +26,16 @@ public class DoubleHandler extends BaseVerifyRule<Double> {
 
     @Override
     public Double doHandle(String fieldName, String index, Object cellValue) throws Exception {
-        String value = String.valueOf(cellValue);
         if (cellValue instanceof Double) {
             return (Double) cellValue;
-        } else if (NumberUtils.isCreatable(value)) {
-            return new BigDecimal(value).doubleValue();
+        } else {
+            String value = String.valueOf(cellValue);
+            if (this.trim) {
+                value = value.trim();
+            }
+            if (NumberUtils.isCreatable(value)) {
+                return new BigDecimal(value).doubleValue();
+            }
         }
         throw PoiException.error(String.format(PoiConstant.INCORRECT_FORMAT_STR, fieldName, index));
     }

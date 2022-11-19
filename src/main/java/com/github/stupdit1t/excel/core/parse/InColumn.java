@@ -116,7 +116,16 @@ public class InColumn<R> extends AbsParent<OpsColumn<R>> {
      * @return InColumn<R>
      */
     public InColumn<R> asDate() {
-        return asDate(null);
+        return asDate(null, false);
+    }
+
+    /**
+     * 必须为Date类型
+     * @param is1904Date 非标准日期, 尝试设置false
+     * @return
+     */
+    public InColumn<R> asDate(boolean is1904Date) {
+        return asDate(null, is1904Date);
     }
 
     /**
@@ -126,7 +135,18 @@ public class InColumn<R> extends AbsParent<OpsColumn<R>> {
      * @return InColumn<R>
      */
     public InColumn<R> asDate(String pattern) {
-        this.cellVerifyRule = new DateHandler(true, pattern);
+        return asDate(pattern, false);
+    }
+
+    /**
+     * 必须为Date类型
+     *
+     * @param pattern 日期格式类型
+     * @param is1904Date 非标准日期, 尝试设置false
+     * @return InColumn<R>
+     */
+    public InColumn<R> asDate(String pattern, boolean is1904Date) {
+        this.cellVerifyRule = new DateHandler(true, pattern, is1904Date);
         return this;
     }
 
@@ -187,6 +207,16 @@ public class InColumn<R> extends AbsParent<OpsColumn<R>> {
      */
     public InColumn<R> notNull() {
         this.cellVerifyRule.setAllowNull(false);
+        return this;
+    }
+
+    /**
+     * 去除两边空格
+     *
+     * @return InColumn<R>
+     */
+    public InColumn<R> trim() {
+        this.cellVerifyRule.setTrim(true);
         return this;
     }
 

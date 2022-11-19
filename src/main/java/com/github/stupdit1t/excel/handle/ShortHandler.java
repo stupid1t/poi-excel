@@ -25,11 +25,16 @@ public class ShortHandler extends BaseVerifyRule<Short> {
 
     @Override
     public Short doHandle(String fieldName, String index, Object cellValue) throws Exception {
-        String value = String.valueOf(cellValue);
         if (cellValue instanceof Short) {
             return (Short) cellValue;
-        } else if (NumberUtils.isCreatable(value)) {
-            return new BigDecimal(value).shortValue();
+        } else {
+            String value = String.valueOf(cellValue);
+            if (this.trim) {
+                value = value.trim();
+            }
+            if (NumberUtils.isCreatable(value)) {
+                return new BigDecimal(value).shortValue();
+            }
         }
         throw PoiException.error(String.format(PoiConstant.INCORRECT_FORMAT_STR, fieldName, index));
     }
