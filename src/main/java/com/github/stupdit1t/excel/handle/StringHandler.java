@@ -43,6 +43,9 @@ public class StringHandler extends BaseVerifyRule<String> {
     @Override
     public String doHandle(String fieldName, String index, Object cellValue) throws Exception {
         String value = String.valueOf(cellValue);
+        if (this.trim) {
+            value = value.trim();
+        }
         // 处理数值 转为 string包含E科学计数的问题
         if (cellValue instanceof Number) {
             value = new BigDecimal(value).toString();

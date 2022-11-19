@@ -25,11 +25,16 @@ public class FloatHandler extends BaseVerifyRule<Float> {
 
     @Override
     public Float doHandle(String fieldName, String index, Object cellValue) throws Exception {
-        String value = String.valueOf(cellValue);
         if (cellValue instanceof Float) {
             return (Float) cellValue;
-        } else if (NumberUtils.isCreatable(value)) {
-            return new BigDecimal(value).floatValue();
+        } else {
+            String value = String.valueOf(cellValue);
+            if (this.trim) {
+                value = value.trim();
+            }
+            if (NumberUtils.isCreatable(value)) {
+                return new BigDecimal(value).floatValue();
+            }
         }
         throw PoiException.error(String.format(PoiConstant.INCORRECT_FORMAT_STR, fieldName, index));
     }
