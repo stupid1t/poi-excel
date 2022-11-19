@@ -25,14 +25,14 @@
 <dependency>
 <groupId>com.github.stupdit1t</groupId>
 <artifactId>poi-excel</artifactId>
-<version>poi-317.3</version>
+<version>poi-317.4</version>
 </dependency>
 
 <!-- excel导入导出 POI版本为4.1.2 -->
 <dependency>
 <groupId>com.github.stupdit1t</groupId>
 <artifactId>poi-excel</artifactId>
-<version>poi-412.3</version>
+<version>poi-412.4</version>
 </dependency>
 ```
 
@@ -227,7 +227,7 @@ public void export(HttpServletResponse response, SysErrorLogQueryParam queryPara
 ### v3.1.2
 1. 解析回调处理步骤POI Exception
 2. 添加支持非1904日期的识别
-3. g解析列添加trim方法
+3. 解析列添加trim方法
 
 ### v3.1.1
 1. 导出支持读取Excel追加sheet页
