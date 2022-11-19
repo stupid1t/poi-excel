@@ -226,7 +226,8 @@ public void export(HttpServletResponse response, SysErrorLogQueryParam queryPara
 > 有需求才有进步，这个轮子本身就是从0开始因为需求慢慢叠加起来的。有新需求提出来,我觉得合适会更新. 如有疑问可加群帮解答: 811606008
 ### v3.1.2
 1. 解析回调处理步骤POI Exception
-2. 添加支持非1904日期的识别, 解析列添加trim方法
+2. 添加支持非1904日期的识别
+3. g解析列添加trim方法
 
 ### v3.1.1
 1. 导出支持读取Excel追加sheet页
