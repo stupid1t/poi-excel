@@ -24,7 +24,11 @@ public class BooleanHandler extends BaseVerifyRule<Boolean> {
         if (cellValue instanceof Boolean) {
             return (Boolean) cellValue;
         } else {
-            return Boolean.parseBoolean(String.valueOf(cellValue));
+            String value = String.valueOf(cellValue);
+            if (this.trim) {
+                value = value.trim();
+            }
+            return Boolean.parseBoolean(value);
         }
     }
 }

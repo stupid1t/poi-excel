@@ -8,14 +8,14 @@
 <a target="_blank" href='https://github.com/stupdit1t/poi-excel'><img src="https://img.shields.io/github/stars/stupdit1t/poi-excel.svg?style=social"/>
 <a href='https://gitee.com/stupid1t/poi-excel/stargazers'><img src='https://gitee.com/stupid1t/poi-excel/badge/star.svg?theme=white' alt='star'></img></a>
 ## 一. 快速开始
-**已上传maven中央仓库, 无需下载此项目**
+**已上传maven中央仓库, 无需下载此项目, 快照版本每个月初发release**
 ### POM中maven直接引入
 ```xml
 <!-- excel导入导出 POI版本为5.2.2 -->
 <dependency>
     <groupId>com.github.stupdit1t</groupId>
     <artifactId>poi-excel</artifactId>
-    <version>3.0.9</version>
+    <version>3.1.2</version>
 </dependency>
 ```
 
@@ -25,14 +25,14 @@
 <dependency>
 <groupId>com.github.stupdit1t</groupId>
 <artifactId>poi-excel</artifactId>
-<version>poi-317.2</version>
+<version>poi-317.3</version>
 </dependency>
 
 <!-- excel导入导出 POI版本为4.1.2 -->
 <dependency>
 <groupId>com.github.stupdit1t</groupId>
 <artifactId>poi-excel</artifactId>
-<version>poi-412.2</version>
+<version>poi-412.3</version>
 </dependency>
 ```
 
@@ -224,6 +224,16 @@ public void export(HttpServletResponse response, SysErrorLogQueryParam queryPara
 ## 三. 更新记录
 
 > 有需求才有进步，这个轮子本身就是从0开始因为需求慢慢叠加起来的。有新需求提出来,我觉得合适会更新. 如有疑问可加群帮解答: 811606008
+### v3.1.2
+1. 解析回调处理步骤POI Exception
+2. 添加支持非1904日期的识别
+3. g解析列添加trim方法
+
+### v3.1.1
+1. 导出支持读取Excel追加sheet页
+
+### v3.1.0
+1. 支持单元格级别的批注功能, 参考simpleExport2
 
 ### v3.0.9
 1. 表头相同名字重复设置报错, fixbug
@@ -314,7 +324,7 @@ class a {
             }
         };
 
-        // 指定导出XLS格式, 只有这个格式支持密码设置
+        // 指定导出XLS格式,
         ExcelHelper.opsExport(PoiWorkbookType.XLS)
                 // 全局样式覆盖
                 .style(titleStyle)
@@ -370,6 +380,7 @@ class a {
                                 if (val.equals("北京")) {
                                     style.setBackColor(IndexedColors.YELLOW);
                                     style.setHeight(900);
+                                    style.setComment("自定义设置样式批注");
                                     // 属性值自定义
                                     return val + "(自定义)";
                                 }

@@ -24,7 +24,11 @@ public class CharHandler extends BaseVerifyRule<Character> {
         if (cellValue instanceof Character) {
             return (Character) cellValue;
         } else {
-            return String.valueOf(cellValue).toCharArray()[0];
+            String value = String.valueOf(cellValue);
+            if (this.trim) {
+                value = value.trim();
+            }
+            return value.toCharArray()[0];
         }
     }
 }

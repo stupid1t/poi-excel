@@ -25,11 +25,16 @@ public class IntegerHandler extends BaseVerifyRule<Integer> {
 
     @Override
     public Integer doHandle(String fieldName, String index, Object cellValue) throws Exception {
-        String value = String.valueOf(cellValue);
         if (cellValue instanceof Integer) {
             return (Integer) cellValue;
-        } else if (NumberUtils.isCreatable(value)) {
-            return new BigDecimal(value).intValue();
+        } else {
+            String value = String.valueOf(cellValue);
+            if (this.trim) {
+                value = value.trim();
+            }
+            if (NumberUtils.isCreatable(value)) {
+                return new BigDecimal(value).intValue();
+            }
         }
         throw PoiException.error(String.format(PoiConstant.INCORRECT_FORMAT_STR, fieldName, index));
     }
