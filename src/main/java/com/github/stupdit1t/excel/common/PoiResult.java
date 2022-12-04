@@ -1,5 +1,6 @@
 package com.github.stupdit1t.excel.common;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
@@ -14,6 +15,8 @@ public class PoiResult<T> {
     private boolean success = true;
 
     private List<String> message = Collections.emptyList();
+
+    private List<Exception> exception = new ArrayList<>();
 
     private List<T> data;
 
@@ -45,10 +48,19 @@ public class PoiResult<T> {
         this.data = beans;
     }
 
+    public List<Exception> getException() {
+        return exception;
+    }
+
+    public void setException(List<Exception> exception) {
+        this.exception = exception;
+    }
+
     public static <T> PoiResult<T> fail() {
         PoiResult<T> poiResult = new PoiResult<>();
         poiResult.setSuccess(false);
         poiResult.setMessage(Collections.singletonList("读取Excel失败"));
+        poiResult.setException(Collections.emptyList());
         poiResult.setData(Collections.emptyList());
         return poiResult;
     }
