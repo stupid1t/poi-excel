@@ -102,7 +102,7 @@ public class ParseClass {
                 // 不能为空
                 .field("F", "people", "项目所属人").asString().notNull().done()
                 // 不能为空
-                .field("G", "leader", "项目领导人").asString().done()
+                .field("G", "leader", "项目领导人").asString().defaultValue("巨无霸").done()
                 // 必须是数字
                 .field("H", "scount", "总分").asInt().done()
                 .field("I", "avg", "历史平均分").asDouble().done()

@@ -28,6 +28,11 @@ public abstract class BaseVerifyRule<T, R> extends AbsParent<OpsColumn<R>> {
 	protected boolean trim;
 
 	/**
+	 * 默认值
+	 */
+	protected T defaultValue;
+
+	/**
 	 * 构建校验规则
 	 *
 	 * @param allowNull 是否为空
@@ -63,8 +68,8 @@ public abstract class BaseVerifyRule<T, R> extends AbsParent<OpsColumn<R>> {
 	public T handle(String fieldName, String index, Object cellValue) throws PoiException {
 		// 空值处理
 		cellValue = handleNull(fieldName, index, cellValue);
-		if (cellValue == null) {
-			return null;
+		if (ObjectUtils.isEmpty(cellValue)) {
+			return this.defaultValue;
 		}
 		T endVal;
 		try {
@@ -84,7 +89,7 @@ public abstract class BaseVerifyRule<T, R> extends AbsParent<OpsColumn<R>> {
 	 * @return InColumn<R>
 	 */
 	public BaseVerifyRule<T, R> notNull() {
-		this.setAllowNull(false);
+		this.allowNull = false;
 		return this;
 	}
 
@@ -94,7 +99,17 @@ public abstract class BaseVerifyRule<T, R> extends AbsParent<OpsColumn<R>> {
 	 * @return InColumn<R>
 	 */
 	public BaseVerifyRule<T, R> trim() {
-		this.setTrim(true);
+		this.trim = true;
+		return this;
+	}
+
+	/**
+	 * 去除两边空格
+	 *
+	 * @return InColumn<R>
+	 */
+	public BaseVerifyRule<T, R> defaultValue(T defaultValue) {
+		this.defaultValue = defaultValue;
 		return this;
 	}
 
@@ -106,23 +121,4 @@ public abstract class BaseVerifyRule<T, R> extends AbsParent<OpsColumn<R>> {
 	 * @param cellValue 列值
 	 */
 	public abstract T doHandle(String fieldName, String index, Object cellValue) throws Exception;
-
-	/**
-	 * 设置是否可为空
-	 *
-	 * @param allowNull 可为空
-	 */
-	public void setAllowNull(boolean allowNull) {
-		this.allowNull = allowNull;
-	}
-
-	/**
-	 * 是否去空格
-	 *
-	 * @param trim 是 去除两边空格 否  不去除
-	 */
-	public void setTrim(boolean trim) {
-		this.trim = trim;
-	}
-
 }
