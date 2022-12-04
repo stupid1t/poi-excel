@@ -141,7 +141,7 @@ public class OpsSheet<R> extends AbsParent<OpsParse<R>> {
             }
             return ExcelUtil.readSheet(this.parent.fromStream, poiSheetArea, columns, this.callback, this.parent.rowClass);
         }
-        return PoiResult.fail();
+        return PoiResult.fail(null);
     }
 
 }

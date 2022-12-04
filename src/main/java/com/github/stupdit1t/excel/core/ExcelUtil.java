@@ -934,10 +934,10 @@ public class ExcelUtil {
 	public static <T> PoiResult<T> readSheet(String filePath, PoiSheetDataArea poiSheetArea, Map<String, InColumn<?>> columns, InCallback<T> callBack, Class<T> rowClass) {
 		try (InputStream is = new FileInputStream(filePath)) {
 			return readSheet(is, poiSheetArea, columns, callBack, rowClass);
-		} catch (IOException e) {
+		} catch (Exception e) {
 			LOG.error(e);
+			return PoiResult.fail(e);
 		}
-		return new PoiResult<>();
 	}
 
 	/**
@@ -953,10 +953,10 @@ public class ExcelUtil {
 	public static <T> PoiResult<T> readSheet(String filePath, String password, PoiSheetDataArea poiSheetArea, Map<String, InColumn<?>> columns, InCallback<T> callBack, Class<T> rowClass) {
 		try (InputStream is = new FileInputStream(filePath)) {
 			return readSheet(is, password, poiSheetArea, columns, callBack, rowClass);
-		} catch (IOException e) {
+		} catch (Exception e) {
 			LOG.error(e);
+			return PoiResult.fail(e);
 		}
-		return new PoiResult<>();
 	}
 
 	/**
@@ -981,8 +981,8 @@ public class ExcelUtil {
 			return readSheet(sheet, poiSheetArea.getHeaderRowCount(), poiSheetArea.getFooterRowCount(), columns, callBack, rowClass);
 		} catch (Exception e) {
 			LOG.error(e);
+			return PoiResult.fail(e);
 		}
-		return new PoiResult<>();
 	}
 
 	/**
@@ -1007,8 +1007,8 @@ public class ExcelUtil {
 			return readSheet(sheet, poiSheetArea.getHeaderRowCount(), poiSheetArea.getFooterRowCount(), columns, callBack, rowClass);
 		} catch (Exception e) {
 			LOG.error(e);
+			return PoiResult.fail(e);
 		}
-		return new PoiResult<>();
 	}
 
 	/**

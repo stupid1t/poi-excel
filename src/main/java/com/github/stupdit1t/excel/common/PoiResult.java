@@ -56,11 +56,13 @@ public class PoiResult<T> {
         this.unknownError = unknownError;
     }
 
-    public static <T> PoiResult<T> fail() {
+    public static <T> PoiResult<T> fail(Exception e) {
         PoiResult<T> poiResult = new PoiResult<>();
         poiResult.setSuccess(false);
         poiResult.setMessage(Collections.singletonList("读取Excel失败"));
-        poiResult.setUnknownError(Collections.emptyList());
+        if (e != null) {
+            poiResult.setUnknownError(Collections.singletonList(e));
+        }
         poiResult.setData(Collections.emptyList());
         return poiResult;
     }
