@@ -61,9 +61,9 @@ public class ParseClass {
                 .field("D", "province", "省份").done()
                 .field("E", "city", "市").done()
                 // 不能为空
-                .field("F", "people", "项目所属人").notNull().done()
+                .field("F", "people", "项目所属人").asString().done()
                 // 不能为空
-                .field("G", "leader", "项目领导人").notNull().done()
+                .field("G", "leader", "项目领导人").asString().done()
                 // 必须是数字
                 .field("H", "scount", "总分").asLong().done()
                 .field("I", "avg", "历史平均分").done()
@@ -100,13 +100,13 @@ public class ParseClass {
                 .field("D", "province", "省份").done()
                 .field("E", "city", "市").done()
                 // 不能为空
-                .field("F", "people", "项目所属人").notNull().done()
+                .field("F", "people", "项目所属人").asString().notNull().done()
                 // 不能为空
-                .field("G", "leader", "项目领导人").notNull().done()
+                .field("G", "leader", "项目领导人").asString().done()
                 // 必须是数字
                 .field("H", "scount", "总分").asInt().done()
                 .field("I", "avg", "历史平均分").asDouble().done()
-                .field("J", "createTime", "创建时间").asDate("yyyy/MM/dd").trim().done()
+                .field("J", "createTime", "创建时间").asDate().pattern("yyyy/MM/dd").trim().done()
                 .done()
                 .callBack((row, index) -> {
                     // 行回调, 可以在这里改数据

@@ -1,5 +1,6 @@
 package com.github.stupdit1t.excel.handle;
 
+import com.github.stupdit1t.excel.core.parse.OpsColumn;
 import com.github.stupdit1t.excel.handle.rule.BaseVerifyRule;
 
 
@@ -8,15 +9,15 @@ import com.github.stupdit1t.excel.handle.rule.BaseVerifyRule;
  *
  * @author 625
  */
-public class CharHandler extends BaseVerifyRule<Character> {
+public class CharHandler<R> extends BaseVerifyRule<Character, R> {
 
     /**
      * 常规验证
      *
      * @param allowNull 可为空
      */
-    public CharHandler(boolean allowNull) {
-        super(allowNull);
+    public CharHandler(boolean allowNull, OpsColumn<R> opsColumn) {
+        super(allowNull, opsColumn);
     }
 
     @Override
