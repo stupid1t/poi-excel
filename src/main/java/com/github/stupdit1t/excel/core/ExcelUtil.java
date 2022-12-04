@@ -1044,7 +1044,7 @@ public class ExcelUtil {
         // 获取真实的数据行尾数
         int rowEnd = getLastRealLastRow(sheet.getRow(sheet.getLastRowNum())) - dataEndRowCount;
         List<String> errors = new ArrayList<>();
-        List<Exception> exceptions = new ArrayList<>();
+        List<Exception> unknownError = new ArrayList<>();
         try {
             for (int j = rowStart; j <= rowEnd; j++) {
                 List<String> rowErrors = new ArrayList<>();
@@ -1095,9 +1095,8 @@ public class ExcelUtil {
                         }
                     } catch (PoiException e) {
                         rowErrors.add(e.getMessage());
-                        exceptions.add(e);
                     } catch (Exception e) {
-                        exceptions.add(e);
+                        unknownError.add(e);
                     }
                 }
                 // 有效, 回调处理加入
@@ -1106,9 +1105,8 @@ public class ExcelUtil {
                         callBack.callback(data, j + 1);
                     } catch (PoiException e) {
                         rowErrors.add(e.getMessage());
-                        exceptions.add(e);
                     } catch (Exception e) {
-                        exceptions.add(e);
+                        unknownError.add(e);
                     }
                 }
                 // 如果行错误不为空, 添加错误
@@ -1120,15 +1118,15 @@ public class ExcelUtil {
             }
         } catch (Exception e) {
             LOG.error(e);
-            exceptions.add(e);
+            unknownError.add(e);
         } finally {
             // throw parse exception
-            if (errors.size() > 0 || exceptions.size() > 0) {
+            if (errors.size() > 0 || unknownError.size() > 0) {
                 rsp.setSuccess(false);
                 rsp.setMessage(errors);
             }
             rsp.setData(beans);
-            rsp.setException(exceptions);
+            rsp.setUnknownError(unknownError);
         }
         // 返回结果
         return rsp;

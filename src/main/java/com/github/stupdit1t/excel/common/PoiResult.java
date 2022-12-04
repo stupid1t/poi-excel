@@ -16,7 +16,7 @@ public class PoiResult<T> {
 
     private List<String> message = Collections.emptyList();
 
-    private List<Exception> exception = new ArrayList<>();
+    private List<Exception> unknownError = new ArrayList<>();
 
     private List<T> data;
 
@@ -48,19 +48,19 @@ public class PoiResult<T> {
         this.data = beans;
     }
 
-    public List<Exception> getException() {
-        return exception;
+    public List<Exception> getUnknownError() {
+        return unknownError;
     }
 
-    public void setException(List<Exception> exception) {
-        this.exception = exception;
+    public void setUnknownError(List<Exception> unknownError) {
+        this.unknownError = unknownError;
     }
 
     public static <T> PoiResult<T> fail() {
         PoiResult<T> poiResult = new PoiResult<>();
         poiResult.setSuccess(false);
         poiResult.setMessage(Collections.singletonList("读取Excel失败"));
-        poiResult.setException(Collections.emptyList());
+        poiResult.setUnknownError(Collections.emptyList());
         poiResult.setData(Collections.emptyList());
         return poiResult;
     }
