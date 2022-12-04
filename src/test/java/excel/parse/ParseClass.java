@@ -56,7 +56,7 @@ public class ParseClass {
                 // 强制输入字符串, 且不能为空
                 .field("A", "projectName", "项目名称").asString().notNull().done()
                 // img类型. 导入图片必须这样写, 且字段为byte[]
-                .field("B", "img", "项目图片").asImg().done()
+                .field("B", "img", "项目图片").done()
                 .field("C", "areaName", "所属区域").done()
                 .field("D", "province", "省份").done()
                 .field("E", "city", "市").done()
@@ -100,7 +100,7 @@ public class ParseClass {
                 .field("D", "province", "省份").done()
                 .field("E", "city", "市").done()
                 // 不能为空
-                .field("F", "people", "项目所属人").asString().notNull().done()
+                .field("F", "people", "项目所属人").asString().pattern("\\d+").defaultValue("1").notNull().done()
                 // 不能为空
                 .field("G", "leader", "项目领导人").asString().defaultValue("巨无霸").done()
                 // 必须是数字
