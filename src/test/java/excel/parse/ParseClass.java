@@ -86,7 +86,7 @@ public class ParseClass {
     @Test
     public void parseBean() {
         name.set("parseBean");
-        PoiResult<ProjectEvaluate> parse = ExcelHelper.opsParse(ProjectEvaluate.class)
+         ExcelHelper.opsParse(ProjectEvaluate.class)
                 .from("src/test/java/excel/parse/excel/simpleExport.xlsx")
                 // 指定数据区域
                 .opsSheet(0, 1, 0)
@@ -112,14 +112,19 @@ public class ParseClass {
                     // 行回调, 可以在这里改数据
                     System.out.println("当前是第:" + index + " 数据是: " + row);
                 })
-                .parse();
-        if (!parse.isSuccess()) {
-            // 输出验证不通过的信息
-            System.out.println(parse.getMessageToString());
-        }
+                .parsePart(10, (data) -> {
+                    if(data.isSuccess()){
+                        for (ProjectEvaluate datum : data.getData()) {
+                            System.out.println(datum);
+                        }
+                    }else{
+                        System.out.println("导入异常: " + data.getMessageToString());
+                        for (ProjectEvaluate datum : data.getData()) {
+                            System.out.println(datum);
+                        }
+                    }
 
-        // 打印解析的数据
-        parse.getData().forEach(System.out::println);
+                });
     }
 
     @Test
@@ -147,13 +152,18 @@ public class ParseClass {
                 .field("I", "avg", "历史平均分").done()
                 .field("J", "createTime", "创建时间").asDate().pattern("yyyy/MM/dd").trim().done()
                 .done()
-                .callBack((row, index) -> {
-                    // 行回调, 可以在这里改数据
-                    System.out.println("当前是第:" + index + " 数据是: " + row);
-                })
-                .parsePart(5, (data) -> {
-                    PoiResult<HashMap> poiResult = data;
-                    System.out.println("部分数据:" + poiResult.getData().size());
+                .parsePart(10, (data) -> {
+                    if(data.isSuccess()){
+                        for (HashMap datum : data.getData()) {
+                            System.out.println(datum);
+                        }
+                    }else{
+                        System.out.println("导入异常: " + data.getMessageToString());
+                        for (HashMap datum : data.getData()) {
+                            System.out.println(datum);
+                        }
+                    }
+
                 });
     }
 }

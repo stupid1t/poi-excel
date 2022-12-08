@@ -167,10 +167,12 @@ public class OpsSheet<R> extends AbsParent<OpsParse<R>> {
                     }
                     InputSource is = new InputSource(stream);
                     xmlReader.parse(is);
+                    index++;
                 }
             }
         } catch (Exception e) {
             e.printStackTrace();
+            partResult.accept(PoiResult.fail(e));
         }
 
     }

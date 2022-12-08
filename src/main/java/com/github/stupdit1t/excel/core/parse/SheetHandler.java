@@ -17,33 +17,35 @@ import java.util.function.Consumer;
 
 public class SheetHandler<T> implements XSSFSheetXMLHandler.SheetContentsHandler {
 
-    Class<T> entityClass;
+    private final Class<T> entityClass;
 
-    int sheetIndex;
+    private final int sheetIndex;
 
-    boolean mapClass;
+    private final boolean mapClass;
 
-    T rowEntity;
+    private T rowEntity;
 
-    int headerRowNum;
+    private final int headerRowNum;
 
-    int batchSize;
+    private final int batchSize;
 
-    InCallback<T> callback;
+    private final InCallback<T> callback;
 
-    Map<String, InColumn<?>> columns;
+    private final Map<String, InColumn<?>> columns;
 
-    int nowRowNum;
+    private int nowRowNum;
 
-    Consumer<PoiResult<T>> partResult;
+    private final Consumer<PoiResult<T>> partResult;
 
-    List<T> data = new ArrayList<>();
+    private final List<T> data = new ArrayList<>();
 
-    List<String> rowErrors = new ArrayList<>();
+    private final List<String> errorRow = new ArrayList<>();
 
-    List<String> message = new ArrayList<>();
+    private final List<String> error = new ArrayList<>();
 
-    List<Exception> unknownError = new ArrayList<>();
+    private final List<Exception> unknownError = new ArrayList<>();
+
+    private final List<Exception> unknownErrorRow = new ArrayList<>();
 
 
     public SheetHandler(int sheetIndex, Class<T> entityClass, int headerRowNum, Map<String, InColumn<?>> columns, InCallback<T> callback, int batchSize, Consumer<PoiResult<T>> partResult) {
@@ -66,9 +68,7 @@ public class SheetHandler<T> implements XSSFSheetXMLHandler.SheetContentsHandler
         if (rowNum > headerRowNum - 1) {
             try {
                 rowEntity = entityClass.newInstance();
-            } catch (InstantiationException e) {
-                e.printStackTrace();
-            } catch (IllegalAccessException e) {
+            } catch (InstantiationException | IllegalAccessException e) {
                 e.printStackTrace();
             }
         }
@@ -79,6 +79,9 @@ public class SheetHandler<T> implements XSSFSheetXMLHandler.SheetContentsHandler
      */
     @Override
     public void cell(String cellReference, String formattedValue, XSSFComment comment) {
+        if (this.nowRowNum < headerRowNum - 1) {
+            return;
+        }
         if (rowEntity != null) {
             try {
                 CellRangeAddress cellRangeAddress = CellRangeAddress.valueOf(cellReference);
@@ -111,9 +114,10 @@ public class SheetHandler<T> implements XSSFSheetXMLHandler.SheetContentsHandler
                     FieldUtils.writeField(rowEntity, fieldName, cellValue, true);
                 }
             } catch (PoiException e) {
-                rowErrors.add(e.getMessage());
+                errorRow.add(e.getMessage());
             } catch (Exception e) {
-                unknownError.add(e);
+                e.printStackTrace();
+                unknownErrorRow.add(e);
             }
         }
     }
@@ -124,25 +128,30 @@ public class SheetHandler<T> implements XSSFSheetXMLHandler.SheetContentsHandler
     @Override
     public void endRow(int rowNum) {
         try {
-            if (rowNum > headerRowNum - 1) {
+            if (callback != null && (rowNum > headerRowNum - 1) && this.rowEntity != null) {
                 callback.callback(this.rowEntity, rowNum);
             }
         } catch (PoiException e) {
-            rowErrors.add(e.getMessage());
+            errorRow.add(e.getMessage());
         } catch (Exception e) {
-            unknownError.add(e);
+            e.printStackTrace();
+            unknownErrorRow.add(e);
         }
         // 如果行错误不为空, 添加错误
-        if (!rowErrors.isEmpty()) {
-            message.add(String.format(PoiConstant.ROW_INDEX_STR, this.nowRowNum + 1, String.join(" ", rowErrors)));
+        if (!errorRow.isEmpty()) {
+            error.add(String.format(PoiConstant.ROW_INDEX_STR, this.nowRowNum + 1, String.join(" ", errorRow)));
         }
-        if (unknownError.isEmpty()) {
+        if (errorRow.isEmpty() && unknownErrorRow.isEmpty() && this.rowEntity != null) {
             data.add(this.rowEntity);
+        } else {
+            unknownError.addAll(unknownErrorRow);
         }
         if (data.size() == this.batchSize) {
             // 表示部分数据解析完, 结束
             batchFinish();
         }
+        errorRow.clear();
+        unknownErrorRow.clear();
     }
 
     /**
@@ -151,15 +160,15 @@ public class SheetHandler<T> implements XSSFSheetXMLHandler.SheetContentsHandler
     private void batchFinish() {
         PoiResult<T> poiResult = new PoiResult<>();
         poiResult.setData(data);
-        poiResult.setMessage(message);
+        poiResult.setMessage(error);
+        poiResult.setSuccess(true);
         poiResult.setUnknownError(unknownError);
-        if (!message.isEmpty() || !unknownError.isEmpty()) {
+        if (!error.isEmpty() || !unknownError.isEmpty()) {
             poiResult.setSuccess(false);
         }
         partResult.accept(poiResult);
         data.clear();
-        message.clear();
-        rowErrors.clear();
+        error.clear();
         unknownError.clear();
     }
 
