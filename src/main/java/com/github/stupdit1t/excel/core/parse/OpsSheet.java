@@ -117,7 +117,8 @@ public class OpsSheet<R> extends AbsParent<OpsParse<R>> {
     /**
      * 解析sheet方法
      *
-     * @return PoiResult
+     * @param partSize 批量页大小
+     * @param partResult 批量结果
      */
     public void parsePart(int partSize, Consumer<PoiResult<R>> partResult) {
         try {

@@ -71,6 +71,7 @@ public void export(HttpServletResponse response, SysErrorLogQueryParam queryPara
 
 1. 解析Excel遇到未知异常捕获至PoiResult
 2. 解析Excel链式方法调整，新增defaultValue
+3. 增加大数据事件流分批导入功能，如一次处理百万数据，避免直接读取到内存OOM问题
 
 ### v3.1.2
 
