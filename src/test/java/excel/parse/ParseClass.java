@@ -86,7 +86,7 @@ public class ParseClass {
     @Test
     public void parseBean() {
         name.set("parseBean");
-         ExcelHelper.opsParse(ProjectEvaluate.class)
+        ExcelHelper.opsParse(ProjectEvaluate.class)
                 .from("src/test/java/excel/parse/excel/simpleExport.xlsx")
                 // 指定数据区域
                 .opsSheet(0, 1, 0)
@@ -113,11 +113,11 @@ public class ParseClass {
                     System.out.println("当前是第:" + index + " 数据是: " + row);
                 })
                 .parsePart(10, (data) -> {
-                    if(data.isSuccess()){
+                    if (data.isSuccess()) {
                         for (ProjectEvaluate datum : data.getData()) {
                             System.out.println(datum);
                         }
-                    }else{
+                    } else {
                         System.out.println("导入异常: " + data.getMessageToString());
                         for (ProjectEvaluate datum : data.getData()) {
                             System.out.println(datum);
@@ -134,36 +134,13 @@ public class ParseClass {
                 .from("src/test/java/excel/parse/excel/simpleExport.xlsx")
                 // 指定数据区域
                 .opsSheet(0, 1, 1)
-                // 自定义列映射
-                .opsColumn()
-                // 强制输入字符串, 且不能为空
-                .field("A", "projectName", "项目名称").asString().notNull().done()
-                // img类型. 导入图片必须这样写, 且字段为byte[]
-                .field("B", "img", "项目图片").done()
-                .field("C", "areaName", "所属区域").done()
-                .field("D", "province", "省份").done()
-                .field("E", "city", "市").done()
-                // 不能为空
-                .field("F", "people", "项目所属人").asString().done()
-                // 不能为空
-                .field("G", "leader", "项目领导人").asString().done()
-                // 必须是数字
-                .field("H", "scount", "总分").asLong().done()
-                .field("I", "avg", "历史平均分").done()
-                .field("J", "createTime", "创建时间").asDate().pattern("yyyy/MM/dd").trim().done()
-                .done()
-                .parsePart(10, (data) -> {
-                    if(data.isSuccess()){
-                        for (HashMap datum : data.getData()) {
-                            System.out.println(datum);
-                        }
-                    }else{
-                        System.out.println("导入异常: " + data.getMessageToString());
+                .parsePart(2, (data) -> {
+                    if (data.isSuccess()) {
                         for (HashMap datum : data.getData()) {
                             System.out.println(datum);
                         }
                     }
-
+                    System.out.println("===========================");
                 });
     }
 }

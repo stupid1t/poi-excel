@@ -15,7 +15,7 @@
 <dependency>
     <groupId>com.github.stupdit1t</groupId>
     <artifactId>poi-excel</artifactId>
-    <version>3.1.3</version>
+    <version>3.1.3-SNAPSHOT</version>
 </dependency>
 ```
 
@@ -67,7 +67,7 @@ public void export(HttpServletResponse response, SysErrorLogQueryParam queryPara
 
 > 有需求才有进步，这个轮子本身就是从0开始因为需求慢慢叠加起来的。有新需求提出来,我觉得合适会更新. 如有疑问可加群帮解答: 811606008
 
-### v3.1.3
+### v3.1.3-SNAPSHOT
 
 1. 解析Excel遇到未知异常捕获至PoiResult
 2. 解析Excel链式方法调整，新增defaultValue
@@ -576,6 +576,27 @@ public class MainClass {
         // 打印解析的数据
         parse.getData().forEach(System.out::println);
     }
+}
+```
+
+* 解析大数据，分批处理， 
+```
+@Test
+public void parseMap3() {
+    name.set("parseMap3");
+    ExcelHelper.opsParse(HashMap.class)
+            .from("src/test/java/excel/parse/excel/simpleExport.xlsx")
+            // 指定数据区域
+            .opsSheet(0, 1, 1)
+            // 每次处理10个
+            .parsePart(10, (data) -> {
+                if (data.isSuccess()) {
+                    for (HashMap datum : data.getData()) {
+                        System.out.println(datum);
+                    }
+                }
+                System.out.println("===========================");
+            });
 }
 ```
 
