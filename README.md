@@ -15,7 +15,7 @@
 <dependency>
     <groupId>com.github.stupdit1t</groupId>
     <artifactId>poi-excel</artifactId>
-    <version>3.1.3-SNAPSHOT</version>
+    <version>3.1.3</version>
 </dependency>
 ```
 
@@ -67,7 +67,7 @@ public void export(HttpServletResponse response, SysErrorLogQueryParam queryPara
 
 > 有需求才有进步，这个轮子本身就是从0开始因为需求慢慢叠加起来的。有新需求提出来,我觉得合适会更新. 如有疑问可加群帮解答: 811606008
 
-### v3.1.3-SNAPSHOT
+### v3.1.3
 
 1. 解析Excel遇到未知异常捕获至PoiResult
 2. 解析Excel链式方法调整，新增defaultValue
