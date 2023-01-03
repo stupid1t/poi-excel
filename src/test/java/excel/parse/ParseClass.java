@@ -61,7 +61,7 @@ public class ParseClass {
                 .field("D", "province", "省份").done()
                 .field("E", "city", "市").done()
                 // 不能为空
-                .field("F", "people", "项目所属人").asString().done()
+                .field("F", "people", "项目所属人").asString().defaultValue("张三").done()
                 // 不能为空
                 .field("G", "leader", "项目领导人").asString().done()
                 // 必须是数字
