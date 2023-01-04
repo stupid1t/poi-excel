@@ -218,6 +218,10 @@ public class ExcelUtil {
                 }
             }
             wb.write(out);
+            if (wb instanceof SXSSFWorkbook ) {
+                // 将此workbook对应的临时文件删除
+                ((SXSSFWorkbook )wb).dispose();
+            }
         } catch (IOException e) {
             LOG.error(e);
         }

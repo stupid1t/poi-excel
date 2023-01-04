@@ -112,19 +112,7 @@ public class ParseClass {
                     // 行回调, 可以在这里改数据
                     System.out.println("当前是第:" + index + " 数据是: " + row);
                 })
-                .parsePart(10, (data) -> {
-                    if (data.isSuccess()) {
-                        for (ProjectEvaluate datum : data.getData()) {
-                            System.out.println(datum);
-                        }
-                    } else {
-                        System.out.println("导入异常: " + data.getMessageToString());
-                        for (ProjectEvaluate datum : data.getData()) {
-                            System.out.println(datum);
-                        }
-                    }
-
-                });
+                .parse();
     }
 
     @Test
