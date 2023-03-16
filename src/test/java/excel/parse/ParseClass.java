@@ -93,20 +93,20 @@ public class ParseClass {
                 // 自定义列映射
                 .opsColumn()
                 // 强制输入字符串, 且不能为空
-                .field("A", "projectName", "项目名称").asString().notNull().done()
+                .field("A", "projectName").asString().notNull().done()
                 // img类型. 导入图片必须这样写, 且字段为byte[]
-                .field("B", "img", "项目图片").asImg().done()
-                .field("C", "areaName", "所属区域").done()
-                .field("D", "province", "省份").done()
-                .field("E", "city", "市").done()
+                .field("B", "img").asImg().done()
+                .field("C", "areaName").done()
+                .field("D", "province").done()
+                .field("E", "city").done()
                 // 不能为空
-                .field("F", "people", "项目所属人").asString().pattern("\\d+").defaultValue("1").notNull().done()
+                .field("F", "people").asString().pattern("\\d+").defaultValue("1").notNull().done()
                 // 不能为空
-                .field("G", "leader", "项目领导人").asString().defaultValue("巨无霸").done()
+                .field("G", "leader").asString().defaultValue("巨无霸").done()
                 // 必须是数字
-                .field("H", "scount", "总分").asInt().done()
-                .field("I", "avg", "历史平均分").asDouble().done()
-                .field("J", "createTime", "创建时间").asDate().pattern("yyyy/MM/dd").trim().done()
+                .field("H", "scount").asInt().done()
+                .field("I", "avg").asDouble().done()
+                .field("J", "createTime").asDate().pattern("yyyy/MM/dd").trim().done()
                 .done()
                 .callBack((row, index) -> {
                     // 行回调, 可以在这里改数据

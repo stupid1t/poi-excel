@@ -216,7 +216,7 @@ public class ExportClass {
 				// 宽度设置
 				.width(6000)
 				// 字段导出回调
-				.outHandle((val, row, style) -> {
+				.outHandle((val, row, style, rowIndex) -> {
 					// 如果是北京, 设置背景色为黄色
 					if (val.equals("北京")) {
 						style.setBackColor(IndexedColors.YELLOW);

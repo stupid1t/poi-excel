@@ -107,6 +107,8 @@ public class OpsSheet<R> extends AbsParent<OpsParse<R>> {
     /**
      * 行回调方法
      *
+     * @param callback row 当前数据
+     *                 index 当前数据下标
      * @return OpsSheet
      */
     public OpsSheet<R> callBack(InCallback<R> callback) {
@@ -117,7 +119,7 @@ public class OpsSheet<R> extends AbsParent<OpsParse<R>> {
     /**
      * 解析sheet方法
      *
-     * @param partSize 批量页大小
+     * @param partSize   批量页大小
      * @param partResult 批量结果
      */
     public void parsePart(int partSize, Consumer<PoiResult<R>> partResult) {
@@ -154,15 +156,15 @@ public class OpsSheet<R> extends AbsParent<OpsParse<R>> {
             //5.创建Sax的xmlReader对象
             XMLReader xmlReader = XMLReaderFactory.createXMLReader();
             //6.注册事件处理器
-            SheetHandler<R> sheetHandler = new SheetHandler<R>(this.sheetIndex, this.parent.rowClass,this.headerCount, columns, this.callback, partSize, partResult);
+            SheetHandler<R> sheetHandler = new SheetHandler<R>(this.sheetIndex, this.parent.rowClass, this.headerCount, columns, this.callback, partSize, partResult);
             XSSFSheetXMLHandler xmlHandler = new XSSFSheetXMLHandler(stylesTable, table, sheetHandler, false);
             xmlReader.setContentHandler(xmlHandler);
             //7.逐行读取
             XSSFReader.SheetIterator sheetIterator = (XSSFReader.SheetIterator) reader.getSheetsData();
             int index = 0;
             while (sheetIterator.hasNext()) {
-                try(InputStream stream = sheetIterator.next()){
-                    if(index != this.sheetIndex){
+                try (InputStream stream = sheetIterator.next()) {
+                    if (index != this.sheetIndex) {
                         index++;
                         continue;
                     }

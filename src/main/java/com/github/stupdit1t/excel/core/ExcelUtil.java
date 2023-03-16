@@ -331,7 +331,7 @@ public class ExcelUtil {
                 OutColumn.Style style = column.getStyle();
                 if (column.getOutHandle() != null) {
                     style = OutColumn.Style.clone(column.getStyle());
-                    value = column.getOutHandle().callback(value, t, style);
+                    value = column.getOutHandle().callback(value, t, style, i);
                 }
 
                 // 4.样式处理
