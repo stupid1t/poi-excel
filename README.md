@@ -15,7 +15,7 @@
 <dependency>
     <groupId>com.github.stupdit1t</groupId>
     <artifactId>poi-excel</artifactId>
-    <version>3.1.3</version>
+    <version>3.1.4-SNAPSHOT</version>
 </dependency>
 ```
 
@@ -66,6 +66,12 @@ public void export(HttpServletResponse response, SysErrorLogQueryParam queryPara
 ## 三. 更新记录
 
 > 有需求才有进步，这个轮子本身就是从0开始因为需求慢慢叠加起来的。有新需求提出来,我觉得合适会更新. 如有疑问可加群帮解答: 811606008
+
+### v3.1.4-SNAPSHOT
+
+1. 导出导入回调注释添加
+2. 导入field方法支持只传入列和字段，不需要title
+3. 导出SXSSFWorkbook格式删除临时文件
 
 ### v3.1.3
 
