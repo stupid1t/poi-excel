@@ -1571,7 +1571,7 @@ public class ExcelUtil {
      * @param lastRow    结束行
      * @return DataValidation
      */
-    private static DataValidation createDropDownValidation(Sheet sheet, String[] dataSource, int col, int firstRow, int lastRow) {
+    private static synchronized DataValidation createDropDownValidation(Sheet sheet, String[] dataSource, int col, int firstRow, int lastRow) {
         CellRangeAddressList cellRangeAddressList = new CellRangeAddressList(firstRow, lastRow, col, col);
         DataValidationHelper helper = sheet.getDataValidationHelper();
         Workbook workbook = sheet.getWorkbook();
@@ -1579,34 +1579,49 @@ public class ExcelUtil {
         if (hidden == null) {
             hidden = workbook.createSheet("hidden");
         }
-        // 1.首先创建行
-        int dataLength = dataSource.length;
-        int rowNum = hidden.getLastRowNum();
-        char colLetter = 'A';
-        if (rowNum == -1) {
-            // 第一次创建下拉框数据
-            for (int i = 0; i < dataLength; i++, rowNum++) {
-                hidden.createRow(i).createCell(0).setCellValue(dataSource[i]);
+        String hash = "H" + Objects.hash(dataSource);
+        // 1.检测下拉框是否已经创建过
+        int dropDownCol = 0;
+        Row fieldRow = hidden.getRow(0);
+        boolean find = false;
+        if (fieldRow != null) {
+            for (int i = 0; i < fieldRow.getLastCellNum(); i++) {
+                // 标题相等，已经创建过
+                if (fieldRow.getCell(i) != null && hash.equals(fieldRow.getCell(i).getStringCellValue())) {
+                    dropDownCol = i;
+                    find = true;
+                }
             }
-        } else {
-            // 之前已经创建过
-            int createNum = dataLength - ++rowNum;
-            short lastCellNum = hidden.getRow(0).getLastCellNum();
-            for (int i = 0; i < lastCellNum; i++) {
-                colLetter++;
+            if (!find) {
+                dropDownCol = fieldRow.getLastCellNum();
             }
-            for (int i = 0; i < rowNum + createNum; i++) {
+        }
+        String colLetter = PoiConstant.numsRefCell.get(dropDownCol);
+        // 2.创建下拉框引用值
+        if (!find) {
+            for (int i = 0; i < dataSource.length + 1; i++) {
+                // 设置单元格值
                 Row row = hidden.getRow(i);
                 if (row == null) {
                     row = hidden.createRow(i);
                 }
-                row.createCell(lastCellNum).setCellValue(dataSource[i]);
+                Cell cell = row.getCell(dropDownCol);
+                if (cell == null) {
+                    cell = row.createCell(dropDownCol);
+                }
+                if (i == 0) {
+                    // 如果是0号位， 设置单元格值为字段
+                    cell.setCellValue(hash);
+                } else {
+                    cell.setCellValue(dataSource[i - 1]);
+                }
             }
         }
+
         // 3.设置表达式
-        String formula = "hidden!$" + colLetter + "$1:$" + colLetter + "$" + dataLength;
+        String formula = "hidden!$" + colLetter + "$2:$" + colLetter + "$" + (dataSource.length + 1);
         DataValidationConstraint constraint = helper.createFormulaListConstraint(formula);
-        workbook.setSheetHidden(1, true);
+        //workbook.setSheetHidden(1, true);
 
         DataValidation dataValidation = helper.createValidation(constraint, cellRangeAddressList);
 
