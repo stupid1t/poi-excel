@@ -218,9 +218,9 @@ public class ExcelUtil {
                 }
             }
             wb.write(out);
-            if (wb instanceof SXSSFWorkbook ) {
+            if (wb instanceof SXSSFWorkbook) {
                 // 将此workbook对应的临时文件删除
-                ((SXSSFWorkbook )wb).dispose();
+                ((SXSSFWorkbook) wb).dispose();
             }
         } catch (IOException e) {
             LOG.error(e);
@@ -1117,7 +1117,7 @@ public class ExcelUtil {
                 if (!rowErrors.isEmpty()) {
                     errors.add(String.format(PoiConstant.ROW_INDEX_STR, j + 1, String.join(" ", rowErrors)));
                 }
-				if (unknownError.isEmpty()) {
+                if (unknownError.isEmpty()) {
                     beans.add(data);
                 }
             }
@@ -1574,44 +1574,40 @@ public class ExcelUtil {
     private static DataValidation createDropDownValidation(Sheet sheet, String[] dataSource, int col, int firstRow, int lastRow) {
         CellRangeAddressList cellRangeAddressList = new CellRangeAddressList(firstRow, lastRow, col, col);
         DataValidationHelper helper = sheet.getDataValidationHelper();
-        DataValidationConstraint constraint;
-        if (sheet.getWorkbook() instanceof HSSFWorkbook) {
-            constraint = helper.createExplicitListConstraint(dataSource);
-        } else {
-            Workbook workbook = sheet.getWorkbook();
-            Sheet hidden = workbook.getSheet("hidden");
-            if (hidden == null) {
-                hidden = workbook.createSheet("hidden");
-            }
-            // 1.首先创建行
-            int dataLength = dataSource.length;
-            int rowNum = hidden.getLastRowNum();
-            char colLetter = 'A';
-            if (rowNum == -1) {
-                // 第一次创建下拉框数据
-                for (int i = 0; i < dataLength; i++, rowNum++) {
-                    hidden.createRow(i).createCell(0).setCellValue(dataSource[i]);
-                }
-            } else {
-                // 之前已经创建过
-                int createNum = dataLength - ++rowNum;
-                short lastCellNum = hidden.getRow(0).getLastCellNum();
-                for (int i = 0; i < lastCellNum; i++) {
-                    colLetter++;
-                }
-                for (int i = 0; i < rowNum + createNum; i++) {
-                    Row row = hidden.getRow(i);
-                    if (row == null) {
-                        row = hidden.createRow(i);
-                    }
-                    row.createCell(lastCellNum).setCellValue(dataSource[i]);
-                }
-            }
-            // 3.设置表达式
-            String formula = "hidden!$" + colLetter + "$1:$" + colLetter + "$" + dataLength;
-            constraint = helper.createFormulaListConstraint(formula);
-            workbook.setSheetHidden(1, true);
+        Workbook workbook = sheet.getWorkbook();
+        Sheet hidden = workbook.getSheet("hidden");
+        if (hidden == null) {
+            hidden = workbook.createSheet("hidden");
         }
+        // 1.首先创建行
+        int dataLength = dataSource.length;
+        int rowNum = hidden.getLastRowNum();
+        char colLetter = 'A';
+        if (rowNum == -1) {
+            // 第一次创建下拉框数据
+            for (int i = 0; i < dataLength; i++, rowNum++) {
+                hidden.createRow(i).createCell(0).setCellValue(dataSource[i]);
+            }
+        } else {
+            // 之前已经创建过
+            int createNum = dataLength - ++rowNum;
+            short lastCellNum = hidden.getRow(0).getLastCellNum();
+            for (int i = 0; i < lastCellNum; i++) {
+                colLetter++;
+            }
+            for (int i = 0; i < rowNum + createNum; i++) {
+                Row row = hidden.getRow(i);
+                if (row == null) {
+                    row = hidden.createRow(i);
+                }
+                row.createCell(lastCellNum).setCellValue(dataSource[i]);
+            }
+        }
+        // 3.设置表达式
+        String formula = "hidden!$" + colLetter + "$1:$" + colLetter + "$" + dataLength;
+        DataValidationConstraint constraint = helper.createFormulaListConstraint(formula);
+        workbook.setSheetHidden(1, true);
+
         DataValidation dataValidation = helper.createValidation(constraint, cellRangeAddressList);
 
         // 处理Excel兼容性问题

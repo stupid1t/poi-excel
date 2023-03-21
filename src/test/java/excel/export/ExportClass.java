@@ -348,10 +348,10 @@ public class ExportClass {
 	public void templateExport() {
 		name.set("templateExport");
 		List<String> list = new ArrayList<>();
-		for (int i = 0; i < 20; i++) {
+		for (int i = 1; i <= 200; i++) {
 			list.add(i + "平推");
 		}
-		ExcelHelper.opsExport(PoiWorkbookType.XLSX)
+		ExcelHelper.opsExport(PoiWorkbookType.XLS)
 				.opsSheet(Collections.emptyList())
 				.opsHeader().simple().texts("宝宝姓名", "手机号码", "宝宝生日", "月龄", "宝宝性别", "来源渠道", "备注").done()
 				.opsColumn()
