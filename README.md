@@ -66,6 +66,9 @@ public void export(HttpServletResponse response, SysErrorLogQueryParam queryPara
 ## 三. 更新记录
 
 > 有需求才有进步，这个轮子本身就是从0开始因为需求慢慢叠加起来的。有新需求提出来,我觉得合适会更新. 如有疑问可加群帮解答: 811606008
+### v3.1.5
+
+1. xls格式导出下拉框不能支持太多数据，更换为引用支持更多的数据
 
 ### v3.1.4
 
