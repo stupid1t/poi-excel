@@ -69,6 +69,7 @@ public void export(HttpServletResponse response, SysErrorLogQueryParam queryPara
 ### v3.1.5
 
 1. xls格式导出下拉框不能支持太多数据，更换为引用支持更多的数据
+2. 列数太多，引用单元格BUG处理
 
 ### v3.1.4
 
