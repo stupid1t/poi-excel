@@ -219,6 +219,10 @@ public class ExcelUtil {
             } else {
                 wb.write(out);
             }
+			if (wb instanceof SXSSFWorkbook) {
+				// 将此workbook对应的临时文件删除
+				((SXSSFWorkbook) wb).dispose();
+			}
         } catch (IOException e) {
             LOG.error(e);
         }
@@ -328,7 +332,7 @@ public class ExcelUtil {
 				OutColumn.Style style = column.getStyle();
 				if (column.getOutHandle() != null) {
 					style = OutColumn.Style.clone(column.getStyle());
-					value = column.getOutHandle().callback(value, t, style);
+                    value = column.getOutHandle().callback(value, t, style, i);
 				}
 
 				// 4.样式处理
@@ -369,10 +373,8 @@ public class ExcelUtil {
 					mergerCell[3] = j;
 					if (mergerCell[0] == null) {
 						mergerCell[0] = i + exportRules.getMaxRows();
+                    }
 						mergerCell[1] = i + exportRules.getMaxRows();
-					} else {
-						mergerCell[1] = i + exportRules.getMaxRows();
-					}
 
 					// 如果是最后一行, 则直接存放合并数据
 					if (i == data.size() - 1) {
@@ -459,8 +461,7 @@ public class ExcelUtil {
 	 * @return Sheet
 	 */
 	private static synchronized Sheet safeCreateSheet(Workbook wb, String sheetName) {
-		Sheet sheet = sheetName != null ? wb.createSheet(sheetName) : wb.createSheet();
-		return sheet;
+        return sheetName != null ? wb.createSheet(sheetName) : wb.createSheet();
 	}
 
 	/**
@@ -529,7 +530,8 @@ public class ExcelUtil {
                     style.setWrapText(wrapText);
                 }
                 cacheStyle.put(styleCacheKey, style);
-				cacheStyle.put(styleCacheKey, style);
+
+
 			}
 			// 最终样式设置
 			cell.setCellStyle(style);
@@ -936,10 +938,10 @@ public class ExcelUtil {
 	public static <T> PoiResult<T> readSheet(String filePath, PoiSheetDataArea poiSheetArea, Map<String, InColumn<?>> columns, InCallback<T> callBack, Class<T> rowClass) {
 		try (InputStream is = new FileInputStream(filePath)) {
 			return readSheet(is, poiSheetArea, columns, callBack, rowClass);
-		} catch (IOException e) {
+        } catch (Exception e) {
 			LOG.error(e);
+            return PoiResult.fail(e);
 		}
-		return new PoiResult<>();
 	}
 
     /**
@@ -955,10 +957,10 @@ public class ExcelUtil {
     public static <T> PoiResult<T> readSheet(String filePath, String password, PoiSheetDataArea poiSheetArea, Map<String, InColumn<?>> columns, InCallback<T> callBack, Class<T> rowClass) {
         try (InputStream is = new FileInputStream(filePath)) {
             return readSheet(is, password, poiSheetArea, columns, callBack, rowClass);
-        } catch (IOException e) {
+        } catch (Exception e) {
             LOG.error(e);
+            return PoiResult.fail(e);
         }
-        return new PoiResult<>();
     }
 
 	/**
@@ -983,8 +985,8 @@ public class ExcelUtil {
 			return readSheet(sheet, poiSheetArea.getHeaderRowCount(), poiSheetArea.getFooterRowCount(), columns, callBack, rowClass);
 		} catch (Exception e) {
 			LOG.error(e);
+            return PoiResult.fail(e);
 		}
-		return new PoiResult<>();
 	}
 
     /**
@@ -1009,8 +1011,8 @@ public class ExcelUtil {
             return readSheet(sheet, poiSheetArea.getHeaderRowCount(), poiSheetArea.getFooterRowCount(), columns, callBack, rowClass);
         } catch (Exception e) {
             LOG.error(e);
+            return PoiResult.fail(e);
         }
-        return new PoiResult<>();
     }
 
 	/**
@@ -1031,7 +1033,7 @@ public class ExcelUtil {
 		Collection<InColumn<?>> values = columns.values();
 		int sheetIndex = sheet.getWorkbook().getSheetIndex(sheet);
 		for (InColumn<?> inColumn : values) {
-			BaseVerifyRule<?> cellVerify = inColumn.getCellVerifyRule();
+            BaseVerifyRule<?, ?> cellVerify = inColumn.getCellVerifyRule();
 			if (cellVerify instanceof ImgHandler) {
 				if (pictures == null) {
 					pictures = getSheetPictures(sheetIndex, sheet);
@@ -1046,6 +1048,7 @@ public class ExcelUtil {
 		// 获取真实的数据行尾数
 		int rowEnd = getLastRealLastRow(sheet.getRow(sheet.getLastRowNum())) - dataEndRowCount;
 		List<String> errors = new ArrayList<>();
+        List<Exception> unknownError = new ArrayList<>();
 		try {
 			for (int j = rowStart; j <= rowEnd; j++) {
 				List<String> rowErrors = new ArrayList<>();
@@ -1096,6 +1099,8 @@ public class ExcelUtil {
 						}
                     } catch (PoiException e) {
                         rowErrors.add(e.getMessage());
+                    } catch (Exception e) {
+                        unknownError.add(e);
                     }
                 }
                 // 有效, 回调处理加入
@@ -1104,24 +1109,29 @@ public class ExcelUtil {
                         callBack.callback(data, j + 1);
 					} catch (PoiException e) {
 						rowErrors.add(e.getMessage());
+                    } catch (Exception e) {
+                        unknownError.add(e);
 					}
 				}
 				// 如果行错误不为空, 添加错误
 				if (!rowErrors.isEmpty()) {
 					errors.add(String.format(PoiConstant.ROW_INDEX_STR, j + 1, String.join(" ", rowErrors)));
-				} else {
+                }
+                if (unknownError.isEmpty()) {
 					beans.add(data);
 				}
 			}
 		} catch (Exception e) {
 			LOG.error(e);
+            unknownError.add(e);
 		} finally {
 			// throw parse exception
-			if (errors.size() > 0) {
+            if (errors.size() > 0 || unknownError.size() > 0) {
 				rsp.setSuccess(false);
 				rsp.setMessage(errors);
 			}
 			rsp.setData(beans);
+            rsp.setUnknownError(unknownError);
 		}
 		// 返回结果
 		return rsp;
@@ -1561,47 +1571,58 @@ public class ExcelUtil {
 	 * @param lastRow    结束行
 	 * @return DataValidation
 	 */
-	private static DataValidation createDropDownValidation(Sheet sheet, String[] dataSource, int col, int firstRow, int lastRow) {
+    private static synchronized DataValidation createDropDownValidation(Sheet sheet, String[] dataSource, int col, int firstRow, int lastRow) {
 		CellRangeAddressList cellRangeAddressList = new CellRangeAddressList(firstRow, lastRow, col, col);
 		DataValidationHelper helper = sheet.getDataValidationHelper();
-		DataValidationConstraint constraint;
-		if (sheet.getWorkbook() instanceof HSSFWorkbook) {
-			constraint = helper.createExplicitListConstraint(dataSource);
-		} else {
 			Workbook workbook = sheet.getWorkbook();
 			Sheet hidden = workbook.getSheet("hidden");
 			if (hidden == null) {
 				hidden = workbook.createSheet("hidden");
 			}
-			// 1.首先创建行
-			int dataLength = dataSource.length;
-			int rowNum = hidden.getLastRowNum();
-			char colLetter = 'A';
-			if (rowNum == -1) {
-				// 第一次创建下拉框数据
-				for (int i = 0; i < dataLength; i++, rowNum++) {
-					hidden.createRow(i).createCell(0).setCellValue(dataSource[i]);
+        String hash = "H" + Objects.hash(dataSource);
+        // 1.检测下拉框是否已经创建过
+        int dropDownCol = 0;
+        Row fieldRow = hidden.getRow(0);
+        boolean find = false;
+        if (fieldRow != null) {
+            for (int i = 0; i < fieldRow.getLastCellNum(); i++) {
+                // 标题相等，已经创建过
+                if (fieldRow.getCell(i) != null && hash.equals(fieldRow.getCell(i).getStringCellValue())) {
+                    dropDownCol = i;
+                    find = true;
+                }
 				}
-			} else {
-				// 之前已经创建过
-				int createNum = dataLength - ++rowNum;
-				short lastCellNum = hidden.getRow(0).getLastCellNum();
-				for (int i = 0; i < lastCellNum; i++) {
-					colLetter++;
+            if (!find) {
+                dropDownCol = fieldRow.getLastCellNum();
 				}
-				for (int i = 0; i < rowNum + createNum; i++) {
+        }
+        String colLetter = PoiConstant.numsRefCell.get(dropDownCol);
+        // 2.创建下拉框引用值
+        if (!find) {
+            for (int i = 0; i < dataSource.length + 1; i++) {
+                // 设置单元格值
 					Row row = hidden.getRow(i);
 					if (row == null) {
 						row = hidden.createRow(i);
 					}
-					row.createCell(lastCellNum).setCellValue(dataSource[i]);
+                Cell cell = row.getCell(dropDownCol);
+                if (cell == null) {
+                    cell = row.createCell(dropDownCol);
+                }
+                if (i == 0) {
+                    // 如果是0号位， 设置单元格值为字段
+                    cell.setCellValue(hash);
+                } else {
+                    cell.setCellValue(dataSource[i - 1]);
 				}
 			}
+        }
+
 			// 3.设置表达式
-			String formula = "hidden!$" + colLetter + "$1:$" + colLetter + "$" + dataLength;
-			constraint = helper.createFormulaListConstraint(formula);
+        String formula = "hidden!$" + colLetter + "$2:$" + colLetter + "$" + (dataSource.length + 1);
+        DataValidationConstraint constraint = helper.createFormulaListConstraint(formula);
 			workbook.setSheetHidden(1, true);
-		}
+
 		DataValidation dataValidation = helper.createValidation(constraint, cellRangeAddressList);
 
 		// 处理Excel兼容性问题

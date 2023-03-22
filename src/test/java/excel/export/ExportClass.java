@@ -45,11 +45,6 @@ public class ExportClass {
 	 */
 	private List<List<?>> moreSheetData = new ArrayList<>();
 
-	/**
-	 * 下拉框数据
-	 */
-	private List<String> dropdownList = new ArrayList<>();
-
 	ThreadLocal<Long> time = new ThreadLocal<>();
 
 	ThreadLocal<String> name = new ThreadLocal<>();
@@ -63,7 +58,7 @@ public class ExportClass {
 			obj.setAreaName("华东长三角");
 			obj.setProvince("陕西省");
 			if (i % 3 == 0) {
-				obj.setCity("北京北京北京北京北京北京北京北京北京北京北京北京北京北京北京北京北京北京北京北京北京北京北京北京");
+				obj.setCity("北京");
 			} else {
 				obj.setCity("西安");
 			}
@@ -113,11 +108,6 @@ public class ExportClass {
 		moreSheetData.add(data);
 		moreSheetData.add(mapData);
 		moreSheetData.add(complexData);
-
-		// 下拉框数据
-		for (int i = 0; i < 1000; i++) {
-			dropdownList.add("示例"+ i);
-		}
 	}
 
 	@Before
@@ -216,7 +206,7 @@ public class ExportClass {
 				// 超出宽度换行显示
 				.wrapText()
 				// 下拉框
-				.dropdown(dropdownList.toArray(new String[]{}))
+				.dropdown("北京", "西安", "上海", "广州")
 				// 行数据相同合并
 				.mergerRepeat()
 				// 行高单独设置
@@ -226,9 +216,9 @@ public class ExportClass {
 				// 宽度设置
 				.width(6000)
 				// 字段导出回调
-				.outHandle((val, row, style) -> {
+				.outHandle((val, row, style, rowIndex) -> {
 					// 如果是北京, 设置背景色为黄色
-					if (val.equals("西安")) {
+					if (val.equals("北京")) {
 						style.setBackColor(IndexedColors.YELLOW);
 						style.setHeight(900);
 						style.setComment("北京搞红色");
@@ -358,7 +348,7 @@ public class ExportClass {
 	public void templateExport() {
 		name.set("templateExport");
 		List<String> list = new ArrayList<>();
-		for (int i = 0; i < 53; i++) {
+		for (int i = 1; i <= 200; i++) {
 			list.add(i + "平推");
 		}
 		ExcelHelper.opsExport(PoiWorkbookType.XLS)

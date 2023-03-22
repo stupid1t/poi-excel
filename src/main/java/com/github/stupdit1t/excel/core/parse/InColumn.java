@@ -31,7 +31,7 @@ public class InColumn<R> extends AbsParent<OpsColumn<R>> {
     /**
      * 验证规则
      */
-    BaseVerifyRule<?> cellVerifyRule = new StringHandler(true);
+    BaseVerifyRule<?, R> cellVerifyRule = new StringHandler<R>(true, this.parent);
 
     public InColumn(OpsColumn<R> opsColumn, String index, String field, String title) {
         super(opsColumn);
@@ -45,19 +45,9 @@ public class InColumn<R> extends AbsParent<OpsColumn<R>> {
      *
      * @return InColumn<R>
      */
-    public InColumn<R> asString() {
-        return asString(null);
-    }
-
-    /**
-     * 必须为字符串
-     *
-     * @param pattern 正则校验单元格内容
-     * @return InColumn<R>
-     */
-    public InColumn<R> asString(String pattern) {
-        this.cellVerifyRule = new StringHandler(true, pattern);
-        return this;
+    public StringHandler<R> asString() {
+        this.cellVerifyRule = new StringHandler<>(true, this.parent);
+        return (StringHandler<R>) this.cellVerifyRule;
     }
 
     /**
@@ -65,9 +55,9 @@ public class InColumn<R> extends AbsParent<OpsColumn<R>> {
      *
      * @return InColumn<R>
      */
-    public InColumn<R> asInt() {
-        this.cellVerifyRule = new IntegerHandler(true);
-        return this;
+    public IntegerHandler<R> asInt() {
+        this.cellVerifyRule = new IntegerHandler<>(true, this.parent);
+        return (IntegerHandler<R>) this.cellVerifyRule;
     }
 
     /**
@@ -75,9 +65,9 @@ public class InColumn<R> extends AbsParent<OpsColumn<R>> {
      *
      * @return InColumn<R>
      */
-    public InColumn<R> asLong() {
-        this.cellVerifyRule = new LongHandler(true);
-        return this;
+    public LongHandler<R> asLong() {
+        this.cellVerifyRule = new LongHandler<>(true, this.parent);
+        return (LongHandler<R>) this.cellVerifyRule;
     }
 
     /**
@@ -85,9 +75,9 @@ public class InColumn<R> extends AbsParent<OpsColumn<R>> {
      *
      * @return InColumn<R>
      */
-    public InColumn<R> asBoolean() {
-        this.cellVerifyRule = new BooleanHandler(true);
-        return this;
+    public BooleanHandler<R> asBoolean() {
+        this.cellVerifyRule = new BooleanHandler<>(true, this.parent);
+        return (BooleanHandler<R>) this.cellVerifyRule;
     }
 
     /**
@@ -95,9 +85,9 @@ public class InColumn<R> extends AbsParent<OpsColumn<R>> {
      *
      * @return InColumn<R>
      */
-    public InColumn<R> asBigDecimal() {
-        this.cellVerifyRule = new BigDecimalHandler(true);
-        return this;
+    public BigDecimalHandler<R> asBigDecimal() {
+        this.cellVerifyRule = new BigDecimalHandler<>(true, this.parent);
+        return (BigDecimalHandler<R>) this.cellVerifyRule;
     }
 
     /**
@@ -105,9 +95,9 @@ public class InColumn<R> extends AbsParent<OpsColumn<R>> {
      *
      * @return InColumn<R>
      */
-    public InColumn<R> asChar() {
-        this.cellVerifyRule = new CharHandler(true);
-        return this;
+    public CharHandler<R> asChar() {
+        this.cellVerifyRule = new CharHandler<>(true, this.parent);
+        return (CharHandler<R>) this.cellVerifyRule;
     }
 
     /**
@@ -115,39 +105,9 @@ public class InColumn<R> extends AbsParent<OpsColumn<R>> {
      *
      * @return InColumn<R>
      */
-    public InColumn<R> asDate() {
-        return asDate(null, false);
-    }
-
-    /**
-     * 必须为Date类型
-     * @param is1904Date 非标准日期, 尝试设置false
-     * @return
-     */
-    public InColumn<R> asDate(boolean is1904Date) {
-        return asDate(null, is1904Date);
-    }
-
-    /**
-     * 必须为Date类型
-     *
-     * @param pattern 日期格式类型
-     * @return InColumn<R>
-     */
-    public InColumn<R> asDate(String pattern) {
-        return asDate(pattern, false);
-    }
-
-    /**
-     * 必须为Date类型
-     *
-     * @param pattern 日期格式类型
-     * @param is1904Date 非标准日期, 尝试设置false
-     * @return InColumn<R>
-     */
-    public InColumn<R> asDate(String pattern, boolean is1904Date) {
-        this.cellVerifyRule = new DateHandler(true, pattern, is1904Date);
-        return this;
+    public DateHandler<R> asDate() {
+        this.cellVerifyRule = new DateHandler<>(true, this.parent);
+        return (DateHandler<R>) this.cellVerifyRule;
     }
 
     /**
@@ -155,9 +115,9 @@ public class InColumn<R> extends AbsParent<OpsColumn<R>> {
      *
      * @return InColumn<R>
      */
-    public InColumn<R> asDouble() {
-        this.cellVerifyRule = new DoubleHandler(true);
-        return this;
+    public DoubleHandler<R> asDouble() {
+        this.cellVerifyRule = new DoubleHandler<>(true, this.parent);
+        return (DoubleHandler<R>) this.cellVerifyRule;
     }
 
     /**
@@ -165,9 +125,9 @@ public class InColumn<R> extends AbsParent<OpsColumn<R>> {
      *
      * @return InColumn<R>
      */
-    public InColumn<R> asFloat() {
-        this.cellVerifyRule = new FloatHandler(true);
-        return this;
+    public FloatHandler<R> asFloat() {
+        this.cellVerifyRule = new FloatHandler<>(true, this.parent);
+        return (FloatHandler<R>) this.cellVerifyRule;
     }
 
     /**
@@ -175,9 +135,9 @@ public class InColumn<R> extends AbsParent<OpsColumn<R>> {
      *
      * @return InColumn<R>
      */
-    public InColumn<R> asImg() {
-        this.cellVerifyRule = new ImgHandler(true);
-        return this;
+    public ImgHandler<R> asImg() {
+        this.cellVerifyRule = new ImgHandler<>(true, this.parent);
+        return (ImgHandler<R>) this.cellVerifyRule;
     }
 
     /**
@@ -185,48 +145,20 @@ public class InColumn<R> extends AbsParent<OpsColumn<R>> {
      *
      * @return InColumn<R>
      */
-    public InColumn<R> asShort() {
-        this.cellVerifyRule = new ShortHandler(true);
-        return this;
+    public ShortHandler<R> asShort() {
+        this.cellVerifyRule = new ShortHandler<>(true, this.parent);
+        return (ShortHandler<R>) this.cellVerifyRule;
     }
 
     /**
-     * 自定义类型
+     * 自定义处理
      *
-     * @return InColumn<R>
+     * @param handle 行数，字段值，返回值
+     * @return
      */
-    public InColumn<R> asByCustom(BiFunction<String, Object, Object> handle) {
-        this.cellVerifyRule = new ObjectHandler(true, handle);
-        return this;
-    }
-
-    /**
-     * 不能为空
-     *
-     * @return InColumn<R>
-     */
-    public InColumn<R> notNull() {
-        this.cellVerifyRule.setAllowNull(false);
-        return this;
-    }
-
-    /**
-     * 去除两边空格
-     *
-     * @return InColumn<R>
-     */
-    public InColumn<R> trim() {
-        this.cellVerifyRule.setTrim(true);
-        return this;
-    }
-
-    /**
-     * 获取下标
-     *
-     * @return String
-     */
-    public String getIndex() {
-        return index;
+    public ObjectHandler<R> asByCustom(BiFunction<String, Object, Object> handle) {
+        this.cellVerifyRule = new ObjectHandler<>(true, this.parent, handle);
+        return (ObjectHandler<R>) this.cellVerifyRule;
     }
 
     /**
@@ -244,7 +176,7 @@ public class InColumn<R> extends AbsParent<OpsColumn<R>> {
      * @return String
      */
     public String getTitle() {
-        return title;
+        return this.title == null ? this.field : this.title;
     }
 
     /**
@@ -252,7 +184,7 @@ public class InColumn<R> extends AbsParent<OpsColumn<R>> {
      *
      * @return BaseVerifyRule
      */
-    public BaseVerifyRule<?> getCellVerifyRule() {
+    public BaseVerifyRule<?, R> getCellVerifyRule() {
         return cellVerifyRule;
     }
 }

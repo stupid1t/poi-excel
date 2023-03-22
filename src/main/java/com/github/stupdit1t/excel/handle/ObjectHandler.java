@@ -1,5 +1,6 @@
 package com.github.stupdit1t.excel.handle;
 
+import com.github.stupdit1t.excel.core.parse.OpsColumn;
 import com.github.stupdit1t.excel.handle.rule.BaseVerifyRule;
 
 import java.util.function.BiFunction;
@@ -10,7 +11,7 @@ import java.util.function.BiFunction;
  *
  * @author 625
  */
-public class ObjectHandler extends BaseVerifyRule<Object> {
+public class ObjectHandler<R> extends BaseVerifyRule<Object, R> {
 
     private BiFunction<String, Object, Object> doHandleSub;
 
@@ -19,8 +20,8 @@ public class ObjectHandler extends BaseVerifyRule<Object> {
      *
      * @param allowNull 可为空
      */
-    public ObjectHandler(boolean allowNull, BiFunction<String, Object, Object> handle) {
-        super(allowNull);
+    public ObjectHandler(boolean allowNull, OpsColumn<R> opsColumn, BiFunction<String, Object, Object> handle) {
+        super(allowNull, opsColumn);
         this.doHandleSub = handle;
     }
 
