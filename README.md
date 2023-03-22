@@ -15,7 +15,7 @@
 <dependency>
     <groupId>com.github.stupdit1t</groupId>
     <artifactId>poi-excel</artifactId>
-    <version>3.1.5-SNAPSHOT</version>
+    <version>3.1.5</version>
 </dependency>
 ```
 
