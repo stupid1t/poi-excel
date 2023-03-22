@@ -19,20 +19,20 @@
 </dependency>
 ```
 
-### 兼容两个低版本POI(截至 3.1.2)
+### 兼容两个低版本POI(截至 3.1.5)
 ```xml
 <!-- excel导入导出 POI版本为3.17 -->
 <dependency>
 <groupId>com.github.stupdit1t</groupId>
 <artifactId>poi-excel</artifactId>
-<version>poi-317.4</version>
+<version>poi-317.5</version>
 </dependency>
 
 <!-- excel导入导出 POI版本为4.1.2 -->
 <dependency>
 <groupId>com.github.stupdit1t</groupId>
 <artifactId>poi-excel</artifactId>
-<version>poi-412.4</version>
+<version>poi-412.5</version>
 </dependency>
 ```
 
