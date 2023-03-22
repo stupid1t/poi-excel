@@ -4,7 +4,6 @@ import org.apache.poi.ss.usermodel.DataFormatter;
 import org.apache.poi.xssf.eventusermodel.ReadOnlySharedStringsTable;
 import org.apache.poi.xssf.model.CommentsTable;
 import org.apache.poi.xssf.model.StylesTable;
-import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
 
 /**
@@ -30,8 +29,12 @@ public class XSSFSheetXMLHandler extends org.apache.poi.xssf.eventusermodel.XSSF
     }
 
     @Override
-    public void startElement(String uri, String localName, String qName, Attributes attributes) throws SAXException {
-        super.startElement(uri, localName, qName, attributes);
-        ((SheetHandler) this.output).endSheet();
+    public void endElement(String uri, String localName, String qName)
+            throws SAXException {
+        super.endElement(uri, localName, qName);
+        if ("sheetData".equals(localName)) {
+            // indicate that this sheet is now done
+            ((SheetHandler) output).endSheet();
+        }
     }
 }
