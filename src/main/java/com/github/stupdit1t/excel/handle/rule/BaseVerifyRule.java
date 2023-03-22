@@ -2,6 +2,8 @@ package com.github.stupdit1t.excel.handle.rule;
 
 import com.github.stupdit1t.excel.common.PoiConstant;
 import com.github.stupdit1t.excel.common.PoiException;
+import com.github.stupdit1t.excel.core.AbsParent;
+import com.github.stupdit1t.excel.core.parse.OpsColumn;
 import org.apache.commons.lang3.ObjectUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -11,7 +13,7 @@ import org.apache.logging.log4j.Logger;
  *
  * @author 625
  */
-public abstract class BaseVerifyRule<T> {
+public abstract class BaseVerifyRule<T, R> extends AbsParent<OpsColumn<R>> {
 
     private static final Logger LOG = LogManager.getLogger(BaseVerifyRule.class);
 
@@ -25,12 +27,18 @@ public abstract class BaseVerifyRule<T> {
      */
     protected boolean trim;
 
+	/**
+	 * 默认值
+	 */
+	protected T defaultValue;
+
     /**
      * 构建校验规则
      *
      * @param allowNull 是否为空
      */
-    public BaseVerifyRule(boolean allowNull) {
+	public BaseVerifyRule(boolean allowNull, OpsColumn<R> parent) {
+		super(parent);
         this.allowNull = allowNull;
     }
 
@@ -60,8 +68,8 @@ public abstract class BaseVerifyRule<T> {
     public T handle(String fieldName, String index, Object cellValue) throws PoiException {
         // 空值处理
         cellValue = handleNull(fieldName, index, cellValue);
-        if (cellValue == null) {
-            return null;
+		if (ObjectUtils.isEmpty(cellValue)) {
+			return this.defaultValue;
         }
         T endVal;
         try {
@@ -75,6 +83,37 @@ public abstract class BaseVerifyRule<T> {
         return endVal;
     }
 
+	/**
+	 * 不能为空
+	 *
+	 * @return InColumn<R>
+	 */
+	public BaseVerifyRule<T, R> notNull() {
+		this.allowNull = false;
+		return this;
+	}
+
+	/**
+	 * 去除两边空格
+	 *
+	 * @return InColumn<R>
+	 */
+	public BaseVerifyRule<T, R> trim() {
+		this.trim = true;
+		return this;
+	}
+
+	/**
+	 * 去除两边空格
+	 *
+	 * @return InColumn<R>
+	 */
+	public BaseVerifyRule<T, R> defaultValue(T defaultValue) {
+		this.defaultValue = defaultValue;
+		return this;
+	}
+
+
     /**
      * 校验单元格值
      *
@@ -82,22 +121,4 @@ public abstract class BaseVerifyRule<T> {
      * @param cellValue 列值
      */
     public abstract T doHandle(String fieldName, String index, Object cellValue) throws Exception;
-
-    /**
-     * 设置是否可为空
-     *
-     * @param allowNull 可为空
-     */
-    public void setAllowNull(boolean allowNull) {
-        this.allowNull = allowNull;
-    }
-
-    /**
-     * 是否去空格
-     * @param trim 是 去除两边空格 否  不去除
-     */
-    public void setTrim(boolean trim) {
-        this.trim = trim;
-    }
-
 }

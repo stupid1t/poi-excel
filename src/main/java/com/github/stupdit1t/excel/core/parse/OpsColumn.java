@@ -26,6 +26,19 @@ public class OpsColumn<R> extends AbsParent<OpsSheet<R>> {
         super(export);
     }
 
+
+    /**
+     * 列字段定义，指定列对应的字段
+     *
+     * @param index 下标, 如A/B/C/D
+     * @param field 对应的字段
+     * @return InColumn
+     */
+    public InColumn<R> field(String index, String field) {
+        return this.field(index, field, null);
+    }
+
+
     /**
      * 列字段定义
      *

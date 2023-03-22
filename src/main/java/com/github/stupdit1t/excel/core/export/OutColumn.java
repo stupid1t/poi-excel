@@ -331,9 +331,12 @@ public class OutColumn<R> extends AbsParent<OpsColumn<R>> implements Cloneable {
     }
 
     /**
-     * 输出出路
+     * 输出设置
      *
-     * @param outHandle 处理内容
+     * @param outHandle value    当前单元格值
+     *                  row      当前行记录
+     *                  style    自定义单元格样式
+     *                  rowIndex 数据下标
      * @return Column<R>
      */
     public OutColumn<R> outHandle(OutCallback<R> outHandle) {
@@ -394,6 +397,8 @@ public class OutColumn<R> extends AbsParent<OpsColumn<R>> implements Cloneable {
 
         /**
          * 获取批注
+         *
+         * @return
          */
         public String getComment() {
             return comment;
@@ -401,6 +406,7 @@ public class OutColumn<R> extends AbsParent<OpsColumn<R>> implements Cloneable {
 
         /**
          * 设置批注
+         *
          * @param comment
          */
         public void setComment(String comment) {
@@ -585,7 +591,6 @@ public class OutColumn<R> extends AbsParent<OpsColumn<R>> implements Cloneable {
 
         /**
          * 获取换行显示
-         *
          */
         public Boolean getWrapText() {
             return wrapText;
@@ -702,7 +707,6 @@ public class OutColumn<R> extends AbsParent<OpsColumn<R>> implements Cloneable {
 
     /**
      * 行重复合并
-     *
      */
     public String[] getMergerRepeatFieldValue() {
         return mergerRepeatFieldValue;

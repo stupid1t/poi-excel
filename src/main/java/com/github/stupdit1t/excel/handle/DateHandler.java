@@ -1,6 +1,7 @@
 package com.github.stupdit1t.excel.handle;
 
 import com.github.stupdit1t.excel.common.PoiConstant;
+import com.github.stupdit1t.excel.core.parse.OpsColumn;
 import com.github.stupdit1t.excel.handle.rule.BaseVerifyRule;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.math.NumberUtils;
@@ -17,28 +18,46 @@ import java.util.Date;
  *
  * @author 625
  */
-public class DateHandler extends BaseVerifyRule<Date> {
+public class DateHandler<R> extends BaseVerifyRule<Date, R> {
 
     /**
      * 日期格式
      */
-    private final String pattern;
+	private String pattern;
 
     /**
      * 是否为1904date
      */
-    private final boolean is1904Date;
+	private boolean is1904Date;
 
     /**
      * 常规验证
      *
      * @param allowNull 可为空
-     * @param pattern   格式化
+	 * @param opsColumn 格式化
      */
-    public DateHandler(boolean allowNull, String pattern, boolean is1904Date) {
-        super(allowNull);
+	public DateHandler(boolean allowNull, OpsColumn<R> opsColumn) {
+		super(allowNull, opsColumn);
+	}
+
+	/**
+	 * 格式化
+	 *
+	 * @param pattern 格式
+	 */
+	public DateHandler<R> pattern(String pattern) {
         this.pattern = pattern;
+		return this;
+	}
+
+	/**
+	 * 格式化
+	 *
+	 * @param is1904Date 格式
+	 */
+	public DateHandler<R> is1904Date(boolean is1904Date) {
         this.is1904Date = is1904Date;
+		return this;
     }
 
     @Override

@@ -2,6 +2,7 @@ package com.github.stupdit1t.excel.handle;
 
 import com.github.stupdit1t.excel.common.PoiConstant;
 import com.github.stupdit1t.excel.common.PoiException;
+import com.github.stupdit1t.excel.core.parse.OpsColumn;
 import com.github.stupdit1t.excel.handle.rule.BaseVerifyRule;
 import org.apache.commons.lang3.math.NumberUtils;
 
@@ -13,15 +14,15 @@ import java.math.BigDecimal;
  *
  * @author 625
  */
-public class BigDecimalHandler extends BaseVerifyRule<BigDecimal> {
+public class BigDecimalHandler<R> extends BaseVerifyRule<BigDecimal, R> {
 
     /**
      * 常规验证
      *
      * @param allowNull 可为空
      */
-    public BigDecimalHandler(boolean allowNull) {
-        super(allowNull);
+	public BigDecimalHandler(boolean allowNull, OpsColumn<R> opsColumn) {
+		super(allowNull, opsColumn);
     }
 
     @Override

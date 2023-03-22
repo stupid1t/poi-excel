@@ -61,9 +61,9 @@ public class ParseClass {
                 .field("D", "province", "省份").done()
                 .field("E", "city", "市").done()
                 // 不能为空
-                .field("F", "people", "项目所属人").notNull().done()
+                .field("F", "people", "项目所属人").asString().notNull().done()
                 // 不能为空
-                .field("G", "leader", "项目领导人").notNull().done()
+                .field("G", "leader", "项目领导人").asString().notNull().done()
                 // 必须是数字
                 .field("H", "scount", "总分").asLong().done()
                 .field("I", "avg", "历史平均分").done()
@@ -100,13 +100,13 @@ public class ParseClass {
                 .field("D", "province", "省份").done()
                 .field("E", "city", "市").done()
                 // 不能为空
-                .field("F", "people", "项目所属人").notNull().done()
+                .field("F", "people", "项目所属人").asString().notNull().done()
                 // 不能为空
-                .field("G", "leader", "项目领导人").notNull().done()
+                .field("G", "leader", "项目领导人").asString().notNull().done()
                 // 必须是数字
                 .field("H", "scount", "总分").asInt().done()
                 .field("I", "avg", "历史平均分").asDouble().done()
-                .field("J", "createTime", "创建时间").asDate("yyyy/MM/dd").trim().done()
+                .field("J", "createTime", "创建时间").asDate().trim().done()
                 .done()
                 .callBack((row, index) -> {
                     // 行回调, 可以在这里改数据
@@ -120,6 +120,24 @@ public class ParseClass {
 
         // 打印解析的数据
         parse.getData().forEach(System.out::println);
+    }
+
+    @Test
+    public void parseMap3() {
+        name.set("parseMap3");
+        ExcelHelper.opsParse(HashMap.class)
+                .from("src/test/java/excel/parse/excel/simpleExport.xlsx")
+                // 指定数据区域
+                .opsSheet(0, 1, 1)
+                // 每次处理10个
+                .parsePart(3, (data) -> {
+                    if (data.isSuccess()) {
+                        for (HashMap datum : data.getData()) {
+                            System.out.println(datum);
+                        }
+                    }
+                    System.out.println("===========================");
+                });
     }
 }
 
