@@ -525,12 +525,11 @@ class a {
 ## 五. 解析导入
 
 ##### 1. 支持严格的单元格校验,可以定位到单元格坐标校验
-
 ##### 2. 支持数据行的图片导入
-
 ##### 3. 支持导入过程中,对数据处理添加回调逻辑,满足其他业务场景
-
 ##### 4. xls和xlsx都支持导入
+##### 5. 支持数据处理，如设置默认值/转换/去空格/日期格式化/excel日期识别/正则验证/自定义转换验证
+##### 6. 支持大数据导入，数据分批处理，防OOM
 
 * 导入文件示例图
 
@@ -656,8 +655,8 @@ public class MainClass {
                 .field("F", "people").asString().pattern("\\d+").defaultValue("1").notNull().done()
                 // 不能为空
                 .field("G", "leader").asString().defaultValue("巨无霸").done()
-                // 必须是数字
-                .field("H", "scount").asString().done()
+                // 字符串整形数字，Excel数子类型会带浮点
+                .field("H", "scount").asString().intStr().done()
                 .field("I", "avg").asDouble().notNull().done()
                 .field("J", "createTime").asDate().pattern("yyyy/MM/dd").trim().done()
                 .done()

@@ -96,7 +96,7 @@ public class ParseClass {
                 // 不能为空
                 .field("G", "leader").asString().defaultValue("巨无霸").done()
                 // 必须是数字
-                .field("H", "scount").asString().done()
+                .field("H", "scount").asString().intStr().done()
                 .field("I", "avg").asDouble().notNull().done()
                 .field("J", "createTime").asDate().pattern("yyyy/MM/dd").trim().done()
                 .done()
