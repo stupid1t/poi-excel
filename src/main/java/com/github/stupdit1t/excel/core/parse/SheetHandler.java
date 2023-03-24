@@ -1,11 +1,13 @@
 package com.github.stupdit1t.excel.core.parse;
 
 import com.github.stupdit1t.excel.callback.InCallback;
+import com.github.stupdit1t.excel.common.ErrorMessage;
 import com.github.stupdit1t.excel.common.PoiCommon;
 import com.github.stupdit1t.excel.common.PoiConstant;
-import com.github.stupdit1t.excel.common.PoiException;
 import com.github.stupdit1t.excel.common.PoiResult;
 import org.apache.commons.lang3.reflect.FieldUtils;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.apache.poi.ss.util.CellRangeAddress;
 import org.apache.poi.xssf.eventusermodel.XSSFSheetXMLHandler;
 import org.apache.poi.xssf.usermodel.XSSFComment;
@@ -16,6 +18,8 @@ import java.util.Map;
 import java.util.function.Consumer;
 
 public class SheetHandler<T> implements XSSFSheetXMLHandler.SheetContentsHandler {
+
+    private static final Logger LOG = LogManager.getLogger(SheetHandler.class);
 
     private final Class<T> entityClass;
 
@@ -39,14 +43,9 @@ public class SheetHandler<T> implements XSSFSheetXMLHandler.SheetContentsHandler
 
     private final List<T> data = new ArrayList<>();
 
-    private final List<String> errorRow = new ArrayList<>();
+    private final List<ErrorMessage> totalError = new ArrayList<>();
 
-    private final List<String> error = new ArrayList<>();
-
-    private final List<Exception> unknownError = new ArrayList<>();
-
-    private final List<Exception> unknownErrorRow = new ArrayList<>();
-
+    private final List<ErrorMessage> rowError = new ArrayList<>();
 
     public SheetHandler(int sheetIndex, Class<T> entityClass, int headerRowNum, Map<String, InColumn<?>> columns, InCallback<T> callback, int batchSize, Consumer<PoiResult<T>> partResult) {
         this.sheetIndex = sheetIndex;
@@ -83,9 +82,10 @@ public class SheetHandler<T> implements XSSFSheetXMLHandler.SheetContentsHandler
             return;
         }
         if (rowEntity != null) {
-            try {
                 CellRangeAddress cellRangeAddress = CellRangeAddress.valueOf(cellReference);
                 String columnIndexChar = PoiConstant.numsRefCell.get(cellRangeAddress.getFirstColumn());
+            String location = columnIndexChar + cellRangeAddress.getFirstRow();
+            try {
                 InColumn<?> inColumn = this.columns.get(columnIndexChar);
                 Object cellValue = formattedValue;
                 String fieldName;
@@ -105,7 +105,7 @@ public class SheetHandler<T> implements XSSFSheetXMLHandler.SheetContentsHandler
 
                 // 校验类型转换处理
                 if (inColumn != null) {
-                    cellValue = inColumn.getCellVerifyRule().handle(inColumn.getTitle(), columnIndexChar + (cellRangeAddress.getFirstRow() + 1), cellValue);
+                    cellValue = inColumn.getCellVerifyRule().handle(cellRangeAddress.getFirstRow(), cellRangeAddress.getFirstColumn(), cellValue);
                 }
 
                 if (mapClass) {
@@ -113,11 +113,8 @@ public class SheetHandler<T> implements XSSFSheetXMLHandler.SheetContentsHandler
                 } else {
                     FieldUtils.writeField(rowEntity, fieldName, cellValue, true);
                 }
-            } catch (PoiException e) {
-                errorRow.add(e.getMessage());
             } catch (Exception e) {
-                e.printStackTrace();
-                unknownErrorRow.add(e);
+                rowError.add(new ErrorMessage(location, cellRangeAddress.getFirstRow(), cellRangeAddress.getFirstColumn(), e));
             }
         }
     }
@@ -131,29 +128,22 @@ public class SheetHandler<T> implements XSSFSheetXMLHandler.SheetContentsHandler
             if (callback != null && (rowNum > headerRowNum - 1) && this.rowEntity != null) {
                 callback.callback(this.rowEntity, rowNum);
             }
-        } catch (PoiException e) {
-            errorRow.add(e.getMessage());
         } catch (Exception e) {
-            e.printStackTrace();
-            unknownErrorRow.add(e);
+            LOG.error(e);
+            rowError.add(new ErrorMessage("第" + (rowNum + 1) + "行", rowNum, -1, e));
         }
-        // 如果行错误不为空, 添加错误
-        if (!errorRow.isEmpty()) {
-            error.add(String.format(PoiConstant.ROW_INDEX_STR, this.nowRowNum + 1, String.join(" ", errorRow)));
-        }
-        if (errorRow.isEmpty() && unknownErrorRow.isEmpty() && this.rowEntity != null) {
+
+        if (rowError.isEmpty() && this.rowEntity != null) {
             data.add(this.rowEntity);
         } else {
-            unknownError.addAll(unknownErrorRow);
+            totalError.addAll(this.rowError);
         }
         if (data.size() == this.batchSize) {
             // 表示部分数据解析完, 结束
             batchFinish();
-        }else{
-
         }
-        errorRow.clear();
-        unknownErrorRow.clear();
+
+
     }
 
     /**
@@ -162,16 +152,14 @@ public class SheetHandler<T> implements XSSFSheetXMLHandler.SheetContentsHandler
     private void batchFinish() {
         PoiResult<T> poiResult = new PoiResult<>();
         poiResult.setData(data);
-        poiResult.setMessage(error);
-        poiResult.setSuccess(true);
-        poiResult.setUnknownError(unknownError);
-        if (!error.isEmpty() || !unknownError.isEmpty()) {
-            poiResult.setSuccess(false);
+        poiResult.setError(rowError);
+        if (!rowError.isEmpty()) {
+            poiResult.setHasError(true);
         }
         partResult.accept(poiResult);
         data.clear();
-        error.clear();
-        unknownError.clear();
+        rowError.clear();
+        totalError.clear();
     }
 
     public void endSheet() {

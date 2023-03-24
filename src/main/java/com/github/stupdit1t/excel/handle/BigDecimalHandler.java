@@ -26,7 +26,7 @@ public class BigDecimalHandler<R> extends BaseVerifyRule<BigDecimal, R> {
     }
 
     @Override
-    public BigDecimal doHandle(String fieldName, String index, Object cellValue) throws Exception {
+	public BigDecimal doHandle(int row, int col, Object cellValue) throws Exception {
         if (cellValue instanceof BigDecimal) {
             return (BigDecimal) cellValue;
         } else {
@@ -38,6 +38,6 @@ public class BigDecimalHandler<R> extends BaseVerifyRule<BigDecimal, R> {
                 return new BigDecimal(value);
             }
         }
-        throw PoiException.error(String.format(PoiConstant.INCORRECT_FORMAT_STR, fieldName, index));
+		throw PoiException.error(PoiConstant.INCORRECT_FORMAT_STR);
     }
 }

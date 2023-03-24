@@ -1,6 +1,7 @@
 package com.github.stupdit1t.excel.core.parse;
 
 import com.github.stupdit1t.excel.callback.InCallback;
+import com.github.stupdit1t.excel.common.ErrorMessage;
 import com.github.stupdit1t.excel.common.PoiResult;
 import com.github.stupdit1t.excel.common.PoiSheetDataArea;
 import com.github.stupdit1t.excel.core.AbsParent;
@@ -10,6 +11,7 @@ import org.apache.poi.openxml4j.opc.OPCPackage;
 import org.apache.poi.openxml4j.opc.PackageAccess;
 import org.apache.poi.xssf.eventusermodel.ReadOnlySharedStringsTable;
 import org.apache.poi.xssf.eventusermodel.XSSFReader;
+import org.apache.poi.xssf.eventusermodel.XSSFSheetXMLHandler;
 import org.apache.poi.xssf.model.StylesTable;
 import org.xml.sax.InputSource;
 import org.xml.sax.XMLReader;
@@ -174,7 +176,7 @@ public class OpsSheet<R> extends AbsParent<OpsParse<R>> {
             }
         } catch (Exception e) {
             e.printStackTrace();
-            partResult.accept(PoiResult.fail(e));
+            partResult.accept(PoiResult.fail(new ErrorMessage(e)));
         }
 
     }

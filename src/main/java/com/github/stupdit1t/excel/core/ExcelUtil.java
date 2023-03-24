@@ -937,7 +937,7 @@ public class ExcelUtil {
             return readSheet(is, poiSheetArea, columns, callBack, rowClass);
         } catch (Exception e) {
             LOG.error(e);
-            return PoiResult.fail(e);
+            return PoiResult.fail(new ErrorMessage(e));
         }
     }
 
@@ -956,7 +956,7 @@ public class ExcelUtil {
             return readSheet(is, password, poiSheetArea, columns, callBack, rowClass);
         } catch (Exception e) {
             LOG.error(e);
-            return PoiResult.fail(e);
+            return PoiResult.fail(new ErrorMessage(e));
         }
     }
 
@@ -982,7 +982,7 @@ public class ExcelUtil {
             return readSheet(sheet, poiSheetArea.getHeaderRowCount(), poiSheetArea.getFooterRowCount(), columns, callBack, rowClass);
         } catch (Exception e) {
             LOG.error(e);
-            return PoiResult.fail(e);
+            return PoiResult.fail(new ErrorMessage(e));
         }
     }
 
@@ -1008,7 +1008,7 @@ public class ExcelUtil {
             return readSheet(sheet, poiSheetArea.getHeaderRowCount(), poiSheetArea.getFooterRowCount(), columns, callBack, rowClass);
         } catch (Exception e) {
             LOG.error(e);
-            return PoiResult.fail(e);
+            return PoiResult.fail(new ErrorMessage(e));
         }
     }
 
@@ -1044,11 +1044,9 @@ public class ExcelUtil {
         int rowStart = sheet.getFirstRowNum() + dataStartRow;
         // 获取真实的数据行尾数
         int rowEnd = getLastRealLastRow(sheet.getRow(sheet.getLastRowNum())) - dataEndRowCount;
-        List<String> errors = new ArrayList<>();
-        List<Exception> unknownError = new ArrayList<>();
+        List<ErrorMessage> error = new ArrayList<>();
         try {
             for (int j = rowStart; j <= rowEnd; j++) {
-                List<String> rowErrors = new ArrayList<>();
                 T data = rowClass.newInstance();
                 Row row = sheet.getRow(j);
                 if (row == null) {
@@ -1057,9 +1055,10 @@ public class ExcelUtil {
                 int lastCellNum = columns.size() == 0 ? row.getLastCellNum() : columns.size();
                 for (int k = 0; k < lastCellNum; k++) {
                     String fieldName;
-                    try {
                         // 列名称获取
                         String columnIndexChar = PoiConstant.numsRefCell.get(k);
+                    String location = columnIndexChar + (j + 1);
+                    try {
                         InColumn<?> inColumn = columns.get(columnIndexChar);
                         Object cellValue;
                         if (inColumn != null) {
@@ -1086,7 +1085,7 @@ public class ExcelUtil {
 
                         // 校验类型转换处理
                         if (inColumn != null) {
-                            cellValue = inColumn.getCellVerifyRule().handle(inColumn.getTitle(), columnIndexChar + (j + 1), cellValue);
+                            cellValue = inColumn.getCellVerifyRule().handle(j, k, cellValue);
                         }
 
                         if (mapClass) {
@@ -1094,41 +1093,33 @@ public class ExcelUtil {
                         } else {
                             FieldUtils.writeField(data, fieldName, cellValue, true);
                         }
-                    } catch (PoiException e) {
-                        rowErrors.add(e.getMessage());
                     } catch (Exception e) {
-                        unknownError.add(e);
+                        error.add(new ErrorMessage(location, j, k, e));
                     }
                 }
                 // 有效, 回调处理加入
                 if (callBack != null) {
+                    int rowNum = j + 1;
                     try {
-                        callBack.callback(data, j + 1);
-                    } catch (PoiException e) {
-                        rowErrors.add(e.getMessage());
+                        callBack.callback(data, rowNum);
                     } catch (Exception e) {
-                        unknownError.add(e);
+                        error.add(new ErrorMessage("第" + rowNum + "行", j, -1, e));
                     }
                 }
-                // 如果行错误不为空, 添加错误
-                if (!rowErrors.isEmpty()) {
-                    errors.add(String.format(PoiConstant.ROW_INDEX_STR, j + 1, String.join(" ", rowErrors)));
-                }
-                if (unknownError.isEmpty()) {
+                if (error.isEmpty()) {
                     beans.add(data);
                 }
             }
         } catch (Exception e) {
             LOG.error(e);
-            unknownError.add(e);
+            error.add(new ErrorMessage(e));
         } finally {
             // throw parse exception
-            if (errors.size() > 0 || unknownError.size() > 0) {
-                rsp.setSuccess(false);
-                rsp.setMessage(errors);
+            if (error.size() > 0) {
+                rsp.setHasError(true);
             }
             rsp.setData(beans);
-            rsp.setUnknownError(unknownError);
+            rsp.setError(error);
         }
         // 返回结果
         return rsp;
@@ -1463,7 +1454,7 @@ public class ExcelUtil {
                             obj = cell.getRichStringCellValue().getString();
                     }
                 } catch (Exception e) {
-                    obj = "";
+                    obj = cell.getStringCellValue();
                     LOG.error("公式有误:{0}", e);
                 }
                 break;

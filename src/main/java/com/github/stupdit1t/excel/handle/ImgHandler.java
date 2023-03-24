@@ -23,11 +23,11 @@ public class ImgHandler<R> extends BaseVerifyRule<byte[], R> {
     }
 
     @Override
-    public byte[] doHandle(String fieldName, String index, Object cellValue) throws Exception {
+    public byte[] doHandle(int row, int col, Object cellValue) throws Exception {
         if (cellValue instanceof byte[]) {
             return (byte[]) cellValue;
         }
-        throw PoiException.error(String.format(PoiConstant.INCORRECT_FORMAT_STR, fieldName, index));
+        throw PoiException.error(PoiConstant.INCORRECT_FORMAT_STR);
     }
 
 }

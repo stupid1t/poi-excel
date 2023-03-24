@@ -25,7 +25,7 @@ public class ShortHandler<R> extends BaseVerifyRule<Short, R> {
     }
 
     @Override
-    public Short doHandle(String fieldName, String index, Object cellValue) throws Exception {
+    public Short doHandle(int row, int col, Object cellValue) throws Exception {
         if (cellValue instanceof Short) {
             return (Short) cellValue;
         } else {
@@ -37,6 +37,6 @@ public class ShortHandler<R> extends BaseVerifyRule<Short, R> {
                 return new BigDecimal(value).shortValue();
             }
         }
-        throw PoiException.error(String.format(PoiConstant.INCORRECT_FORMAT_STR, fieldName, index));
+        throw PoiException.error(PoiConstant.INCORRECT_FORMAT_STR);
     }
 }
