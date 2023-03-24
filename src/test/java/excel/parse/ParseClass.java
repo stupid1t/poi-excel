@@ -66,7 +66,7 @@ public class ParseClass {
                 // 不能为空
                 .field("G", "leader", "项目领导人").asString().done()
                 // 必须是数字
-                .field("H", "scount", "总分").asLong().done()
+                .field("H", "scount", "总分").asString().done()
                 .field("I", "avg", "历史平均分").done()
                 .field("J", "createTime", "创建时间").asDate().trim().done()
                 .done()
@@ -114,7 +114,7 @@ public class ParseClass {
                 // 不能为空
                 .field("G", "leader").asString().defaultValue("巨无霸").done()
                 // 必须是数字
-                .field("H", "scount").asInt().done()
+                .field("H", "scount").asString().done()
                 .field("I", "avg").asDouble().notNull().done()
                 .field("J", "createTime").asDate().pattern("yyyy/MM/dd").trim().done()
                 .done()
@@ -158,7 +158,7 @@ public class ParseClass {
                 // 不能为空
                 .field("G", "leader").asString().defaultValue("巨无霸").done()
                 // 必须是数字
-                .field("H", "scount").asInt().done()
+                .field("H", "scount").asString().done()
                 .field("I", "avg").asDouble().notNull().done()
                 .field("J", "createTime").asDate().pattern("yyyy/MM/dd").trim().done()
                 .done()
