@@ -45,15 +45,14 @@ public abstract class BaseVerifyRule<T, R> extends AbsParent<OpsColumn<R>> {
     /**
      * 判空处理
      *
-     * @param fieldName 列名称
      * @param value     列值
      */
-    public Object handleNull(String fieldName, String index, Object value) throws PoiException {
+    public Object handleNull(Object value) throws PoiException {
         if (ObjectUtils.isEmpty(value)) {
             if (this.allowNull) {
                 return null;
             } else {
-                throw PoiException.error(String.format(PoiConstant.NOT_EMPTY_STR, fieldName, index));
+                throw PoiException.error(PoiConstant.NOT_EMPTY_STR);
             }
         }
         return value;
@@ -62,25 +61,15 @@ public abstract class BaseVerifyRule<T, R> extends AbsParent<OpsColumn<R>> {
     /**
      * 校验单元格值
      *
-     * @param fieldName 列名称
      * @param cellValue 列值
      */
-    public T handle(String fieldName, String index, Object cellValue) throws PoiException {
+    public T handle(int row, int col, Object cellValue) throws Exception {
         // 空值处理
-        cellValue = handleNull(fieldName, index, cellValue);
+        cellValue = handleNull(cellValue);
 		if (ObjectUtils.isEmpty(cellValue)) {
 			return this.defaultValue;
         }
-        T endVal;
-        try {
-            endVal = doHandle(fieldName, index, cellValue);
-        } catch (PoiException e) {
-            throw e;
-        } catch (Exception e) {
-            LOG.error(e);
-            throw PoiException.error(String.format(PoiConstant.INCORRECT_FORMAT_STR, fieldName, index));
-        }
-        return endVal;
+        return doHandle(row, col, cellValue);
     }
 
 	/**
@@ -117,8 +106,9 @@ public abstract class BaseVerifyRule<T, R> extends AbsParent<OpsColumn<R>> {
     /**
      * 校验单元格值
      *
-     * @param fieldName 列名称
+     * @param row       行号
+     * @param col       列号
      * @param cellValue 列值
      */
-    public abstract T doHandle(String fieldName, String index, Object cellValue) throws Exception;
+    public abstract T doHandle(int row, int col, Object cellValue) throws Exception;
 }

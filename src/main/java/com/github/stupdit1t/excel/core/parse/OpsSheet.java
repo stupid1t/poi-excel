@@ -1,6 +1,7 @@
 package com.github.stupdit1t.excel.core.parse;
 
 import com.github.stupdit1t.excel.callback.InCallback;
+import com.github.stupdit1t.excel.common.ErrorMessage;
 import com.github.stupdit1t.excel.common.PoiResult;
 import com.github.stupdit1t.excel.common.PoiSheetDataArea;
 import com.github.stupdit1t.excel.core.AbsParent;
@@ -175,7 +176,7 @@ public class OpsSheet<R> extends AbsParent<OpsParse<R>> {
             }
         } catch (Exception e) {
             e.printStackTrace();
-            partResult.accept(PoiResult.fail(e));
+            partResult.accept(PoiResult.fail(new ErrorMessage(e)));
         }
 
     }

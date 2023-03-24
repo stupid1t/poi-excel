@@ -25,7 +25,7 @@ public class IntegerHandler<R> extends BaseVerifyRule<Integer, R> {
     }
 
     @Override
-    public Integer doHandle(String fieldName, String index, Object cellValue) throws Exception {
+	public Integer doHandle(int row, int col, Object cellValue) throws Exception {
         if (cellValue instanceof Integer) {
             return (Integer) cellValue;
         } else {
@@ -37,6 +37,6 @@ public class IntegerHandler<R> extends BaseVerifyRule<Integer, R> {
                 return new BigDecimal(value).intValue();
             }
         }
-        throw PoiException.error(String.format(PoiConstant.INCORRECT_FORMAT_STR, fieldName, index));
+		throw PoiException.error(PoiConstant.INCORRECT_FORMAT_STR);
     }
 }
