@@ -33,11 +33,11 @@
     <version>poi-317.5</version>
 </dependency>
 
-        <!-- excel导入导出 POI版本为4.1.2 -->
+<!-- excel导入导出 POI版本为4.1.2 -->
 <dependency>
-<groupId>com.github.stupdit1t</groupId>
-<artifactId>poi-excel</artifactId>
-<version>poi-412.5</version>
+    <groupId>com.github.stupdit1t</groupId>
+    <artifactId>poi-excel</artifactId>
+    <version>poi-412.5</version>
 </dependency>
 ```
 
@@ -74,7 +74,7 @@ public void export(HttpServletResponse response,SysErrorLogQueryParam queryParam
 
 > 有需求才有进步，这个轮子本身就是从0开始因为需求慢慢叠加起来的。有新需求提出来,我觉得合适会更新. 如有疑问可加群帮解答: 811606008
 
-### v3.2.0
+### v3.2.0 (相对3.1.x，有部分不兼容改动)
 
 1. 重构解析表格异常收集，a.提供行级别异常输出，b.单元格级别异常输出，c.自定义异常输入
 2. 新增解析数字格式的单元格，用String接收带小数点.0的问题，提供intStr()参数，转换为整形
