@@ -16,44 +16,61 @@ import java.util.regex.Pattern;
  */
 public class StringHandler<R> extends BaseVerifyRule<String, R> {
 
-	/**
-	 * 正则验证
-	 */
-	private String pattern;
+    /**
+     * 正则验证
+     */
+    private String pattern;
 
-	/**
-	 * 常规验证
-	 *
-	 * @param allowNull 可为空
-	 */
-	public StringHandler(boolean allowNull, OpsColumn<R> opsColumn) {
-		super(allowNull, opsColumn);
-	}
+    /**
+     * 转换为整形数字
+     */
+    private boolean parseInt;
 
-	/**
-	 * 格式
-	 *
-	 * @param pattern 是否可为空
-	 */
-	public StringHandler<R> pattern(String pattern) {
-		this.pattern = pattern;
-		return this;
-	}
+    /**
+     * 常规验证
+     *
+     * @param allowNull 可为空
+     */
+    public StringHandler(boolean allowNull, OpsColumn<R> opsColumn) {
+        super(allowNull, opsColumn);
+    }
 
+    /**
+     * 格式
+     *
+     * @param pattern 是否可为空
+     */
+    public StringHandler<R> pattern(String pattern) {
+        this.pattern = pattern;
+        return this;
+    }
 
-	@Override
-	public String doHandle(int row, int col, Object cellValue) throws Exception {
-		String value = String.valueOf(cellValue);
-		if (this.trim) {
-			value = value.trim();
-		}
-		// 处理数值 转为 string包含E科学计数的问题
-		if (cellValue instanceof Number) {
-			value = new BigDecimal(value).toString();
-		}
-		if (pattern != null && !Pattern.matches(pattern, value)) {
-			throw PoiException.error(PoiConstant.INCORRECT_FORMAT_STR);
-		}
-		return value;
-	}
+    /**
+     * 格式化为整形数字
+     */
+    public StringHandler<R> intStr() {
+        this.parseInt = true;
+        return this;
+    }
+
+    @Override
+    public String doHandle(int row, int col, Object cellValue) throws Exception {
+        String value = String.valueOf(cellValue);
+        if (this.trim) {
+            value = value.trim();
+        }
+        // 处理数值 转为 string包含E科学计数的问题
+        if (cellValue instanceof Number) {
+            if (parseInt) {
+                value = new BigDecimal(value).intValue() + "";
+            } else {
+                value = new BigDecimal(value).toString();
+            }
+        }
+        if (pattern != null && !Pattern.matches(pattern, value)) {
+            throw PoiException.error(PoiConstant.INCORRECT_FORMAT_STR);
+        }
+
+        return value;
+    }
 }
