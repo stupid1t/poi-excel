@@ -580,39 +580,46 @@ public class MainClass {
 
     @Test
     public void parseMap1() {
+        name.set("parseMap1");
         PoiResult<HashMap> parse = ExcelHelper.opsParse(HashMap.class)
-                .from("src/test/java/excel/export/excel/simpleExport.xlsx")
+                .from("src/test/java/excel/parse/excel/simpleExport.xlsx")
                 // 指定数据区域
                 .opsSheet(0, 1, 0)
                 .parse();
-        if (!parse.isSuccess()) {
+        if (parse.hasError()) {
             // 输出验证不通过的信息
-            System.out.println(parse.getMessageToString());
+            System.out.println(parse.getErrorInfoString());
         }
         // 打印解析的数据
-        parse.getData().forEach(System.out::println);
+        if(parse.hasData()){
+            result.getData().forEach(System.out::println);
+        }
     }
 }
 ```
 
 * 解析大数据，分批处理， 
 ```java
-@Test
-public void parseMap3() {
-    name.set("parseMap3");
-    ExcelHelper.opsParse(HashMap.class)
-            .from("src/test/java/excel/parse/excel/simpleExport.xlsx")
-            // 指定数据区域
-            .opsSheet(0, 1, 1)
-            // 每次处理10个
-            .parsePart(10, (data) -> {
-                if (data.isSuccess()) {
-                    for (HashMap datum : data.getData()) {
-                        System.out.println(datum);
+public class MainClass {
+    @Test
+    public void parseMapBig() {
+        name.set("parseMapBig");
+        ExcelHelper.opsParse(HashMap.class)
+                .from("src/test/java/excel/parse/excel/simpleExport.xlsx")
+                // 指定数据区域
+                .opsSheet(0, 1, 1)
+                // 每1000处理一次
+                .parsePart(1000, (result) -> {
+                    if (result.hasError()) {
+                        // 输出验证不通过的信息
+                        System.out.println(result.getErrorInfoString());
                     }
-                }
-                System.out.println("===========================");
-            });
+                    // 打印解析的数据
+                    if(result.hasData()){
+                        result.getData().forEach(System.out::println);
+                    }
+                });
+    }
 }
 ```
 

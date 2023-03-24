@@ -23,20 +23,14 @@ public class InColumn<R> extends AbsParent<OpsColumn<R>> {
     final String field;
 
     /**
-     * 标题
-     */
-    final String title;
-
-    /**
      * 验证规则
      */
     BaseVerifyRule<?, R> cellVerifyRule = new StringHandler<R>(true, this.parent);
 
-    public InColumn(OpsColumn<R> opsColumn, String index, String field, String title) {
+    public InColumn(OpsColumn<R> opsColumn, String index, String field) {
         super(opsColumn);
         this.index = index;
         this.field = field;
-        this.title = title;
     }
 
     /**
@@ -169,15 +163,6 @@ public class InColumn<R> extends AbsParent<OpsColumn<R>> {
      */
     public String getField() {
         return field;
-    }
-
-    /**
-     * 获取标题
-     *
-     * @return String
-     */
-    public String getTitle() {
-        return this.title == null ? this.field : this.title;
     }
 
     /**
