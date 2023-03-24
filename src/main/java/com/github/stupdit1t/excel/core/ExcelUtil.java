@@ -1473,7 +1473,7 @@ public class ExcelUtil {
                 obj = "";
                 break;
             default:
-                obj = cell.getStringCellValue();
+                obj = "";
                 break;
         }
         return obj;
