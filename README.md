@@ -688,24 +688,21 @@ public class MainClass {
 
 ```xml
 if(result.hasError()){
-        System.out.println("===============单元格错误=================");
-        String errorInfoString = result.getErrorInfoString();
-        System.out.println(errorInfoString);
+    System.out.println("===============单元格错误=================");
+    String errorInfoString = result.getErrorInfoString();
+    System.out.println(errorInfoString);
 
-        System.out.println("===============数据行错误=================");
-        String errorInfoLineString = result.getErrorInfoLineString();
-        System.out.println(errorInfoLineString);
+    System.out.println("===============数据行错误=================");
+    String errorInfoLineString = result.getErrorInfoLineString();
+    System.out.println(errorInfoLineString);
 
-        // 获取原始的异常信息
-        List
-<ErrorMessage>error = result.getError();
+    // 获取原始的异常信息
+    List<ErrorMessage>error = result.getError();
     // 获取原始的单元格错误
-    List
-    <String>errorInfo = result.getErrorInfo();
-        // 获取原始的数据行错误
-        List
-        <String>errorInfoLine = result.getErrorInfoLine();
-            }
+    List<String>errorInfo = result.getErrorInfo();
+    // 获取原始的数据行错误
+    List<String>errorInfoLine = result.getErrorInfoLine();
+}
 ```
 
 * 输出
