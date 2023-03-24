@@ -15,110 +15,98 @@ import org.apache.logging.log4j.Logger;
  */
 public abstract class BaseVerifyRule<T, R> extends AbsParent<OpsColumn<R>> {
 
-	private static final Logger LOG = LogManager.getLogger(BaseVerifyRule.class);
+    private static final Logger LOG = LogManager.getLogger(BaseVerifyRule.class);
 
-	/**
-	 * 是否可为空
-	 */
-	protected boolean allowNull;
+    /**
+     * 是否可为空
+     */
+    protected boolean allowNull;
 
-	/**
-	 * 是否去空格
-	 */
-	protected boolean trim;
+    /**
+     * 是否去空格
+     */
+    protected boolean trim;
 
-	/**
-	 * 默认值
-	 */
-	protected T defaultValue;
+    /**
+     * 默认值
+     */
+    protected T defaultValue;
 
-	/**
-	 * 构建校验规则
-	 *
-	 * @param allowNull 是否为空
-	 */
-	public BaseVerifyRule(boolean allowNull, OpsColumn<R> parent) {
-		super(parent);
-		this.allowNull = allowNull;
-	}
+    /**
+     * 构建校验规则
+     *
+     * @param allowNull 是否为空
+     */
+    public BaseVerifyRule(boolean allowNull, OpsColumn<R> parent) {
+        super(parent);
+        this.allowNull = allowNull;
+    }
 
-	/**
-	 * 判空处理
-	 *
-	 * @param fieldName 列名称
-	 * @param value     列值
-	 */
-	public Object handleNull(String fieldName, String index, Object value) throws PoiException {
-		if (ObjectUtils.isEmpty(value)) {
-			if (this.allowNull) {
-				return null;
-			} else {
-				throw PoiException.error(String.format(PoiConstant.NOT_EMPTY_STR, fieldName, index));
-			}
-		}
-		return value;
-	}
+    /**
+     * 判空处理
+     *
+     * @param value 列值
+     */
+    public Object handleNull(Object value) throws PoiException {
+        if (ObjectUtils.isEmpty(value)) {
+            if (this.allowNull) {
+                return null;
+            } else {
+                throw PoiException.error(PoiConstant.NOT_EMPTY_STR);
+            }
+        }
+        return value;
+    }
 
-	/**
-	 * 校验单元格值
-	 *
-	 * @param fieldName 列名称
-	 * @param cellValue 列值
-	 */
-	public T handle(String fieldName, String index, Object cellValue) throws PoiException {
-		// 空值处理
-		cellValue = handleNull(fieldName, index, cellValue);
-		if (ObjectUtils.isEmpty(cellValue)) {
-			return this.defaultValue;
-		}
-		T endVal;
-		try {
-			endVal = doHandle(fieldName, index, cellValue);
-		} catch (PoiException e) {
-			throw e;
-		} catch (Exception e) {
-			LOG.error(e);
-			throw PoiException.error(String.format(PoiConstant.INCORRECT_FORMAT_STR, fieldName, index));
-		}
-		return endVal;
-	}
+    /**
+     * 校验单元格值
+     *
+     * @param cellValue 列值
+     */
+    public T handle(Object cellValue) throws Exception {
+        // 空值处理
+        cellValue = handleNull(cellValue);
+        if (ObjectUtils.isEmpty(cellValue)) {
+            return this.defaultValue;
+        }
+        return doHandle(cellValue);
+    }
 
-	/**
-	 * 不能为空
-	 *
-	 * @return InColumn<R>
-	 */
-	public BaseVerifyRule<T, R> notNull() {
-		this.allowNull = false;
-		return this;
-	}
+    /**
+     * 不能为空
+     *
+     * @return InColumn<R>
+     */
+    public BaseVerifyRule<T, R> notNull() {
+        this.allowNull = false;
+        return this;
+    }
 
-	/**
-	 * 去除两边空格
-	 *
-	 * @return InColumn<R>
-	 */
-	public BaseVerifyRule<T, R> trim() {
-		this.trim = true;
-		return this;
-	}
+    /**
+     * 去除两边空格
+     *
+     * @return InColumn<R>
+     */
+    public BaseVerifyRule<T, R> trim() {
+        this.trim = true;
+        return this;
+    }
 
-	/**
-	 * 去除两边空格
-	 *
-	 * @return InColumn<R>
-	 */
-	public BaseVerifyRule<T, R> defaultValue(T defaultValue) {
-		this.defaultValue = defaultValue;
-		return this;
-	}
+    /**
+     * 去除两边空格
+     *
+     * @return InColumn<R>
+     */
+    public BaseVerifyRule<T, R> defaultValue(T defaultValue) {
+        this.defaultValue = defaultValue;
+        return this;
+    }
 
 
-	/**
-	 * 校验单元格值
-	 *
-	 * @param fieldName 列名称
-	 * @param cellValue 列值
-	 */
-	public abstract T doHandle(String fieldName, String index, Object cellValue) throws Exception;
+    /**
+     * 校验单元格值
+     *
+     * @param cellValue 列值
+     */
+    public abstract T doHandle(Object cellValue) throws Exception;
 }

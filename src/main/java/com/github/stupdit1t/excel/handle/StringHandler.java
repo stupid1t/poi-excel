@@ -42,7 +42,7 @@ public class StringHandler<R> extends BaseVerifyRule<String, R> {
 
 
 	@Override
-	public String doHandle(String fieldName, String index, Object cellValue) throws Exception {
+	public String doHandle(Object cellValue) throws Exception {
 		String value = String.valueOf(cellValue);
 		if (this.trim) {
 			value = value.trim();
@@ -52,7 +52,7 @@ public class StringHandler<R> extends BaseVerifyRule<String, R> {
 			value = new BigDecimal(value).toString();
 		}
 		if (pattern != null && !Pattern.matches(pattern, value)) {
-			throw PoiException.error(String.format(PoiConstant.INCORRECT_FORMAT_STR, fieldName, index));
+			throw PoiException.error(PoiConstant.INCORRECT_FORMAT_STR);
 		}
 		return value;
 	}

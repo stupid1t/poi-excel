@@ -26,7 +26,7 @@ public class DoubleHandler<R> extends BaseVerifyRule<Double, R> {
     }
 
     @Override
-    public Double doHandle(String fieldName, String index, Object cellValue) throws Exception {
+    public Double doHandle(Object cellValue) throws Exception {
         if (cellValue instanceof Double) {
             return (Double) cellValue;
         } else {
@@ -38,7 +38,7 @@ public class DoubleHandler<R> extends BaseVerifyRule<Double, R> {
                 return new BigDecimal(value).doubleValue();
             }
         }
-        throw PoiException.error(String.format(PoiConstant.INCORRECT_FORMAT_STR, fieldName, index));
+        throw PoiException.error(PoiConstant.INCORRECT_FORMAT_STR);
     }
 
 }

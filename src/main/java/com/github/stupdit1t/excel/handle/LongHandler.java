@@ -25,7 +25,7 @@ public class LongHandler<R> extends BaseVerifyRule<Long, R> {
     }
 
     @Override
-    public Long doHandle(String fieldName, String index, Object cellValue) throws Exception {
+    public Long doHandle(Object cellValue) throws Exception {
         if (cellValue instanceof Long) {
             return (Long) cellValue;
         } else {
@@ -37,6 +37,6 @@ public class LongHandler<R> extends BaseVerifyRule<Long, R> {
                 return new BigDecimal(value).longValue();
             }
         }
-        throw PoiException.error(String.format(PoiConstant.INCORRECT_FORMAT_STR, fieldName, index));
+        throw PoiException.error(PoiConstant.INCORRECT_FORMAT_STR);
     }
 }

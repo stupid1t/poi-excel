@@ -25,7 +25,7 @@ public class FloatHandler<R> extends BaseVerifyRule<Float, R> {
     }
 
     @Override
-    public Float doHandle(String fieldName, String index, Object cellValue) throws Exception {
+    public Float doHandle(Object cellValue) throws Exception {
         if (cellValue instanceof Float) {
             return (Float) cellValue;
         } else {
@@ -37,6 +37,6 @@ public class FloatHandler<R> extends BaseVerifyRule<Float, R> {
                 return new BigDecimal(value).floatValue();
             }
         }
-        throw PoiException.error(String.format(PoiConstant.INCORRECT_FORMAT_STR, fieldName, index));
+        throw PoiException.error(PoiConstant.INCORRECT_FORMAT_STR);
     }
 }

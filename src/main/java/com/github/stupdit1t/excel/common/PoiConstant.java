@@ -52,17 +52,17 @@ public class PoiConstant {
     /**
      * 不能为空模板
      */
-    public static final String NOT_EMPTY_STR = "%s-不能为空(%s) ";
+    public static final String NOT_EMPTY_STR = "不能为空";
 
     /**
      * 格式不正确
      */
-    public static final String INCORRECT_FORMAT_STR = "%s-格式不正确(%s) ";
+    public static final String INCORRECT_FORMAT_STR = "格式不正确";
 
     /**
      * 不能为空模板
      */
-    public static final String ROW_INDEX_STR = "第%s行: %s";
+    public static final String ROW_INDEX_STR = "[%s]: %s";
 
     static {
         // 填充2列A~ZZ

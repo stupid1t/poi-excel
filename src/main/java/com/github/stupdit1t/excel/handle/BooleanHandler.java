@@ -21,7 +21,7 @@ public class BooleanHandler<R> extends BaseVerifyRule<Boolean, R> {
 	}
 
 	@Override
-	public Boolean doHandle(String fieldName, String index, Object cellValue) throws Exception {
+	public Boolean doHandle(Object cellValue) throws Exception {
 		if (cellValue instanceof Boolean) {
 			return (Boolean) cellValue;
 		} else {
