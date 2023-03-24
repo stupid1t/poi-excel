@@ -105,7 +105,7 @@ public class SheetHandler<T> implements XSSFSheetXMLHandler.SheetContentsHandler
 
                 // 校验类型转换处理
                 if (inColumn != null) {
-                    cellValue = inColumn.getCellVerifyRule().handle(cellValue);
+                    cellValue = inColumn.getCellVerifyRule().handle(cellRangeAddress.getFirstRow(), cellRangeAddress.getFirstColumn(), cellValue);
                 }
 
                 if (mapClass) {
