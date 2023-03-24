@@ -1,10 +1,9 @@
 package com.github.stupdit1t.excel.core.parse;
 
+import com.github.stupdit1t.excel.callback.CellCallback;
 import com.github.stupdit1t.excel.core.AbsParent;
 import com.github.stupdit1t.excel.handle.*;
 import com.github.stupdit1t.excel.handle.rule.BaseVerifyRule;
-
-import java.util.function.Function;
 
 /**
  * 列的定义
@@ -153,10 +152,12 @@ public class InColumn<R> extends AbsParent<OpsColumn<R>> {
     /**
      * 自定义处理
      *
-     * @param handle value 当前字段值
+     * @param handle row 行号
+     *               col 列号
+     *               value 当前字段值
      * @return
      */
-    public ObjectHandler<R> asByCustom(Function<Object, Object> handle) {
+    public ObjectHandler<R> asByCustom(CellCallback handle) {
         this.cellVerifyRule = new ObjectHandler(true, this.parent, handle);
         return (ObjectHandler<R>) this.cellVerifyRule;
     }

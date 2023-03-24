@@ -25,7 +25,7 @@ public class ShortHandler<R> extends BaseVerifyRule<Short, R> {
     }
 
     @Override
-    public Short doHandle(Object cellValue) throws Exception {
+    public Short doHandle(int row, int col, Object cellValue) throws Exception {
         if (cellValue instanceof Short) {
             return (Short) cellValue;
         } else {

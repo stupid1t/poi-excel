@@ -21,7 +21,7 @@ public class CharHandler<R> extends BaseVerifyRule<Character, R> {
     }
 
     @Override
-    public Character doHandle(Object cellValue) throws Exception {
+    public Character doHandle(int row, int col, Object cellValue) throws Exception {
         if (cellValue instanceof Character) {
             return (Character) cellValue;
         } else {

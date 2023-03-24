@@ -42,7 +42,7 @@ public class StringHandler<R> extends BaseVerifyRule<String, R> {
 
 
 	@Override
-	public String doHandle(Object cellValue) throws Exception {
+	public String doHandle(int row, int col, Object cellValue) throws Exception {
 		String value = String.valueOf(cellValue);
 		if (this.trim) {
 			value = value.trim();

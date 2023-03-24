@@ -94,7 +94,7 @@ public class ParseClass {
                 // 自定义列映射
                 .opsColumn()
                 // 强制输入字符串, 且不能为空
-                .field("A", "projectName").asByCustom((val) -> {
+                .field("A", "projectName").asByCustom((row, col, val) -> {
                     if ("中青旅0".equals(val)) {
                         throw new PoiException("数据有误!");
                     }
@@ -138,7 +138,7 @@ public class ParseClass {
                 // 自定义列映射
                 .opsColumn()
                 // 强制输入字符串, 且不能为空
-                .field("A", "projectName").asByCustom((val) -> {
+                .field("A", "projectName").asByCustom((row, col, val) -> {
                     if ("中青旅0".equals(val)) {
                         throw new PoiException( " 数据有误!");
                     }

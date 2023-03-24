@@ -26,7 +26,7 @@ public class BigDecimalHandler<R> extends BaseVerifyRule<BigDecimal, R> {
 	}
 
 	@Override
-	public BigDecimal doHandle(Object cellValue) throws Exception {
+	public BigDecimal doHandle(int row, int col, Object cellValue) throws Exception {
 		if (cellValue instanceof BigDecimal) {
 			return (BigDecimal) cellValue;
 		} else {

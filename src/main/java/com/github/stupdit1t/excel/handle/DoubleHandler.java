@@ -26,7 +26,7 @@ public class DoubleHandler<R> extends BaseVerifyRule<Double, R> {
     }
 
     @Override
-    public Double doHandle(Object cellValue) throws Exception {
+    public Double doHandle(int row, int col, Object cellValue) throws Exception {
         if (cellValue instanceof Double) {
             return (Double) cellValue;
         } else {

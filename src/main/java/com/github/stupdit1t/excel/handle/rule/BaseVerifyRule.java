@@ -63,13 +63,13 @@ public abstract class BaseVerifyRule<T, R> extends AbsParent<OpsColumn<R>> {
      *
      * @param cellValue 列值
      */
-    public T handle(Object cellValue) throws Exception {
+    public T handle(int row, int col, Object cellValue) throws Exception {
         // 空值处理
         cellValue = handleNull(cellValue);
         if (ObjectUtils.isEmpty(cellValue)) {
             return this.defaultValue;
         }
-        return doHandle(cellValue);
+        return doHandle(row, col, cellValue);
     }
 
     /**
@@ -106,7 +106,9 @@ public abstract class BaseVerifyRule<T, R> extends AbsParent<OpsColumn<R>> {
     /**
      * 校验单元格值
      *
+     * @param row       行号
+     * @param col       列号
      * @param cellValue 列值
      */
-    public abstract T doHandle(Object cellValue) throws Exception;
+    public abstract T doHandle(int row, int col, Object cellValue) throws Exception;
 }

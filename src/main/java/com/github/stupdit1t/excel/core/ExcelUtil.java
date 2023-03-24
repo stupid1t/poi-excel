@@ -1088,7 +1088,7 @@ public class ExcelUtil {
 
                         // 校验类型转换处理
                         if (inColumn != null) {
-                            cellValue = inColumn.getCellVerifyRule().handle(cellValue);
+                            cellValue = inColumn.getCellVerifyRule().handle(j, k, cellValue);
                         }
 
                         if (mapClass) {
