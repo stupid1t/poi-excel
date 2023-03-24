@@ -1,5 +1,6 @@
 package excel.parse;
 
+import com.github.stupdit1t.excel.common.ErrorMessage;
 import com.github.stupdit1t.excel.common.PoiException;
 import com.github.stupdit1t.excel.common.PoiResult;
 import com.github.stupdit1t.excel.core.ExcelHelper;
@@ -9,6 +10,7 @@ import org.junit.Before;
 import org.junit.Test;
 
 import java.util.HashMap;
+import java.util.List;
 
 public class ParseClass {
 
@@ -67,7 +69,7 @@ public class ParseClass {
     @Test
     public void parseBean() {
         name.set("parseBean");
-        PoiResult<ProjectEvaluate> parse = ExcelHelper.opsParse(ProjectEvaluate.class)
+        PoiResult<ProjectEvaluate> result = ExcelHelper.opsParse(ProjectEvaluate.class)
                 .from("src/test/java/excel/parse/excel/simpleExport.xlsx")
                 // 指定数据区域
                 .opsSheet(0, 1, 0)
@@ -106,6 +108,21 @@ public class ParseClass {
                     }
                 })
                 .parse();
+
+        if(result.hasError()){
+            System.out.println("===============单元格错误=================");
+            String errorInfoString = result.getErrorInfoString();
+            System.out.println(errorInfoString);
+            System.out.println("===============数据行错误=================");
+            String errorInfoLineString = result.getErrorInfoLineString();
+            System.out.println(errorInfoLineString);
+            // 获取原始的异常信息
+            List<ErrorMessage> error = result.getError();
+            // 获取原始的单元格错误
+            List<String> errorInfo = result.getErrorInfo();
+            // 获取原始的数据行错误
+            List<String> errorInfoLine = result.getErrorInfoLine();
+        }
     }
 
     @Test
