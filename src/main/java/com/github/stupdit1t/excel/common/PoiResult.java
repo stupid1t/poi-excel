@@ -23,7 +23,6 @@ public class PoiResult<T> {
     /**
      * 获取数据
      *
-     * @return
      */
     public List<T> getData() {
         return data;
@@ -33,7 +32,6 @@ public class PoiResult<T> {
     /**
      * 获取解析产生的错误
      *
-     * @return
      */
     public List<ErrorMessage> getError() {
         return error;
@@ -42,7 +40,6 @@ public class PoiResult<T> {
     /**
      * 判断是否有错误
      *
-     * @return
      */
     public boolean hasError() {
         return hasError;
@@ -58,7 +55,6 @@ public class PoiResult<T> {
     /**
      * 获取POIException 格式化失败信息
      *
-     * @return
      */
     public List<String> getErrorInfo() {
         if (this.hasError()) {
@@ -74,7 +70,6 @@ public class PoiResult<T> {
     /**
      * 获取行级别 错误
      *
-     * @return
      */
     public List<String> getErrorInfoLine() {
         if (this.hasError()) {
@@ -106,7 +101,6 @@ public class PoiResult<T> {
     /**
      * 获取行级别 字符串错误
      *
-     * @return
      */
     public String getErrorInfoLineString() {
         return getErrorInfoLineString("\n");
@@ -117,7 +111,6 @@ public class PoiResult<T> {
      * 获取行级别 字符串错误
      *
      * @param delimiter 每个错误的分隔符
-     * @return
      */
     public String getErrorInfoLineString(String delimiter) {
         return String.join(delimiter, getErrorInfoLine());
@@ -127,7 +120,6 @@ public class PoiResult<T> {
     /**
      * 获取字符串错误
      *
-     * @return
      */
     public String getErrorInfoString() {
         return getErrorInfoString("\n");
@@ -137,7 +129,6 @@ public class PoiResult<T> {
      * 获取字符串错误
      *
      * @param delimiter 每个错误的分隔符
-     * @return
      */
     public String getErrorInfoString(String delimiter) {
         return String.join(delimiter, getErrorInfo());

@@ -149,7 +149,6 @@ public class InColumn<R> extends AbsParent<OpsColumn<R>> {
      * @param handle row 行号
      *               col 列号
      *               value 当前字段值
-     * @return
      */
     public ObjectHandler<R> asByCustom(CellCallback handle) {
         this.cellVerifyRule = new ObjectHandler(true, this.parent, handle);
