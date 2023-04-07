@@ -601,7 +601,11 @@ public class ExcelUtil {
 				}
 				Cell cell = CellUtil.createCell(sheet.getRow(firstRow), firstCol, value, styleNew);
 				if (value.startsWith("=")) {
+                    try {
 					cell.setCellFormula(value.substring(1));
+                    }catch (Exception e){
+                        cell.setCellValue(value);;
+                    }
 				}
 				if ((lastRow - firstRow) != 0 || (lastCol - firstCol) != 0) {
 					cellMerge(sheet, firstRow, lastRow, firstCol, lastCol);
@@ -1227,7 +1231,11 @@ public class ExcelUtil {
 							cellValueStr = cellValueStr.replace("${" + var + "}", value);
 						}
 						if (cellValueStr.startsWith("=")) {
+                            try {
 							row.getCell(k).setCellFormula(cellValueStr.substring(1));
+                            }catch (Exception e){
+                                row.getCell(k).setCellValue(cellValueStr);
+                            }
 						} else {
 							row.getCell(k).setCellValue(cellValueStr);
 						}
@@ -1353,7 +1361,11 @@ public class ExcelUtil {
 			// 判断是否是公式
 			String strValue = String.valueOf(value);
 			if (strValue.startsWith("=")) {
+                try {
 				cell.setCellFormula(strValue.substring(1));
+                } catch (Exception e) {
+                    cell.setCellValue(strValue);
+                }
 			} else {
 				cell.setCellValue(strValue);
 			}
