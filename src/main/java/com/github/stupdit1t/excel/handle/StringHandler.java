@@ -62,7 +62,7 @@ public class StringHandler<R> extends BaseVerifyRule<String, R> {
         // 处理数值 转为 string包含E科学计数的问题
         if (cellValue instanceof Number) {
             if (parseInt) {
-                value = new BigDecimal(value).intValue() + "";
+                value = new BigDecimal(value).longValue() + "";
             } else {
             value = new BigDecimal(value).toString();
         }
