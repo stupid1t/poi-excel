@@ -19,7 +19,7 @@
 <dependency>
     <groupId>com.github.stupdit1t</groupId>
     <artifactId>poi-excel</artifactId>
-    <version>3.2.0-SNAPSHOT</version>
+    <version>3.2.0</version>
 </dependency>
 ```
 
@@ -30,14 +30,14 @@
 <dependency>
     <groupId>com.github.stupdit1t</groupId>
     <artifactId>poi-excel</artifactId>
-    <version>poi-317.5</version>
+    <version>poi-317.6</version>
 </dependency>
 
         <!-- excel导入导出 POI版本为4.1.2 -->
 <dependency>
     <groupId>com.github.stupdit1t</groupId>
     <artifactId>poi-excel</artifactId>
-    <version>poi-412.5</version>
+    <version>poi-412.6</version>
 </dependency>
 ```
 
