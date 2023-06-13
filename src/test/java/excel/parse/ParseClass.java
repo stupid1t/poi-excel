@@ -11,6 +11,7 @@ import org.junit.Test;
 
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class ParseClass {
 
@@ -60,7 +61,7 @@ public class ParseClass {
                         System.out.println(result.getErrorInfoString());
                     }
                     // 打印解析的数据
-                    if(result.hasData()){
+                    if (result.hasData()) {
                         result.getData().forEach(System.out::println);
                     }
                 });
@@ -69,6 +70,10 @@ public class ParseClass {
     @Test
     public void parseBean() {
         name.set("parseBean");
+        Map<String, String> mapping = new HashMap<String, String>();
+        mapping.put("西安","1");
+        mapping.put("北京","2");
+
         PoiResult<ProjectEvaluate> result = ExcelHelper.opsParse(ProjectEvaluate.class)
                 .from("src/test/java/excel/parse/excel/simpleExport.xlsx")
                 // 指定数据区域
@@ -89,18 +94,18 @@ public class ParseClass {
                 // img类型. 导入图片必须这样写, 且字段为byte[]
                 .field("B", "img").asImg().done()
                 .field("C", "areaName").asString().done()
-                .field("D", "province").done()
-                .field("E", "city").done()
+                .field("D", "province").asString().done()
+                .field("E", "city").asString().map(mapping::get).done()
                 // 不能为空
-                .field("F", "people").asString().pattern("\\d+").defaultValue("1").notNull().done()
+                .field("F", "people").done()
                 // 不能为空
                 .field("G", "leader").asString().defaultValue("巨无霸").done()
                 // 必须是数字
-                .field("H", "scount").asString().intStr().done()
-                .field("I", "avg").asDouble().notNull().done()
+                .field("H", "scount").asString().done()
+                .field("I", "avg").asString().notNull().done()
                 .field("J", "createTime").asDate().pattern("yyyy/MM/dd").trim().done()
                 .done()
-                .callBack((row, index) -> {
+                .map((row, index) -> {
                     // 行回调, 可以在这里改数据
                     System.out.println("当前是第:" + index + " 数据是: " + row);
                     if ("中青旅2-Hello".equals(row.getProjectName())) {
@@ -109,7 +114,7 @@ public class ParseClass {
                 })
                 .parse();
 
-        if(result.hasError()){
+        if (result.hasError()) {
             System.out.println("===============单元格错误=================");
             String errorInfoString = result.getErrorInfoString();
             System.out.println(errorInfoString);
@@ -155,11 +160,11 @@ public class ParseClass {
                 // 不能为空
                 .field("G", "leader").asString().defaultValue("巨无霸").done()
                 // 必须是数字
-                .field("H", "scount").asString().intStr().done()
+                .field("H", "scount").asString().done()
                 .field("I", "avg").asDouble().notNull().done()
                 .field("J", "createTime").asDate().pattern("yyyy/MM/dd").trim().done()
                 .done()
-                .callBack((row, index) -> {
+                .map((row, index) -> {
                     // 行回调, 可以在这里改数据
                     System.out.println("当前是第:" + index + " 数据是: " + row);
                 })

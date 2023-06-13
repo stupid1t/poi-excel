@@ -1,12 +1,16 @@
 package excel.replace;
 
 import com.github.stupdit1t.excel.core.ExcelHelper;
+import org.apache.commons.io.FileUtils;
 import org.junit.Test;
+
+import java.io.File;
+import java.io.IOException;
 
 public class ReplaceClass {
 
     @Test
-    public void parseMap1() {
+    public void parseMap1() throws IOException {
         ExcelHelper.opsReplace()
                 .from("src/test/java/excel/replace/replace.xlsx")
                 .variable("projectName", "中青旅")
@@ -15,8 +19,8 @@ public class ReplaceClass {
                 .variable("reciveSb", "张三")
                 .variable("phone", "15594980303")
                 .variable("address", "陕西省xxxx")
-                .variable("company", "社保局")
-                .variable("remark", "李四")
+                .variable("company", FileUtils.readFileToByteArray(new File("C:\\Users\\35361\\Desktop\\1.png")))
+                .variable("remark", FileUtils.readFileToByteArray(new File("C:\\Users\\35361\\Desktop\\1.png")))
                 .replaceTo("src/test/java/excel/replace/replace2.xlsx");
     }
 }

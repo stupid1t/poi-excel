@@ -33,7 +33,7 @@ public class SheetHandler<T> implements XSSFSheetXMLHandler.SheetContentsHandler
 
     private final int batchSize;
 
-    private final InCallback<T> callback;
+    private final InCallback<T> map;
 
     private final Map<String, InColumn<?>> columns;
 
@@ -47,13 +47,13 @@ public class SheetHandler<T> implements XSSFSheetXMLHandler.SheetContentsHandler
 
     private final List<ErrorMessage> rowError = new ArrayList<>();
 
-    public SheetHandler(int sheetIndex, Class<T> entityClass, int headerRowNum, Map<String, InColumn<?>> columns, InCallback<T> callback, int batchSize, Consumer<PoiResult<T>> partResult) {
+    public SheetHandler(int sheetIndex, Class<T> entityClass, int headerRowNum, Map<String, InColumn<?>> columns, InCallback<T> map, int batchSize, Consumer<PoiResult<T>> partResult) {
         this.sheetIndex = sheetIndex;
         this.entityClass = entityClass;
         this.mapClass = PoiCommon.isMapData(this.entityClass);
         this.headerRowNum = headerRowNum;
         this.columns = columns;
-        this.callback = callback;
+        this.map = map;
         this.batchSize = batchSize;
         this.partResult = partResult;
     }
@@ -125,8 +125,8 @@ public class SheetHandler<T> implements XSSFSheetXMLHandler.SheetContentsHandler
     @Override
     public void endRow(int rowNum) {
         try {
-            if (callback != null && (rowNum > headerRowNum - 1) && this.rowEntity != null) {
-                callback.callback(this.rowEntity, rowNum);
+            if (map != null && (rowNum > headerRowNum - 1) && this.rowEntity != null) {
+                map.callback(this.rowEntity, rowNum);
             }
         } catch (Exception e) {
             LOG.error(e);

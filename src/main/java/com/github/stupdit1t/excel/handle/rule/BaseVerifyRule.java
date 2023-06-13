@@ -8,6 +8,8 @@ import org.apache.commons.lang3.ObjectUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import java.util.function.Function;
+
 /**
  * 列校验和格式化接口
  *
@@ -33,6 +35,11 @@ public abstract class BaseVerifyRule<T, R> extends AbsParent<OpsColumn<R>> {
     protected T defaultValue;
 
     /**
+     * 映射转换
+     */
+    private Function<T, T> mapping;
+
+    /**
      * 构建校验规则
      *
      * @param allowNull 是否为空
@@ -47,7 +54,7 @@ public abstract class BaseVerifyRule<T, R> extends AbsParent<OpsColumn<R>> {
      *
      * @param value 列值
      */
-    public Object handleNull(Object value) throws PoiException {
+    protected Object handleNull(Object value) throws PoiException {
         if (ObjectUtils.isEmpty(value)) {
             if (this.allowNull) {
                 return null;
@@ -69,7 +76,13 @@ public abstract class BaseVerifyRule<T, R> extends AbsParent<OpsColumn<R>> {
         if (ObjectUtils.isEmpty(cellValue)) {
             return this.defaultValue;
         }
-        return doHandle(row, col, cellValue);
+        T data = doHandle(row, col, cellValue);
+
+        // 数据映射转换，也可做判断
+        if (mapping != null) {
+            return mapping.apply(data);
+        }
+        return data;
     }
 
     /**
@@ -104,11 +117,19 @@ public abstract class BaseVerifyRule<T, R> extends AbsParent<OpsColumn<R>> {
 
 
     /**
+     * 转换or映射or判断
+     */
+    public BaseVerifyRule<T, R> map(Function<T, T> mapping) {
+        this.mapping = mapping;
+        return this;
+    }
+
+    /**
      * 校验单元格值
      *
      * @param row       行号
      * @param col       列号
      * @param cellValue 列值
      */
-    public abstract T doHandle(int row, int col, Object cellValue) throws Exception;
+    protected abstract T doHandle(int row, int col, Object cellValue) throws Exception;
 }

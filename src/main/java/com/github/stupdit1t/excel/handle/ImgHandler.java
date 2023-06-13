@@ -23,7 +23,7 @@ public class ImgHandler<R> extends BaseVerifyRule<byte[], R> {
     }
 
     @Override
-    public byte[] doHandle(int row, int col, Object cellValue) throws Exception {
+    protected byte[] doHandle(int row, int col, Object cellValue) throws Exception {
         if (cellValue instanceof byte[]) {
             return (byte[]) cellValue;
         }

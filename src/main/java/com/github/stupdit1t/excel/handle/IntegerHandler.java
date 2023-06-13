@@ -25,7 +25,7 @@ public class IntegerHandler<R> extends BaseVerifyRule<Integer, R> {
 	}
 
 	@Override
-	public Integer doHandle(int row, int col, Object cellValue) throws Exception {
+	protected Integer doHandle(int row, int col, Object cellValue) throws Exception {
 		if (cellValue instanceof Integer) {
 			return (Integer) cellValue;
 		} else {

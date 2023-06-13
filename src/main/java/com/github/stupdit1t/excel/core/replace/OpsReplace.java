@@ -38,7 +38,7 @@ public class OpsReplace {
     /**
      * 要替换的变量
      */
-    Map<String, String> variable = new HashMap<>();
+    Map<String, Object> variable = new HashMap<>();
 
     /**
      * 检测是否已经被设置状态
@@ -91,7 +91,7 @@ public class OpsReplace {
      * @param variable 变量
      * @return OpsReplace
      */
-    public OpsReplace variables(Map<String, String> variable) {
+    public OpsReplace variables(Map<String, Object> variable) {
         this.variable.putAll(variable);
         return this;
     }
@@ -103,7 +103,7 @@ public class OpsReplace {
      * @param value 变量值
      * @return OpsReplace
      */
-    public OpsReplace variable(String key, String value) {
+    public OpsReplace variable(String key, Object value) {
         this.variable.put(key, value);
         return this;
     }

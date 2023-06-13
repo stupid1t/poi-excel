@@ -62,7 +62,7 @@ public class DateHandler<R> extends BaseVerifyRule<Date, R> {
 
 
 	@Override
-	public Date doHandle(int row, int col, Object cellValue) throws Exception {
+	protected Date doHandle(int row, int col, Object cellValue) throws Exception {
 		if (cellValue instanceof Date) {
 			// 如果是日期格式通过
 			Date date = (Date) cellValue;

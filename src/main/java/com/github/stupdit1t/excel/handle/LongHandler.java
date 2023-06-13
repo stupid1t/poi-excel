@@ -25,7 +25,7 @@ public class LongHandler<R> extends BaseVerifyRule<Long, R> {
     }
 
     @Override
-    public Long doHandle(int row, int col, Object cellValue) throws Exception {
+    protected Long doHandle(int row, int col, Object cellValue) throws Exception {
         if (cellValue instanceof Long) {
             return (Long) cellValue;
         } else {
