@@ -1,5 +1,3 @@
-  ![logo](https://user-images.githubusercontent.com/29246805/180177278-d83c1d09-5714-4f4f-8e88-4202a584b872.png)
-
 [![OSCS Status](https://www.oscs1024.com/platform/badge/stupdit1t/poi-excel.svg?size=small)](https://www.oscs1024.com/project/stupdit1t/poi-excel?ref=badge_small)
 <img alt="GitHub code size in bytes" src="https://img.shields.io/github/languages/code-size/stupdit1t/poi-excel">
 <a target="_blank" href="LICENSE"><img src="https://img.shields.io/:license-MIT-blue.svg"></a>
