@@ -216,14 +216,15 @@ public class ExportClass {
 				// 宽度设置
 				.width(6000)
 				// 字段导出回调
-				.outHandle((val, row, style, rowIndex) -> {
+				.map((val, row, style, rowIndex) -> {
 					// 如果是北京, 设置背景色为黄色
 					if (val.equals("北京")) {
 						style.setBackColor(IndexedColors.YELLOW);
 						style.setHeight(900);
 						style.setComment("北京搞红色");
 						// 属性值自定义
-						return val + "(自定义)";
+						int index = rowIndex + 1;
+						return "=J" + index + "+K" + index;
 					}
 					return val;
 				}).done()

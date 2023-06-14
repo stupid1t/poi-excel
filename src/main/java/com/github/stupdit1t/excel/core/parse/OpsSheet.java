@@ -62,7 +62,7 @@ public class OpsSheet<R> extends AbsParent<OpsParse<R>> {
     /**
      * 行回调方法
      */
-    InCallback<R> callback;
+    InCallback<R> map;
 
     /**
      * 声明构造
@@ -108,12 +108,12 @@ public class OpsSheet<R> extends AbsParent<OpsParse<R>> {
     /**
      * 行回调方法
      *
-     * @param callback row 当前数据
-     *                 index 当前数据下标
+     * @param map row 当前数据
+     *            index 当前数据下标
      * @return OpsSheet
      */
-    public OpsSheet<R> callBack(InCallback<R> callback) {
-        this.callback = callback;
+    public OpsSheet<R> map(InCallback<R> map) {
+        this.map = map;
         return this;
     }
 
@@ -157,7 +157,7 @@ public class OpsSheet<R> extends AbsParent<OpsParse<R>> {
             //5.创建Sax的xmlReader对象
             XMLReader xmlReader = XMLReaderFactory.createXMLReader();
             //6.注册事件处理器
-            SheetHandler<R> sheetHandler = new SheetHandler<R>(this.sheetIndex, this.parent.rowClass, this.headerCount, columns, this.callback, partSize, partResult);
+            SheetHandler<R> sheetHandler = new SheetHandler<R>(this.sheetIndex, this.parent.rowClass, this.headerCount, columns, this.map, partSize, partResult);
             XSSFSheetXMLHandler xmlHandler = new XSSFSheetXMLHandler(stylesTable, table, sheetHandler, false);
             xmlReader.setContentHandler(xmlHandler);
             //7.逐行读取
@@ -210,14 +210,14 @@ public class OpsSheet<R> extends AbsParent<OpsParse<R>> {
         }
         if (this.parent.fromMode == 1) {
             if(this.parent.password != null){
-                return ExcelUtil.readSheet(this.parent.fromPath, this.parent.password, poiSheetArea, columns, this.callback, this.parent.rowClass);
+                return ExcelUtil.readSheet(this.parent.fromPath, this.parent.password, poiSheetArea, columns, this.map, this.parent.rowClass);
             }
-            return ExcelUtil.readSheet(this.parent.fromPath, poiSheetArea, columns, this.callback, this.parent.rowClass);
+            return ExcelUtil.readSheet(this.parent.fromPath, poiSheetArea, columns, this.map, this.parent.rowClass);
         } else if (this.parent.fromMode == 2) {
             if(this.parent.password != null){
-                return ExcelUtil.readSheet(this.parent.fromStream, this.parent.password, poiSheetArea, columns, this.callback, this.parent.rowClass);
+                return ExcelUtil.readSheet(this.parent.fromStream, this.parent.password, poiSheetArea, columns, this.map, this.parent.rowClass);
             }
-            return ExcelUtil.readSheet(this.parent.fromStream, poiSheetArea, columns, this.callback, this.parent.rowClass);
+            return ExcelUtil.readSheet(this.parent.fromStream, poiSheetArea, columns, this.map, this.parent.rowClass);
         }
         return PoiResult.fail(null);
     }

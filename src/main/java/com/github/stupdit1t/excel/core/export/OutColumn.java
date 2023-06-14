@@ -333,14 +333,14 @@ public class OutColumn<R> extends AbsParent<OpsColumn<R>> implements Cloneable {
     /**
      * 输出设置
      *
-     * @param outHandle value    当前单元格值
-     *                  row      当前行记录
-     *                  style    自定义单元格样式
-     *                  rowIndex 数据下标
+     * @param map value    当前单元格值
+     *            row      当前行记录
+     *            style    自定义单元格样式
+     *            rowIndex 数据下标
      * @return Column<R>
      */
-    public OutColumn<R> outHandle(OutCallback<R> outHandle) {
-        this.outHandle = outHandle;
+    public OutColumn<R> map(OutCallback<R> map) {
+        this.outHandle = map;
         return this;
     }
 

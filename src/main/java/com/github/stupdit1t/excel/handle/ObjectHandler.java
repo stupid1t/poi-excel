@@ -25,7 +25,7 @@ public class ObjectHandler<R> extends BaseVerifyRule<Object, R> {
     }
 
     @Override
-    public Object doHandle(int row, int col, Object cellValue) throws Exception {
+    protected Object doHandle(int row, int col, Object cellValue) throws Exception {
         return doHandleSub.callback(row, col, cellValue);
     }
 }

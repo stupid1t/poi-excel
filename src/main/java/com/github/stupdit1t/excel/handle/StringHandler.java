@@ -22,11 +22,6 @@ public class StringHandler<R> extends BaseVerifyRule<String, R> {
     private String pattern;
 
     /**
-     * 转换为整形数字
-     */
-    private boolean parseInt;
-
-    /**
      * 常规验证
      *
 	 * @param allowNull 可为空
@@ -45,27 +40,15 @@ public class StringHandler<R> extends BaseVerifyRule<String, R> {
 		return this;
     }
 
-    /**
-     * 格式化为整形数字
-     */
-    public StringHandler<R> intStr() {
-        this.parseInt = true;
-        return this;
-    }
-
     @Override
-    public String doHandle(int row, int col, Object cellValue) throws Exception {
+    protected String doHandle(int row, int col, Object cellValue) throws Exception {
         String value = String.valueOf(cellValue);
         if (this.trim) {
             value = value.trim();
         }
         // 处理数值 转为 string包含E科学计数的问题
         if (cellValue instanceof Number) {
-            if (parseInt) {
-                value = new BigDecimal(value).intValue() + "";
-            } else {
-            value = new BigDecimal(value).toString();
-        }
+            value = new BigDecimal(value).toPlainString();
         }
         if (pattern != null && !Pattern.matches(pattern, value)) {
             throw PoiException.error(PoiConstant.INCORRECT_FORMAT_STR);
