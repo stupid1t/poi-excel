@@ -143,42 +143,42 @@ public class ParseClass {
                 .opsSheet(0, 1, 0)
                 // 自定义列映射
                 .opsColumn()
-                // 强制输入字符串, 且不能为空
-                .field("A", "projectName").asString().notNull().done()
-                // img类型. 导入图片必须这样写, 且字段为byte[]
-                .field("B", "img").asImg().done()
-                // 必须为数字
-                .field("C", "areaName").asString().pattern("\\d+").done()
-                .field("D", "province").asFloat().map((val) -> {
-                    if (val > 100) {
-                        // 会被收集异常
-                        throw PoiException.error("分数太大了!");
-                    }
-                    return val;
-                }).done()
-                // 城市，去两边空格，并映射字典。
-                .field("E", "city").asString().defaultValue("未知").trim().map(cityMapping::get).done()
-                // 不能为空
-                .field("F", "people").asBigDecimal().notNull().done()
-                // 不能为空
-                .field("G", "leader").asString().notNull().done()
-                // 必须是数字
-                .field("H", "scount").asLong().done()
-                .field("I", "avg").asByCustom((row, col, value) -> {
-                    if (value != null) {
-                        // 自定义处理数据转换验证等操作
-                        return 1;
-                    }
-                    return value;
-                }).done()
-                .field("J", "createTime").asDate().pattern("yyyy-MM-dd").done()
-                .done()
+                    // 强制输入字符串, 且不能为空
+                    .field("A", "projectName").asString().notNull().done()
+                    // img类型. 导入图片必须这样写, 且字段为byte[]
+                    .field("B", "img").asImg().done()
+                    // 必须为数字
+                    .field("C", "areaName").asString().pattern("\\d+").done()
+                    .field("D", "province").asFloat().map((val)->{
+                        if (val > 100){
+                            // 会被收集异常
+                            throw PoiException.error("分数太大了!");
+                        }
+                        return val;
+                    }).done()
+                    // 城市，去两边空格，并映射字典。
+                    .field("E", "city").asString().defaultValue("未知").trim().map(cityMapping::get).done()
+                    // 不能为空
+                    .field("F", "people").asBigDecimal().notNull().done()
+                    // 不能为空
+                    .field("G", "leader").asString().notNull().done()
+                    // 必须是数字
+                    .field("H", "scount").asLong().done()
+                    .field("I", "avg").asByCustom((row, col, value) ->{
+                        if(value != null){
+                            // 自定义处理数据转换验证等操作
+                            return 1;
+                        }
+                        return value;
+                    }).done()
+                    .field("J", "createTime").asDate().pattern("yyyy-MM-dd").done()
+                    .done()
                 // 行级别钩子
                 .map((row, index) -> {
                     // 行回调, 可以在这里改数据
                     System.out.println("当前是第:" + index + " 数据是: " + row);
                     // 也可以验证数据
-                    if (row.get("leader") == null) {
+                    if (row.get("leader") == null){
                         throw PoiException.error("leader不能为空");
                     }
                 })

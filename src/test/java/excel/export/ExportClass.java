@@ -152,13 +152,13 @@ public class ExportClass {
         // 自定义全局 样式
         ICellStyle titleStyle = new ICellStyle() {
 
-            // 样式所属：支持大标题，副标题，数据单元格，尾部数据单元格 TITLE，HEADER，CELL，FOOTER
+			// 样式所属：支持大标题，副标题，数据单元格，尾部数据单元格 TITLE，HEADER，CELL，FOOTER
             @Override
             public CellPosition getPosition() {
                 return CellPosition.TITLE;
             }
 
-            // 字体样式设置
+			// 字体样式设置
             @Override
             public void handleStyle(Font font, CellStyle cellStyle) {
                 font.setFontHeightInPoints((short) 20);
@@ -174,97 +174,97 @@ public class ExportClass {
                 .style(titleStyle)
                 // 导出添加密码
                 .password("123456")
-                // 并行流导出
-                .parallelSheet()
+				// 并行流导出
+				.parallelSheet()
                 // sheet 导出声明
                 .opsSheet(data)
-                // 自动生成序号, （复杂表头下, 需要自己定义序号列）
-                .autoNum()
-                // 自定义数据行高度, 默认excel正常高度
-                .height(CellPosition.CELL, 300)
-                // 全局单元格宽度100000
-                .width(100000)
-                // 序号列宽度, 默认2000
-                .autoNumColumnWidth(3000)
-                // sheet名字
-                .sheetName("简单导出")
-                // 表头声明
-                .opsHeader()
-                // 不冻结表头
-                .noFreeze()
-                // 简单模式
-                .simple()
-                // 大标题声明
-                .title("我是大标题")
-                // 副标题, 自定义样式
-                .text("项目名称", (font, style) -> {
-                    // 红色
-                    font.setColor(IndexedColors.RED.index);
-                    // 居顶
-                    style.setVerticalAlignment(VerticalAlignment.TOP);
-                })
-                // 副标题批量
-                .texts("项目图", "所属区域", "省份", "项目所属人", "市", "创建时间", "项目领导人", "得分", "平均分")
-                .done()
-                // 数据列声明
-                .opsColumn()
-                // 批量导出字段
-                .fields("projectName", "img", "areaName", "province", "people")
-                // 个性化导出字段设置
-                .field("city")
-                // 超出宽度换行显示
-                .wrapText()
-                // 下拉框
-                .dropdown("北京", "西安", "上海", "广州")
-                // 行数据相同合并
-                .mergerRepeat()
-                // 行高单独设置
-                .height(500)
-                // 批注
-                .comment("城市选择下拉框内容哦")
-                // 宽度设置
-                .width(6000)
-                // 字段导出回调
-                .map((val, row, style, rowIndex) -> {
-                    // 如果是北京, 设置背景色为黄色
-                    if (val.equals("北京")) {
-                        style.setBackColor(IndexedColors.YELLOW);
-                        style.setHeight(900);
-                        style.setComment("北京搞红色");
-                        // 属性值自定义
-                        int index = rowIndex + 1;
-                        return "=J" + index + "+K" + index;
-                    }
-                    return val;
-                }).done()
-                .field("createTime")
-                // 区域相同, 合并当前列
-                .mergerRepeat("areaName")
-                // 格式化
-                .pattern("yyyy-MM-dd")
-                // 居左
-                .align(HorizontalAlignment.LEFT)
-                // 居中
-                .valign(VerticalAlignment.CENTER)
-                // 背景黄色
-                .backColor(IndexedColors.YELLOW)
-                // 金色字体
-                .color(IndexedColors.GOLD).done()
-                .fields("leader", "scount")
-                .field("avg").pattern("0.00").done()
-                .done()
-                // 尾行设计
-                .opsFooter()
-                // 字符合并, 尾行合并, 行数从1开始, 会自动计算数据行
-                .text("合计", "A1:H1")
-                // 公式应用
-                .text(String.format("=SUM(J3:J%s)", 2 + data.size()), "1,1,J,J")
-                .text(String.format("=AVERAGE(K3:K%s)", 2 + data.size()), "1,1,K,K")
-                // 坐标合并
-                .text("作者:625", 0, 0, 8, 8).done()
-                .done()
-                // 执行导出
-                .export("src/test/java/excel/export/excel/simpleExport2.xlsx")
+					// 自动生成序号, （复杂表头下, 需要自己定义序号列）
+					.autoNum()
+					// 自定义数据行高度, 默认excel正常高度
+					.height(CellPosition.CELL, 300)
+					// 全局单元格宽度100000
+					.width(100000)
+					// 序号列宽度, 默认2000
+					.autoNumColumnWidth(3000)
+					// sheet名字
+					.sheetName("简单导出")
+					// 表头声明
+					.opsHeader()
+                        // 不冻结表头
+                        .noFreeze()
+                        // 简单模式
+                        .simple()
+                            // 大标题声明
+                            .title("我是大标题")
+                            // 副标题, 自定义样式
+                            .text("项目名称", (font, style) -> {
+                                // 红色
+                                font.setColor(IndexedColors.RED.index);
+                                // 居顶
+                                style.setVerticalAlignment(VerticalAlignment.TOP);
+                            })
+                            // 副标题批量
+                            .texts("项目图", "所属区域", "省份", "项目所属人", "市", "创建时间", "项目领导人", "得分", "平均分")
+					.done()
+					// 数据列声明
+					.opsColumn()
+						// 批量导出字段
+						.fields("projectName", "img", "areaName", "province", "people")
+						// 个性化导出字段设置
+						.field("city")
+							// 超出宽度换行显示
+							.wrapText()
+							// 下拉框
+							.dropdown("北京", "西安", "上海", "广州")
+							// 行数据相同合并
+							.mergerRepeat()
+							// 行高单独设置
+							.height(500)
+							// 批注
+							.comment("城市选择下拉框内容哦")
+							// 宽度设置
+							.width(6000)
+							// 字段导出回调
+							.map((val, row, style, rowIndex) -> {
+								// 如果是北京, 设置背景色为黄色
+								if (val.equals("北京")) {
+									style.setBackColor(IndexedColors.YELLOW);
+									style.setHeight(900);
+									style.setComment("北京搞红色");
+									// 属性值自定义
+									int index = rowIndex + 1;
+									return "=J" + index + "+K" + index;
+								}
+								return val;
+							}).done()
+						.field("createTime")
+							// 区域相同, 合并当前列
+							.mergerRepeat("areaName")
+							// 格式化
+							.pattern("yyyy-MM-dd")
+							// 居左
+							.align(HorizontalAlignment.LEFT)
+							// 居中
+							.valign(VerticalAlignment.CENTER)
+							// 背景黄色
+							.backColor(IndexedColors.YELLOW)
+							// 金色字体
+							.color(IndexedColors.GOLD).done()
+						.fields("leader", "scount")
+						.field("avg").pattern("0.00").done()
+					.done()
+					// 尾行设计
+					.opsFooter()
+						// 字符合并, 尾行合并, 行数从1开始, 会自动计算数据行
+						.text("合计", "A1:H1")
+						// 公式应用
+						.text(String.format("=SUM(J3:J%s)", 2 + data.size()), "1,1,J,J")
+						.text(String.format("=AVERAGE(K3:K%s)", 2 + data.size()), "1,1,K,K")
+						// 坐标合并
+						.text("作者:625", 0, 0, 8, 8).done()
+					.done()
+				// 执行导出
+				.export("src/test/java/excel/export/excel/simpleExport2.xlsx")
         ;
     }
 
