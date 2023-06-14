@@ -25,7 +25,7 @@ public class FloatHandler<R> extends BaseVerifyRule<Float, R> {
     }
 
     @Override
-    public Float doHandle(int row, int col, Object cellValue) throws Exception {
+    protected Float doHandle(int row, int col, Object cellValue) throws Exception {
         if (cellValue instanceof Float) {
             return (Float) cellValue;
         } else {

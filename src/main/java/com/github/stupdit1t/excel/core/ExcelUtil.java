@@ -932,13 +932,13 @@ public class ExcelUtil {
      * @param filePath     文件路径
      * @param poiSheetArea 数据区域
      * @param columns      数据列定义
-     * @param callBack     回调数据行
+     * @param map     回调数据行
      * @param rowClass     数据类
      * @return PoiResult
      */
-    public static <T> PoiResult<T> readSheet(String filePath, PoiSheetDataArea poiSheetArea, Map<String, InColumn<?>> columns, InCallback<T> callBack, Class<T> rowClass) {
+    public static <T> PoiResult<T> readSheet(String filePath, PoiSheetDataArea poiSheetArea, Map<String, InColumn<?>> columns, InCallback<T> map, Class<T> rowClass) {
         try (InputStream is = new FileInputStream(filePath)) {
-            return readSheet(is, poiSheetArea, columns, callBack, rowClass);
+            return readSheet(is, poiSheetArea, columns, map, rowClass);
         } catch (Exception e) {
             LOG.error(e);
             return PoiResult.fail(new ErrorMessage(e));
@@ -951,13 +951,13 @@ public class ExcelUtil {
      * @param filePath     文件路径
      * @param poiSheetArea 数据区域
      * @param columns      数据列定义
-     * @param callBack     回调数据行
+     * @param map     回调数据行
      * @param rowClass     数据类
      * @return PoiResult
      */
-    public static <T> PoiResult<T> readSheet(String filePath, String password, PoiSheetDataArea poiSheetArea, Map<String, InColumn<?>> columns, InCallback<T> callBack, Class<T> rowClass) {
+    public static <T> PoiResult<T> readSheet(String filePath, String password, PoiSheetDataArea poiSheetArea, Map<String, InColumn<?>> columns, InCallback<T> map, Class<T> rowClass) {
         try (InputStream is = new FileInputStream(filePath)) {
-            return readSheet(is, password, poiSheetArea, columns, callBack, rowClass);
+            return readSheet(is, password, poiSheetArea, columns, map, rowClass);
         } catch (Exception e) {
             LOG.error(e);
             return PoiResult.fail(new ErrorMessage(e));
@@ -970,11 +970,11 @@ public class ExcelUtil {
      * @param is           文件流
      * @param poiSheetArea 数据区域
      * @param columns      数据列定义
-     * @param callBack     回调数据行
+     * @param map     回调数据行
      * @param rowClass     数据类
      * @return PoiResult
      */
-    public static <T> PoiResult<T> readSheet(InputStream is, PoiSheetDataArea poiSheetArea, Map<String, InColumn<?>> columns, InCallback<T> callBack, Class<T> rowClass) {
+    public static <T> PoiResult<T> readSheet(InputStream is, PoiSheetDataArea poiSheetArea, Map<String, InColumn<?>> columns, InCallback<T> map, Class<T> rowClass) {
         try (Workbook wb = WorkbookFactory.create(is)) {
             String sheetName = poiSheetArea.getSheetName();
             Sheet sheet;
@@ -983,7 +983,7 @@ public class ExcelUtil {
             } else {
                 sheet = wb.getSheet(sheetName);
             }
-            return readSheet(sheet, poiSheetArea.getHeaderRowCount(), poiSheetArea.getFooterRowCount(), columns, callBack, rowClass);
+            return readSheet(sheet, poiSheetArea.getHeaderRowCount(), poiSheetArea.getFooterRowCount(), columns, map, rowClass);
         } catch (Exception e) {
             LOG.error(e);
             return PoiResult.fail(new ErrorMessage(e));
@@ -996,11 +996,11 @@ public class ExcelUtil {
      * @param is           文件流
      * @param poiSheetArea 数据区域
      * @param columns      数据列定义
-     * @param callBack     回调数据行
+     * @param map     回调数据行
      * @param rowClass     数据类
      * @return PoiResult
      */
-    public static <T> PoiResult<T> readSheet(InputStream is, String password, PoiSheetDataArea poiSheetArea, Map<String, InColumn<?>> columns, InCallback<T> callBack, Class<T> rowClass) {
+    public static <T> PoiResult<T> readSheet(InputStream is, String password, PoiSheetDataArea poiSheetArea, Map<String, InColumn<?>> columns, InCallback<T> map, Class<T> rowClass) {
         try (Workbook wb = WorkbookFactory.create(is, password)) {
             String sheetName = poiSheetArea.getSheetName();
             Sheet sheet;
@@ -1009,7 +1009,7 @@ public class ExcelUtil {
             } else {
                 sheet = wb.getSheet(sheetName);
             }
-            return readSheet(sheet, poiSheetArea.getHeaderRowCount(), poiSheetArea.getFooterRowCount(), columns, callBack, rowClass);
+            return readSheet(sheet, poiSheetArea.getHeaderRowCount(), poiSheetArea.getFooterRowCount(), columns, map, rowClass);
         } catch (Exception e) {
             LOG.error(e);
             return PoiResult.fail(new ErrorMessage(e));
@@ -1024,7 +1024,7 @@ public class ExcelUtil {
      * @param dataEndRowCount 尾部非数据行数量
      * @return PoiResult<T>
      */
-    public static <T> PoiResult<T> readSheet(Sheet sheet, int dataStartRow, int dataEndRowCount, Map<String, InColumn<?>> columns, InCallback<T> callBack, Class<T> rowClass) {
+    public static <T> PoiResult<T> readSheet(Sheet sheet, int dataStartRow, int dataEndRowCount, Map<String, InColumn<?>> columns, InCallback<T> map, Class<T> rowClass) {
         boolean mapClass = PoiCommon.isMapData(rowClass);
         PoiResult<T> rsp = new PoiResult<>();
         List<T> beans = new ArrayList<>();
@@ -1102,10 +1102,10 @@ public class ExcelUtil {
                     }
                 }
                 // 有效, 回调处理加入
-                if (callBack != null) {
+                if (map != null) {
                     int rowNum = j + 1;
                     try {
-                        callBack.callback(data, rowNum);
+                        map.callback(data, rowNum);
                     } catch (Exception e) {
                         error.add(new ErrorMessage("第" + rowNum + "行", j, -1, e));
                     }
@@ -1135,7 +1135,7 @@ public class ExcelUtil {
      * @param filePath 文件路径
      * @param variable 内置变量
      */
-    public static Workbook readExcelWrite(String filePath, Map<String, String> variable) {
+    public static Workbook readExcelWrite(String filePath, Map<String, Object> variable) {
         try (FileInputStream is = new FileInputStream(filePath)) {
             return readExcelWrite(is, variable);
         } catch (IOException e) {
@@ -1151,7 +1151,7 @@ public class ExcelUtil {
      * @param password 文件密码
      * @param variable 内置变量
      */
-    public static Workbook readExcelWrite(String filePath, String password, Map<String, String> variable) {
+    public static Workbook readExcelWrite(String filePath, String password, Map<String, Object> variable) {
         try (FileInputStream is = new FileInputStream(filePath)) {
             return readExcelWrite(is, password, variable);
         } catch (IOException e) {
@@ -1166,7 +1166,7 @@ public class ExcelUtil {
      * @param is       excel文件流
      * @param variable 内置变量
      */
-    public static Workbook readExcelWrite(InputStream is, Map<String, String> variable) {
+    public static Workbook readExcelWrite(InputStream is, Map<String, Object> variable) {
         try {
             Workbook wb = WorkbookFactory.create(is);
             return readExcelWrite(wb, variable);
@@ -1183,7 +1183,7 @@ public class ExcelUtil {
      * @param password 文件密码
      * @param variable 内置变量
      */
-    public static Workbook readExcelWrite(InputStream is, String password, Map<String, String> variable) {
+    public static Workbook readExcelWrite(InputStream is, String password, Map<String, Object> variable) {
         try {
             Workbook wb = WorkbookFactory.create(is);
             if (password != null) {
@@ -1202,13 +1202,15 @@ public class ExcelUtil {
      * @param workbook excel对象
      * @param variable 内置变量
      */
-    private static Workbook readExcelWrite(Workbook workbook, Map<String, String> variable) {
+    private static Workbook readExcelWrite(Workbook workbook, Map<String, Object> variable) {
         int numberOfSheets = workbook.getNumberOfSheets();
         FormulaEvaluator formulaEvaluator = workbook.getCreationHelper().createFormulaEvaluator();
         for (int i = 0; i < numberOfSheets; i++) {
             Sheet sheet = workbook.getSheetAt(i);
+            Drawing<?> createDrawingPatriarch = safeCreateDrawing(sheet);
             Row lastRow = sheet.getRow(sheet.getLastRowNum());
             int lastRealLastRow = getLastRealLastRow(lastRow);
+            Set<String> vars = variable.keySet();
             for (int j = 0; j <= lastRealLastRow; j++) {
                 Row row = sheet.getRow(j);
                 if (row == null) {
@@ -1222,11 +1224,34 @@ public class ExcelUtil {
                         if (!cellValueStr.contains("$")) {
                             continue;
                         }
-                        Set<String> vars = variable.keySet();
                         for (String var : vars) {
-                            String value = variable.get(var);
-                            cellValueStr = cellValueStr.replace("${" + var + "}", value);
+                            String keyVar = "${" + var + "}";
+                            if(!cellValueStr.contains(keyVar)){
+                                continue;
+                            }
+                            Object value = variable.get(var);
+                            if(value instanceof byte[]) {
+                                byte[] data = (byte[]) value;
+                                // 插入图片
+                                ClientAnchor anchor;
+                                int add1;
+                                if (workbook instanceof XSSFWorkbook) {
+                                    anchor = new XSSFClientAnchor(0, 0, 0, 0, k, j, k + 1, j + 1);
+                                    add1 = workbook.addPicture(data, XSSFWorkbook.PICTURE_TYPE_PNG);
+                                } else if (workbook instanceof HSSFWorkbook) {
+                                    anchor = new HSSFClientAnchor(0, 0, 0, 0, k, j, (short) (k + 1), j + 1);
+                                    add1 = workbook.addPicture(data, SXSSFWorkbook.PICTURE_TYPE_PNG);
+                                } else {
+                                    anchor = new XSSFClientAnchor(0, 0, 0, 0, k, j, (short) (k + 1), j + 1);
+                                    add1 = workbook.addPicture(data, XSSFWorkbook.PICTURE_TYPE_PNG);
                         }
+                                createDrawingPatriarch.createPicture(anchor, add1);
+                                cellValueStr = cellValueStr.replace(keyVar, "");
+                            }else{
+                                // 非图片，一律按字符串填充
+                                cellValueStr = cellValueStr.replace(keyVar, String.valueOf(value));
+                            }
+
                         if (cellValueStr.startsWith("=")) {
                             try {
                             row.getCell(k).setCellFormula(cellValueStr.substring(1));
@@ -1239,6 +1264,7 @@ public class ExcelUtil {
                     }
                 }
             }
+        }
         }
         return workbook;
     }
@@ -1474,6 +1500,7 @@ public class ExcelUtil {
                 obj = "";
                 break;
             default:
+                obj = "";
                 break;
         }
         return obj;

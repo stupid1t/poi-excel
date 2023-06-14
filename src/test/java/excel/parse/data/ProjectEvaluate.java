@@ -51,7 +51,7 @@ public class ProjectEvaluate implements Serializable {
 	/**
 	 * 历史平均分
 	 */
-	private double avg;
+	private String avg;
 
 	/**
 	 * 创建时间
@@ -122,11 +122,11 @@ public class ProjectEvaluate implements Serializable {
 		this.scount = scount;
 	}
 
-	public double getAvg() {
+	public String getAvg() {
 		return avg;
 	}
 
-	public void setAvg(double avg) {
+	public void setAvg(String avg) {
 		this.avg = avg;
 	}
 

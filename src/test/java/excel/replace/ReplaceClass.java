@@ -3,10 +3,12 @@ package excel.replace;
 import com.github.stupdit1t.excel.core.ExcelHelper;
 import org.junit.Test;
 
+import java.io.IOException;
+
 public class ReplaceClass {
 
     @Test
-    public void parseMap1() {
+    public void parseMap1() throws IOException {
         ExcelHelper.opsReplace()
                 .from("src/test/java/excel/replace/replace.xlsx")
                 .variable("projectName", "中青旅")

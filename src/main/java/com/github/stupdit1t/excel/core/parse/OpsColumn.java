@@ -28,33 +28,20 @@ public class OpsColumn<R> extends AbsParent<OpsSheet<R>> {
 
 
     /**
-     * 列字段定义，指定列对应的字段
+     * 列字段定义
      *
      * @param index 下标, 如A/B/C/D
      * @param field 对应的字段
      * @return InColumn
      */
     public InColumn<R> field(String index, String field) {
-        return this.field(index, field, null);
-    }
-
-
-    /**
-     * 列字段定义
-     *
-     * @param index 下标, 如A/B/C/D
-     * @param field 对应的字段
-     * @param title 对应的标题
-     * @return InColumn
-     */
-    public InColumn<R> field(String index, String field, String title) {
         // 检测字段是否存在
         if (!this.parent.parent.mapData && this.parent.parent.allFields != null) {
             if (!this.parent.parent.allFields.containsKey(field)) {
                 throw new UnsupportedOperationException("字段不存在!");
             }
         }
-        InColumn<R> inColumn = new InColumn<>(this, index, field, title);
+        InColumn<R> inColumn = new InColumn<>(this, index, field);
         columns.put(index, inColumn);
         return inColumn;
     }
