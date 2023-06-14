@@ -52,7 +52,7 @@ poi-excel 是一个基于 Apache POI 的 Java 工具，旨在简化新手在处�
 </dependency>
 ```
 
-在 Spring 环境下的 Excel 导入和导出中表现最佳。以下是一个简单的示例代码，进行导出操作：
+在 Spring 环境下的以下是一个简单的示例代码，进行导出操作：
 ```java
 @GetMapping("/export")
 public void export(HttpServletResponse response, SysErrorLogQueryParam queryParams) {
