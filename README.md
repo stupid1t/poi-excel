@@ -79,7 +79,7 @@ public void export(HttpServletResponse response, SysErrorLogQueryParam queryPara
 - [导入最佳实践](./README-import.md)
 
 ## 更新记录
-[详见README-hisotry.md](./README-hisotry.md)
+[详见README-history.md](./README-history.md)
 
 ## 报告问题和寻求支持
 
