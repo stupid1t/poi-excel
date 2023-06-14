@@ -75,8 +75,8 @@ public void export(HttpServletResponse response, SysErrorLogQueryParam queryPara
 
 请参考以下示例代码来了解如何使用poi-excel工具：
 
-- [导入最佳实践](./README-export.md)
-- [导出最佳实践](./README-import.md)
+- [导出最佳实践](./README-export.md)
+- [导入最佳实践](./README-import.md)
 
 ## 报告问题和寻求支持
 
