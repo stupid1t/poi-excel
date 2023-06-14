@@ -23,21 +23,21 @@
 </dependency>
 ```
 
-### 兼容两个低版本POI(截至 3.1.5)
+### 兼容两个低版本POI(截至 3.2.1)
 
 ```xml
 <!-- excel导入导出 POI版本为3.17 -->
 <dependency>
     <groupId>com.github.stupdit1t</groupId>
     <artifactId>poi-excel</artifactId>
-    <version>poi-317.6</version>
+    <version>poi-317.7</version>
 </dependency>
 
         <!-- excel导入导出 POI版本为4.1.2 -->
 <dependency>
     <groupId>com.github.stupdit1t</groupId>
     <artifactId>poi-excel</artifactId>
-    <version>poi-412.6</version>
+    <version>poi-412.7</version>
 </dependency>
 ```
 
@@ -79,7 +79,8 @@ public class Spring {
 > 有需求才有进步，这个轮子本身就是从0开始因为需求慢慢叠加起来的。有新需求提出来,我觉得合适会更新. 如有疑问可加群帮解答: 811606008
 
 ### v3.2.1
-1. 导入解析数据，新增列上map方法，用于转换和处理数据
+
+1. 导入解析数据，新增列上map方法，用于转换和处理数据，如字典值转换
 2. 读模板替换变量，支持替换图片
 3. 若干功能优化
 
