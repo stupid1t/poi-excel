@@ -78,6 +78,9 @@ public void export(HttpServletResponse response, SysErrorLogQueryParam queryPara
 - [导出最佳实践](./README-export.md)
 - [导入最佳实践](./README-import.md)
 
+## 更新记录
+[详见README-hisotry.md](./README-hisotry.md)
+
 ## 报告问题和寻求支持
 
 如果您在使用 poi-excel 过程中遇到任何问题或有任何想法和建议，可以直接提出ISSUE，或您可以加入QQ 群一起探讨。QQ群号：811606008。
