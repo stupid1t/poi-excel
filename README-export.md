@@ -117,7 +117,7 @@ ExcelHelper.opsExport(PoiWorkbookType.XLSX)
                 .field("createTime")
                 // 区域相同, 合并当前列
                 .mergerRepeat("areaName")
-                // 格式化
+                // 格式化, 单元格格式，具体参考这个类，或者Excel表格。org.apache.poi.ss.usermodel.BuiltinFormats
                 .pattern("yyyy-MM-dd")
                 // 居左
                 .align(HorizontalAlignment.LEFT)
