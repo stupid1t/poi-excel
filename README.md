@@ -32,7 +32,7 @@ poi-excel 是一个基于 Apache POI 的 Java 工具，旨在简化新手在处�
 <dependency>
     <groupId>com.github.stupdit1t</groupId>
     <artifactId>poi-excel</artifactId>
-    <version>3.2.1</version>
+    <version>3.2.2</version>
 </dependency>
 ```
 如版本冲突，目前兼容两个低版本POI
@@ -41,14 +41,14 @@ poi-excel 是一个基于 Apache POI 的 Java 工具，旨在简化新手在处�
 <dependency>
 <groupId>com.github.stupdit1t</groupId>
 <artifactId>poi-excel</artifactId>
-<version>poi-317.7</version>
+<version>poi-317.8</version>
 </dependency>
 
 <!-- excel导入导出 POI版本为4.1.2 -->
 <dependency>
 <groupId>com.github.stupdit1t</groupId>
 <artifactId>poi-excel</artifactId>
-<version>poi-412.7</version>
+<version>poi-412.8</version>
 </dependency>
 ```
 
