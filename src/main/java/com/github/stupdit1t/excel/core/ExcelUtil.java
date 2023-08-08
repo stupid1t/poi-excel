@@ -1651,7 +1651,9 @@ public class ExcelUtil {
         // 3.设置表达式
         String formula = "hidden!$" + colLetter + "$2:$" + colLetter + "$" + (dataSource.length + 1);
         DataValidationConstraint constraint = helper.createFormulaListConstraint(formula);
-        workbook.setSheetHidden(1, true);
+        workbook.setSheetHidden(workbook.getSheetIndex(hidden), true);
+
+
 
         DataValidation dataValidation = helper.createValidation(constraint, cellRangeAddressList);
 
