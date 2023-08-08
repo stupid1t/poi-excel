@@ -1653,8 +1653,6 @@ public class ExcelUtil {
         DataValidationConstraint constraint = helper.createFormulaListConstraint(formula);
         workbook.setSheetHidden(workbook.getSheetIndex(hidden), true);
 
-
-
         DataValidation dataValidation = helper.createValidation(constraint, cellRangeAddressList);
 
         // 处理Excel兼容性问题
