@@ -137,7 +137,7 @@ public class ExportRules {
     /**
      * 添加的图片
      */
-    Map<Integer[], byte[]> images;
+    private Map<Integer[], byte[]> images;
 
     /**
      * 初始化规则，构建一个简单表头
