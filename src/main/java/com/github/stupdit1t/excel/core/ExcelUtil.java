@@ -912,6 +912,15 @@ public class ExcelUtil {
         RegionUtil.setBorderBottom(BorderStyle.THIN, cra, sheet);
         RegionUtil.setBorderLeft(BorderStyle.THIN, cra, sheet);
         RegionUtil.setBorderRight(BorderStyle.THIN, cra, sheet);
+        // 仅保留第一个单元格值
+        for (int i = firstRow; i <= lastRow; i++) {
+            for (int j = firstCol; j <= lastCol; j++) {
+                if (i == firstRow && firstCol == j) {
+                    continue;
+                }
+                sheet.getRow(i).getCell(j).setCellValue("");
+            }
+        }
     }
 
     /**
