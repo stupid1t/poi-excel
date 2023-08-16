@@ -223,7 +223,7 @@ public class ExportClass {
                         style.setHeight(900);
                         style.setComment("北京搞红色");
                         // 属性值自定义
-						int index = rowIndex + 1;
+                        int index = rowIndex + 1;
                         return "=J" + index + "+K" + index;
                     }
                     return val;
@@ -304,6 +304,7 @@ public class ExportClass {
                 .done()
                 // 自定义合并sheet
                 .mergeCell("F4:G13")
+                .addImage(imageParseBytes(new File("C:\\Users\\35361\\Documents\\code\\self\\poi-excel\\src\\test\\java\\excel\\export\\data\\1.jpg")), "F4:G13")
                 .done()
                 .export("src/test/java/excel/export/excel/complexExport.xlsx");
     }

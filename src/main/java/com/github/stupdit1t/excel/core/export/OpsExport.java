@@ -285,7 +285,7 @@ public class OpsExport {
 		}
 		exportRules.setAutoNum(opsSheet.autoNum);
 		exportRules.setMergerCells(opsSheet.mergerCells);
-
+		exportRules.setImages(opsSheet.images);
 		// footer内容提取
 		if (opsSheet.opsFooter != null) {
 			List<ComplexCell> footer = opsSheet.opsFooter.complexFooter;

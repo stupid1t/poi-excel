@@ -338,7 +338,7 @@ public class ExcelUtil {
                 setCellStyle(wb, cellFont, cacheStyle, cacheFont, style, cell, value);
 
                 // 5.设置单元格值
-                setCellValue(createDrawingPatriarch, value, cell);
+                setCellValue(value, cell);
 
                 // 6.批注添加
                 String comment = style.getComment() != null ? style.getComment() : column.getComment();
@@ -408,6 +408,15 @@ public class ExcelUtil {
         }
 
         // ------------------------ 设置自定义合并 end ------------------------
+
+        // ------------------------ 设置自定义图片 start ----------------------
+        Map<Integer[], byte[]> images = exportRules.getImages();
+        if (images != null) {
+            images.forEach((position, img) -> {
+                addImage(sheet, position, img);
+            });
+        }
+        // ------------------------ 设置自定义图片 end ------------------------
     }
 
 
@@ -603,8 +612,8 @@ public class ExcelUtil {
                 if (value.startsWith("=")) {
                     try {
                         cell.setCellFormula(value.substring(1));
-                    }catch (Exception e){
-                        cell.setCellValue(value);;
+                    } catch (Exception e) {
+                        cell.setCellValue(value);
                     }
                 }
                 if ((lastRow - firstRow) != 0 || (lastCol - firstCol) != 0) {
@@ -944,7 +953,7 @@ public class ExcelUtil {
      * @param filePath     文件路径
      * @param poiSheetArea 数据区域
      * @param columns      数据列定义
-     * @param map     回调数据行
+     * @param map          回调数据行
      * @param rowClass     数据类
      * @return PoiResult
      */
@@ -963,7 +972,7 @@ public class ExcelUtil {
      * @param filePath     文件路径
      * @param poiSheetArea 数据区域
      * @param columns      数据列定义
-     * @param map     回调数据行
+     * @param map          回调数据行
      * @param rowClass     数据类
      * @return PoiResult
      */
@@ -982,7 +991,7 @@ public class ExcelUtil {
      * @param is           文件流
      * @param poiSheetArea 数据区域
      * @param columns      数据列定义
-     * @param map     回调数据行
+     * @param map          回调数据行
      * @param rowClass     数据类
      * @return PoiResult
      */
@@ -1008,7 +1017,7 @@ public class ExcelUtil {
      * @param is           文件流
      * @param poiSheetArea 数据区域
      * @param columns      数据列定义
-     * @param map     回调数据行
+     * @param map          回调数据行
      * @param rowClass     数据类
      * @return PoiResult
      */
@@ -1238,11 +1247,11 @@ public class ExcelUtil {
                         }
                         for (String var : vars) {
                             String keyVar = "${" + var + "}";
-                            if(!cellValueStr.contains(keyVar)){
+                            if (!cellValueStr.contains(keyVar)) {
                                 continue;
                             }
                             Object value = variable.get(var);
-                            if(value instanceof byte[]) {
+                            if (value instanceof byte[]) {
                                 byte[] data = (byte[]) value;
                                 // 插入图片
                                 ClientAnchor anchor;
@@ -1259,7 +1268,7 @@ public class ExcelUtil {
                                 }
                                 createDrawingPatriarch.createPicture(anchor, add1);
                                 cellValueStr = cellValueStr.replace(keyVar, "");
-                            }else{
+                            } else {
                                 // 非图片，一律按字符串填充
                                 cellValueStr = cellValueStr.replace(keyVar, String.valueOf(value));
                             }
@@ -1267,7 +1276,7 @@ public class ExcelUtil {
                             if (cellValueStr.startsWith("=")) {
                                 try {
                                     row.getCell(k).setCellFormula(cellValueStr.substring(1));
-                                }catch (Exception e){
+                                } catch (Exception e) {
                                     row.getCell(k).setCellValue(cellValueStr);
                                 }
                             } else {
@@ -1384,11 +1393,10 @@ public class ExcelUtil {
     /**
      * 给单元格设置值
      *
-     * @param createDrawingPatriarch 画图器
-     * @param value                  单元格值
-     * @param cell                   单元格
+     * @param value 单元格值
+     * @param cell  单元格
      */
-    private static void setCellValue(Drawing<?> createDrawingPatriarch, Object value, Cell cell) {
+    private static void setCellValue(Object value, Cell cell) {
         Workbook workbook = cell.getSheet().getWorkbook();
 
         // 8.值设置, 判断值的类型后进行强制类型转换.再设置单元格格式
@@ -1424,19 +1432,7 @@ public class ExcelUtil {
             short x = (short) cell.getColumnIndex();
             int y = cell.getRowIndex();
             // 5.2插入图片
-            ClientAnchor anchor;
-            int add1;
-            if (workbook instanceof XSSFWorkbook) {
-                anchor = new XSSFClientAnchor(0, 0, 0, 0, x, y, x + 1, y + 1);
-                add1 = workbook.addPicture(data, XSSFWorkbook.PICTURE_TYPE_PNG);
-            } else if (workbook instanceof HSSFWorkbook) {
-                anchor = new HSSFClientAnchor(0, 0, 0, 0, x, y, (short) (x + 1), y + 1);
-                add1 = workbook.addPicture(data, SXSSFWorkbook.PICTURE_TYPE_PNG);
-            } else {
-                anchor = new XSSFClientAnchor(0, 0, 0, 0, x, y, (short) (x + 1), y + 1);
-                add1 = workbook.addPicture(data, XSSFWorkbook.PICTURE_TYPE_PNG);
-            }
-            createDrawingPatriarch.createPicture(anchor, add1);
+            addImage(cell.getSheet(), new Integer[]{y, y, (int) x, (int) x}, data);
             cell.setCellValue("");
         } else if (value == null) {
             cell.setCellValue("");
@@ -1445,6 +1441,48 @@ public class ExcelUtil {
         }
     }
 
+    /**
+     * 指定单元格，添加图片
+     *
+     * @param position 下标位置， row start, row end, col start, col end
+     * @param images   图片数据
+     */
+    public static void addImage(Sheet sheet, Integer[] position, byte[] images) {
+        Drawing<?> drawingPatriarch = sheet.createDrawingPatriarch();
+        Workbook workbook = sheet.getWorkbook();
+        // 5.2插入图片
+        ClientAnchor anchor;
+        int add1;
+        Integer startRow = position[0];
+        Integer endRow = position[1] + 1;
+        Integer startCol = position[2];
+        Integer endCol = position[3] + 1;
+        if (workbook instanceof XSSFWorkbook) {
+            anchor = new XSSFClientAnchor(0, 0, 0, 0, startCol, startRow, endCol, endRow);
+            anchor.setAnchorType(ClientAnchor.AnchorType.MOVE_AND_RESIZE);
+            add1 = workbook.addPicture(images, XSSFWorkbook.PICTURE_TYPE_PNG);
+        } else if (workbook instanceof HSSFWorkbook) {
+            anchor = new HSSFClientAnchor(0, 0, 0, 0, startCol.shortValue(), startRow, endCol.shortValue(), endRow);
+            anchor.setAnchorType(ClientAnchor.AnchorType.MOVE_AND_RESIZE);
+            add1 = workbook.addPicture(images, SXSSFWorkbook.PICTURE_TYPE_PNG);
+        } else {
+            anchor = new XSSFClientAnchor(0, 0, 0, 0, startCol, startRow, endCol, endRow);
+            anchor.setAnchorType(ClientAnchor.AnchorType.MOVE_AND_RESIZE);
+            add1 = workbook.addPicture(images, XSSFWorkbook.PICTURE_TYPE_PNG);
+        }
+        drawingPatriarch.createPicture(anchor, add1);
+    }
+
+    /**
+     * 指定单元格 添加图片
+     *
+     * @param location 如填写1,3,A,C 或 A1:C3
+     * @param images   图片数据
+     */
+    public static void addImage(Sheet sheet, String location, byte[] images) {
+        Integer[] position = PoiCommon.coverRangeIndex(location);
+        addImage(sheet, position, images);
+    }
 
     /**
      * 根据页脚数据获得行号

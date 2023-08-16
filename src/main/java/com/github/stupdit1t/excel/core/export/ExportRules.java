@@ -9,6 +9,7 @@ import org.apache.poi.ss.usermodel.Font;
 
 import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.function.BiConsumer;
 import java.util.stream.Collectors;
 
@@ -132,6 +133,11 @@ public class ExportRules {
      * 自定义合并的单元格
      */
     private List<Integer[]> mergerCells;
+
+    /**
+     * 添加的图片
+     */
+    Map<Integer[], byte[]> images;
 
     /**
      * 初始化规则，构建一个简单表头
@@ -440,14 +446,24 @@ public class ExportRules {
     /**
      * 自定义合并单元格
      *
-     * @return List<Integer[]>
+     * @return List<Integer [ ]>
      */
     public List<Integer[]> getMergerCells() {
         return mergerCells;
     }
 
     /**
+     * 获取添加的图片
+     *
+     * @return
+     */
+    public Map<Integer[], byte[]> getImages() {
+        return images;
+    }
+
+    /**
      * 设置sheet名字
+     *
      * @param sheetName sheet名字
      */
     public void setSheetName(String sheetName) {
@@ -563,8 +579,16 @@ public class ExportRules {
     }
 
     /**
-     * 获取全局列宽
+     * 设置添加的图片
      *
+     * @param images
+     */
+    public void setImages(Map<Integer[], byte[]> images) {
+        this.images = images;
+    }
+
+    /**
+     * 获取全局列宽
      */
     public int getColumnWidth() {
         return columnWidth;
