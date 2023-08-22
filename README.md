@@ -32,10 +32,10 @@ poi-excel 是一个基于 Apache POI 的 Java 工具，旨在简化新手在处�
 <dependency>
     <groupId>com.github.stupdit1t</groupId>
     <artifactId>poi-excel</artifactId>
-    <version>3.2.2</version>
+    <version>3.2.3</version>
 </dependency>
 ```
-如版本冲突，目前兼容两个低版本POI
+如版本冲突，目前兼容两个低版本POI，截止到3.2.2版本
 ```xml
 <!-- excel导入导出 POI版本为3.17 -->
 <dependency>
