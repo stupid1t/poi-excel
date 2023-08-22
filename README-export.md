@@ -190,6 +190,8 @@ ExcelHelper.opsExport(PoiWorkbookType.XLSX)
                     .done()
                 // 自定义合并单元格
                 .mergeCell("F4:G13")
+                // 指定区域添加图片
+                .addImage(imageParseBytes(new File("C:\\Users\\35361\\Documents\\code\\self\\poi-excel\\src\\test\\java\\excel\\export\\data\\1.jpg")), "F4:G13")
                 .done()
             .export("src/test/java/excel/export/excel/complexExport.xlsx");
 ```
