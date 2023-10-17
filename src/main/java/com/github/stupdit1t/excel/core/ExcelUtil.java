@@ -25,10 +25,7 @@ import org.apache.poi.poifs.filesystem.POIFSFileSystem;
 import org.apache.poi.ss.usermodel.*;
 import org.apache.poi.ss.usermodel.DataValidationConstraint.OperatorType;
 import org.apache.poi.ss.usermodel.Row.MissingCellPolicy;
-import org.apache.poi.ss.util.CellRangeAddress;
-import org.apache.poi.ss.util.CellRangeAddressList;
-import org.apache.poi.ss.util.CellUtil;
-import org.apache.poi.ss.util.RegionUtil;
+import org.apache.poi.ss.util.*;
 import org.apache.poi.xssf.streaming.SXSSFWorkbook;
 import org.apache.poi.xssf.usermodel.*;
 import org.openxmlformats.schemas.drawingml.x2006.spreadsheetDrawing.CTMarker;
@@ -1540,7 +1537,7 @@ public class ExcelUtil {
                             if (DateUtil.isCellDateFormatted(cell)) {
                                 obj = cell.getDateCellValue();
                             } else {
-                                obj = cell.getNumericCellValue();
+                                obj = NumberToTextConverter.toText(cell.getNumericCellValue());
                             }
                             break;
                         case STRING:
