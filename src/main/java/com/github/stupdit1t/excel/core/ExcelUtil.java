@@ -1522,7 +1522,7 @@ public class ExcelUtil {
                 if (DateUtil.isCellDateFormatted(cell)) {
                     obj = cell.getDateCellValue();
                 } else {
-                    obj = cell.getNumericCellValue();
+                    obj = NumberToTextConverter.toText(cell.getNumericCellValue());
                 }
                 break;
             case BOOLEAN:
