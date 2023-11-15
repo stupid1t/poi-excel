@@ -12,7 +12,7 @@ PoiResult<HashMap> parse = ExcelHelper.opsParse(HashMap.class)
         // 指定数据区域
         .opsSheet(0, 1, 0)
         .parse();
-if (!parse.isSuccess()) {
+if (parse.hasError()) {
     // 输出验证不通过的信息
     System.out.println(parse.getMessageToString());
 }
