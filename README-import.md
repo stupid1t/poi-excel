@@ -91,3 +91,22 @@ if (parse.hasData()) {
 第4行: 项目领导人-不能为空(G4)  总分-格式不正确(H4) 
 第8行: 项目领导人-不能为空(G8) 
 ```
+
+
+# 大量数据，批量解析
+```java
+ExcelHelper.opsParse(HashMap.class)
+    .from("src/test/java/excel/parse/excel/simpleExport.xlsx")
+    // 指定数据区域
+    .opsSheet(0, 1, 1)
+    .parsePart(1000, (result) -> {
+        if (!result.hasError()) {
+            // 输出验证不通过的信息
+            System.out.println(result.getErrorInfoString());
+        }
+        // 打印解析的数据
+        if (result.hasData()) {
+            result.getData().forEach(System.out::println);
+        }
+    });
+```
