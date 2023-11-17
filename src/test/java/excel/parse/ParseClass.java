@@ -5,7 +5,6 @@ import com.github.stupdit1t.excel.common.PoiException;
 import com.github.stupdit1t.excel.common.PoiResult;
 import com.github.stupdit1t.excel.core.ExcelHelper;
 import excel.parse.data.ProjectEvaluate;
-import org.apache.poi.ss.util.NumberToTextConverter;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -50,6 +49,25 @@ public class ParseClass {
     }
 
     @Test
+    public void parseMapVail() {
+        name.set("parseMap1");
+        PoiResult<HashMap> parse = ExcelHelper.opsParse(HashMap.class)
+                .from("src/test/java/excel/parse/excel/simpleExport.xlsx")
+                // 指定数据区域
+                .opsSheet(0, 1, 0)
+                .opsColumn()
+                .field("H","name").type(int.class).done()
+                .done()
+                .parse();
+        if (!parse.hasError()) {
+            // 输出验证不通过的信息
+            System.out.println(parse.getErrorInfoString());
+        }
+        // 打印解析的数据
+        parse.getData().forEach(System.out::println);
+    }
+
+    @Test
     public void parseMapBig() {
         name.set("parseMapBig");
         ExcelHelper.opsParse(HashMap.class)
@@ -71,46 +89,47 @@ public class ParseClass {
     @Test
     public void parseBean() {
         name.set("parseBean");
-        Map<String, String> mapping = new HashMap<String, String>();
-        mapping.put("西安","1");
-        mapping.put("北京","2");
+        Map<String, Integer> mapping = new HashMap<>();
+        mapping.put("西安", 1);
+        mapping.put("北京", 2);
 
-        PoiResult<ProjectEvaluate> result = ExcelHelper.opsParse(ProjectEvaluate.class)
+        PoiResult<HashMap> result = ExcelHelper.opsParse(HashMap.class)
                 .from("src/test/java/excel/parse/excel/simpleExport.xlsx")
                 // 指定数据区域
                 .opsSheet(0, 1, 0)
                 // 自定义列映射
                 .opsColumn()
                 // 强制输入字符串, 且不能为空
-                .field("A", "projectName").asByCustom((row, col, val) -> {
-                    if ("中青旅0".equals(val)) {
+                .field("A", "projectName").map((value) -> {
+                    if ("中青旅0".equals(value)) {
                         throw new PoiException("数据有误!");
                     }
-                    if ("中青旅1".equals(val)) {
+                    if ("中青旅1".equals(value)) {
                         System.out.println(1 / 0);
                     }
                     // 重写值
-                    return val + "-Hello";
+                    return value + "-Hello";
                 }).notNull().done()
                 // img类型. 导入图片必须这样写, 且字段为byte[]
-                .field("B", "img").asImg().done()
-                .field("C", "areaName").asString().done()
-                .field("D", "province").asString().done()
-                .field("E", "city").asString().map(mapping::get).done()
+                .field("B", "img").type(byte[].class).done()
+                .field("C", "areaName").done()
+                .field("D", "province").done()
+                .field("E", "city").map(mapping::get).done()
                 // 不能为空
                 .field("F", "people").done()
                 // 不能为空
-                .field("G", "leader").asString().defaultValue("巨无霸").done()
+                .field("G", "leader").defaultValue("巨无霸").done()
                 // 必须是数字
-                .field("H", "scount").asString().done()
-                .field("I", "avg").asString().notNull().done()
-                .field("J", "createTime").asDate().pattern("yyyy/MM/dd").trim().done()
+                .field("H", "scount").notNull().done()
+                .field("I", "avg").notNull().done()
+                .field("J", "createTime").format("yyyy/MM/dd").trim().done()
                 .done()
                 .map((row, index) -> {
                     // 行回调, 可以在这里改数据
                     System.out.println("当前是第:" + index + " 数据是: " + row);
-                    if ("中青旅2-Hello".equals(row.getProjectName())) {
-                        throw new NullPointerException();
+                    Object projectName = row.get("projectName");
+                    if ("中青旅2-Hello".equals(projectName)) {
+                        throw new NullPointerException("");
                     }
                 })
                 .parse();
@@ -141,7 +160,7 @@ public class ParseClass {
                 // 自定义列映射
                 .opsColumn()
                 // 强制输入字符串, 且不能为空
-                .field("A", "projectName").asByCustom((row, col, val) -> {
+                .field("A", "projectName").map(val -> {
                     if ("中青旅0".equals(val)) {
                         throw new PoiException(" 数据有误!");
                     }
@@ -152,18 +171,18 @@ public class ParseClass {
                     return val + "-Hello";
                 }).notNull().done()
                 // img类型. 导入图片必须这样写, 且字段为byte[]
-                .field("B", "img").asImg().done()
-                .field("C", "areaName").asString().done()
+                .field("B", "img").done()
+                .field("C", "areaName").done()
                 .field("D", "province").done()
                 .field("E", "city").done()
                 // 不能为空
-                .field("F", "people").asString().pattern("\\d+").defaultValue("1").notNull().done()
+                .field("F", "people").regex("\\d+").defaultValue("1").notNull().done()
                 // 不能为空
-                .field("G", "leader").asString().defaultValue("巨无霸").done()
+                .field("G", "leader").defaultValue("巨无霸").done()
                 // 必须是数字
-                .field("H", "scount").asString().done()
-                .field("I", "avg").asDouble().notNull().done()
-                .field("J", "createTime").asDate().pattern("yyyy/MM/dd").trim().done()
+                .field("H", "scount").done()
+                .field("I", "avg").notNull().done()
+                .field("J", "createTime").format("yyyy").trim().done()
                 .done()
                 .map((row, index) -> {
                     // 行回调, 可以在这里改数据

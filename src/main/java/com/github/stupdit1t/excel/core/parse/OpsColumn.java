@@ -1,6 +1,8 @@
 package com.github.stupdit1t.excel.core.parse;
 
 import com.github.stupdit1t.excel.core.AbsParent;
+import com.github.stupdit1t.excel.handler.BaseVerifyRule;
+import com.github.stupdit1t.excel.handler.IVerifyRule;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -33,7 +35,7 @@ public class OpsColumn<R> extends AbsParent<OpsSheet<R>> {
      * @param field 对应的字段
      * @return InColumn
      */
-    public InColumn<R> field(String index, String field) {
+    public IVerifyRule<R> field(String index, String field) {
         // 检测字段是否存在
         if (!this.parent.parent.mapData && this.parent.parent.allFields != null) {
             if (!this.parent.parent.allFields.containsKey(field)) {
@@ -42,6 +44,6 @@ public class OpsColumn<R> extends AbsParent<OpsSheet<R>> {
         }
         InColumn<R> inColumn = new InColumn<>(this, index, field);
         columns.put(index, inColumn);
-        return inColumn;
+        return inColumn.getCellVerifyRule();
     }
 }
