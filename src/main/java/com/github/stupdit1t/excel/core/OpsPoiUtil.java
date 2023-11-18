@@ -955,9 +955,9 @@ public class OpsPoiUtil {
      * @param rowClass     数据类
      * @return PoiResult
      */
-    public static <T> PoiResult<T> readSheet(String filePath, PoiSheetDataArea poiSheetArea, Map<String, InColumn<?>> columns, InCallback<T> map, Class<T> rowClass, Map<String, Field> allField) {
+    public static <T> PoiResult<T> readSheet(String filePath, PoiSheetDataArea poiSheetArea, Map<String, InColumn<?>> columns, InCallback<T> map, Class<T> rowClass, Map<String, Field> allField, boolean autoField) {
         try (InputStream is = Files.newInputStream(Paths.get(filePath))) {
-            return readSheet(is, poiSheetArea, columns, map, rowClass, allField);
+            return readSheet(is, poiSheetArea, columns, map, rowClass, allField, autoField);
         } catch (Exception e) {
             LOG.error(e);
             return PoiResult.fail(new ErrorMessage(e));
@@ -974,9 +974,9 @@ public class OpsPoiUtil {
      * @param rowClass     数据类
      * @return PoiResult
      */
-    public static <T> PoiResult<T> readSheet(String filePath, String password, PoiSheetDataArea poiSheetArea, Map<String, InColumn<?>> columns, InCallback<T> map, Class<T> rowClass, Map<String, Field> allField) {
+    public static <T> PoiResult<T> readSheet(String filePath, String password, PoiSheetDataArea poiSheetArea, Map<String, InColumn<?>> columns, InCallback<T> map, Class<T> rowClass, Map<String, Field> allField, boolean autoField) {
         try (InputStream is = Files.newInputStream(Paths.get(filePath))) {
-            return readSheet(is, password, poiSheetArea, columns, map, rowClass, allField);
+            return readSheet(is, password, poiSheetArea, columns, map, rowClass, allField, autoField);
         } catch (Exception e) {
             LOG.error(e);
             return PoiResult.fail(new ErrorMessage(e));
@@ -993,7 +993,7 @@ public class OpsPoiUtil {
      * @param rowClass     数据类
      * @return PoiResult
      */
-    public static <T> PoiResult<T> readSheet(InputStream is, PoiSheetDataArea poiSheetArea, Map<String, InColumn<?>> columns, InCallback<T> map, Class<T> rowClass, Map<String, Field> allField) {
+    public static <T> PoiResult<T> readSheet(InputStream is, PoiSheetDataArea poiSheetArea, Map<String, InColumn<?>> columns, InCallback<T> map, Class<T> rowClass, Map<String, Field> allField, boolean autoField) {
         try (Workbook wb = WorkbookFactory.create(is)) {
             String sheetName = poiSheetArea.getSheetName();
             Sheet sheet;
@@ -1002,7 +1002,7 @@ public class OpsPoiUtil {
             } else {
                 sheet = wb.getSheet(sheetName);
             }
-            return readSheet(sheet, poiSheetArea.getHeaderRowCount(), poiSheetArea.getFooterRowCount(), columns, map, rowClass, allField);
+            return readSheet(sheet, poiSheetArea.getHeaderRowCount(), poiSheetArea.getFooterRowCount(), columns, map, rowClass, allField, autoField);
         } catch (Exception e) {
             LOG.error(e);
             return PoiResult.fail(new ErrorMessage(e));
@@ -1019,7 +1019,7 @@ public class OpsPoiUtil {
      * @param rowClass     数据类
      * @return PoiResult
      */
-    public static <T> PoiResult<T> readSheet(InputStream is, String password, PoiSheetDataArea poiSheetArea, Map<String, InColumn<?>> columns, InCallback<T> map, Class<T> rowClass, Map<String, Field> allField) {
+    public static <T> PoiResult<T> readSheet(InputStream is, String password, PoiSheetDataArea poiSheetArea, Map<String, InColumn<?>> columns, InCallback<T> map, Class<T> rowClass, Map<String, Field> allField, boolean autoField) {
         try (Workbook wb = WorkbookFactory.create(is, password)) {
             String sheetName = poiSheetArea.getSheetName();
             Sheet sheet;
@@ -1028,7 +1028,7 @@ public class OpsPoiUtil {
             } else {
                 sheet = wb.getSheet(sheetName);
             }
-            return readSheet(sheet, poiSheetArea.getHeaderRowCount(), poiSheetArea.getFooterRowCount(), columns, map, rowClass, allField);
+            return readSheet(sheet, poiSheetArea.getHeaderRowCount(), poiSheetArea.getFooterRowCount(), columns, map, rowClass, allField, autoField);
         } catch (Exception e) {
             LOG.error(e);
             return PoiResult.fail(new ErrorMessage(e));
@@ -1043,36 +1043,20 @@ public class OpsPoiUtil {
      * @param dataEndRowCount 尾部非数据行数量
      * @return PoiResult<T>
      */
-    public static <T> PoiResult<T> readSheet(Sheet sheet, int dataStartRow, int dataEndRowCount, Map<String, InColumn<?>> columns, InCallback<T> map, Class<T> rowClass, Map<String, Field> allField) {
+    public static <T> PoiResult<T> readSheet(Sheet sheet, int dataStartRow, int dataEndRowCount, Map<String, InColumn<?>> columns, InCallback<T> map, Class<T> rowClass, Map<String, Field> allField, boolean autoField) {
         boolean mapClass = PoiCommon.isMapData(rowClass);
         PoiResult<T> rsp = new PoiResult<>();
         List<T> beans = new ArrayList<>();
-        // 获取excel中所有图片
-        Set<String> hasImgField = new HashSet<>();
-        Collection<InColumn<?>> values = columns.values();
         int sheetIndex = sheet.getWorkbook().getSheetIndex(sheet);
         // 获取图片
-        Map<String, PictureData> pictures = null;
-        if (values.isEmpty()) {
-            pictures = getSheetPictures(sheetIndex, sheet);
-        } else {
-            for (InColumn<?> inColumn : values) {
-                Type genericType = mapClass ? inColumn.getCellVerifyRule().getType() : allField.get(inColumn.getField()).getGenericType();
-                if (genericType != null && (TypeUtils.equals(genericType, byte[].class) || TypeUtils.equals(genericType, Byte[].class))) {
-                    if (pictures == null) {
-                        pictures = getSheetPictures(sheetIndex, sheet);
-                    }
-                    hasImgField.add(inColumn.getField());
-                }
-            }
-        }
-
+        Map<String, PictureData> pictures = getSheetPictures(sheetIndex, sheet);
         // 公式计算初始化
         FormulaEvaluator formulaEvaluator = sheet.getWorkbook().getCreationHelper().createFormulaEvaluator();
         int rowStart = sheet.getFirstRowNum() + dataStartRow;
         // 获取真实的数据行尾数
         int rowEnd = getLastRealLastRow(sheet.getRow(sheet.getLastRowNum())) - dataEndRowCount;
         List<ErrorMessage> error = new ArrayList<>();
+        Map<String, InColumn<?>> mapAutoField = new HashMap<>();
         try {
             for (int j = rowStart; j <= rowEnd; j++) {
                 T data = rowClass.newInstance();
@@ -1080,53 +1064,54 @@ public class OpsPoiUtil {
                 if (row == null) {
                     continue;
                 }
-                boolean hasColumn = !columns.isEmpty();
                 int lastCellNum = row.getLastCellNum();
+
+                // 如果是map且自动填充
+                if (mapClass && autoField && mapAutoField.isEmpty()) {
+                    for (int i = 0; i < lastCellNum; i++) {
+                        String colChar = PoiCommon.convertToCellChar(i);
+                        mapAutoField.put(colChar, new InColumn<>(null, colChar, colChar));
+                    }
+
+                    // 自定义覆盖自动填充
+                    mapAutoField.putAll(columns);
+                    columns = mapAutoField;
+                }
                 for (int k = 0; k < lastCellNum; k++) {
                     String fieldName;
                     // 列名称获取
                     String columnIndexChar = PoiConstant.numsRefCell.get(k);
                     String location = columnIndexChar + (j + 1);
                     try {
-                        Object cellValue;
-                        InColumn<?> inColumn = null;
-                        if (hasColumn) {
-                            inColumn = columns.get(columnIndexChar);
-                            if (inColumn == null) {
-                                continue;
-                            }
-                            fieldName = inColumn.getField();
-                        } else {
-                            // 只有map的情况下, 才使用列字符串
-                            fieldName = columnIndexChar;
-                        }
-                        if (fieldName == null) {
+                        Object cellValue = null;
+                        InColumn<?> inColumn = columns.get(columnIndexChar);
+                        if (inColumn == null) {
                             continue;
                         }
-
+                        fieldName = inColumn.getField();
                         // 尝试设置图片
-                        if (pictures != null && hasImgField.contains(fieldName)) {
-                            String pictureIndex = sheetIndex + "," + j + "," + k;
-                            PictureData remove = pictures.remove(pictureIndex);
-                            cellValue = remove == null ? null : remove.getData();
-                        }else if (pictures != null && mapClass && !hasColumn) {
-                            // 处理导入map，有图片的情况
-                            String pictureIndex = sheetIndex + "," + j + "," + k;
-                            PictureData remove = pictures.remove(pictureIndex);
-                            if(remove == null){
-                                cellValue = getCellValue(row, k, formulaEvaluator);
-                            }else{
-                                cellValue = remove.getData();
+                        if (pictures != null) {
+                            if (!mapClass) {
+                                Type genericType = allField.get(fieldName).getGenericType();
+                                if ((TypeUtils.equals(genericType, byte[].class) || TypeUtils.equals(genericType, Byte[].class))) {
+                                    String pictureIndex = sheetIndex + "," + j + "," + k;
+                                    PictureData remove = pictures.remove(pictureIndex);
+                                    cellValue = remove == null ? null : remove.getData();
+                                }
+                            } else {
+                                String pictureIndex = sheetIndex + "," + j + "," + k;
+                                PictureData remove = pictures.remove(pictureIndex);
+                                cellValue = remove == null ? null : remove.getData();
                             }
-                        } else {
+                        }
+
+                        if (cellValue == null) {
                             cellValue = getCellValue(row, k, formulaEvaluator);
                         }
 
                         // 校验类型转换处理
-                        if (inColumn != null) {
-                            Type genericType = mapClass ? null : allField.get(fieldName).getGenericType();
-                            cellValue = inColumn.getCellVerifyRule().handle(j, k, cellValue, genericType);
-                        }
+                        Type genericType = mapClass ? null : allField.get(fieldName).getGenericType();
+                        cellValue = inColumn.getCellVerifyRule().handle(j, k, cellValue, genericType);
 
                         if (mapClass) {
                             ((Map) data).put(fieldName, cellValue);

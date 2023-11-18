@@ -7,10 +7,7 @@ import org.apache.poi.ss.usermodel.Font;
 import org.apache.poi.ss.util.CellRangeAddress;
 
 import java.lang.reflect.Field;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * 一些公用的方法
@@ -49,12 +46,12 @@ public class PoiCommon {
      * @return Map<String, Field>
      */
     public static Map<String, Field> getAllFields(Class<?> t) {
-        Map<String, Field> field = new HashMap<>();
+        Map<String, Field> field = new LinkedHashMap<>();
         List<Field> allFieldsList = FieldUtils.getAllFieldsList(t);
-        allFieldsList.forEach(n -> {
-            n.setAccessible(true);
-            field.put(n.getName(), n);
-        });
+        for (Field f : allFieldsList) {
+            f.setAccessible(true);
+            field.put(f.getName(), f);
+        }
         return field;
     }
 

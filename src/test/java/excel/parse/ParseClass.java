@@ -39,6 +39,9 @@ public class ParseClass {
                 .from("src/test/java/excel/parse/excel/simpleExport.xlsx")
                 // 指定数据区域
                 .opsSheet(0, 1, 0)
+                .opsColumn(true)
+                .field("A","a")
+                .done()
                 .parse();
         if (!parse.hasError()) {
             // 输出验证不通过的信息
@@ -51,12 +54,11 @@ public class ParseClass {
     @Test
     public void parseMapVail() {
         name.set("parseMap1");
-        PoiResult<HashMap> parse = ExcelHelper.opsParse(HashMap.class)
+        PoiResult<ProjectEvaluate> parse = ExcelHelper.opsParse(ProjectEvaluate.class)
                 .from("src/test/java/excel/parse/excel/simpleExport.xlsx")
                 // 指定数据区域
                 .opsSheet(0, 1, 0)
-                .opsColumn()
-                .field("H", "name").type(int.class)
+                .opsColumn(true)
                 .done()
                 .parse();
         if (!parse.hasError()) {
