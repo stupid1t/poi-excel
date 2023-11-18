@@ -1,7 +1,6 @@
 package com.github.stupdit1t.excel.core.parse;
 
 import com.github.stupdit1t.excel.core.AbsParent;
-import com.github.stupdit1t.excel.handler.BaseVerifyRule;
 
 /**
  * 列的定义
@@ -23,7 +22,7 @@ public class InColumn<R> extends AbsParent<OpsColumn<R>> {
     /**
      * 验证规则
      */
-    BaseVerifyRule<R> cellVerifyRule = new BaseVerifyRule<>(this.parent);
+    BaseParseRule<R> cellVerifyRule = new BaseParseRule<>(this.parent.parent);
 
     public InColumn(OpsColumn<R> opsColumn, String index, String field) {
         super(opsColumn);
@@ -45,7 +44,7 @@ public class InColumn<R> extends AbsParent<OpsColumn<R>> {
      *
      * @return BaseVerifyRule
      */
-    public BaseVerifyRule<R> getCellVerifyRule() {
+    public BaseParseRule<R> getCellVerifyRule() {
         return cellVerifyRule;
     }
 }

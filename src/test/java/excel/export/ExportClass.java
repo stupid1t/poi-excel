@@ -133,11 +133,17 @@ public class ExportClass {
         name.set("simpleExport");
         ExcelHelper.opsExport(PoiWorkbookType.XLS)
                 .opsSheet(data)
-                .autoNum()
-                .opsHeader().simple().texts("序号", "项目名称", "项目图", "所属区域", "省份", "市", "项目所属人", "项目领导人", "得分", "平均分", "创建时间").done()
-                .opsColumn().fields("projectName", "img", "areaName", "province", "city", "people", "leader").field("scount").width(10000).done().field("avg").pattern("0.00%").done().fields("createTime").done()
-                .done()
-                .export("src/test/java/excel/export/excel/simpleExport.xls");
+                    .autoNum()
+                    .opsHeader()
+                        .simple()
+                        .texts("序号", "项目名称", "项目图", "所属区域", "省份", "市", "项目所属人", "项目领导人", "得分", "平均分", "创建时间")
+                        .done()
+                    .opsColumn()
+                        .fields("projectName", "img", "areaName", "province", "city", "people", "leader")
+                        .field("scount").width(10000)
+                        .field("avg").pattern("0.00%").fields("createTime")
+                        .done()
+                    .export("src/test/java/excel/export/excel/simpleExport.xls");
     }
 
     /**
@@ -203,45 +209,45 @@ public class ExportClass {
                 .fields("projectName", "img", "areaName", "province", "people")
                 // 个性化导出字段设置
                 .field("city")
-                // 超出宽度换行显示
-                .wrapText()
-                // 下拉框
-                .dropdown("北京", "西安", "上海", "广州")
-                // 行数据相同合并
-                .mergerRepeat()
-                // 行高单独设置
-                .height(500)
-                // 批注
-                .comment("城市选择下拉框内容哦")
-                // 宽度设置
-                .width(6000)
-                // 字段导出回调
-                .map((val, row, style, rowIndex) -> {
-                    // 如果是北京, 设置背景色为黄色
-                    if (val.equals("北京")) {
-                        style.setBackColor(IndexedColors.YELLOW);
-                        style.setHeight(900);
-                        style.setComment("北京搞红色");
-                        // 属性值自定义
-                        int index = rowIndex + 1;
-                        return "=J" + index + "+K" + index;
-                    }
-                    return val;
-                }).done()
+                    // 超出宽度换行显示
+                    .wrapText()
+                    // 下拉框
+                    .dropdown("北京", "西安", "上海", "广州")
+                    // 行数据相同合并
+                    .mergerRepeat()
+                    // 行高单独设置
+                    .height(500)
+                    // 批注
+                    .comment("城市选择下拉框内容哦")
+                    // 宽度设置
+                    .width(6000)
+                    // 字段导出回调
+                    .map((val, row, style, rowIndex) -> {
+                        // 如果是北京, 设置背景色为黄色
+                        if (val.equals("北京")) {
+                            style.setBackColor(IndexedColors.YELLOW);
+                            style.setHeight(900);
+                            style.setComment("北京搞红色");
+                            // 属性值自定义
+                            int index = rowIndex + 1;
+                            return "=J" + index + "+K" + index;
+                        }
+                        return val;
+                    })
                 .field("createTime")
-                // 区域相同, 合并时间
-                .mergerRepeat("areaName")
-                .pattern("yyyy-MM-dd")
-                // 居左
-                .align(HorizontalAlignment.LEFT)
-                // 居中
-                .valign(VerticalAlignment.CENTER)
-                // 背景黄色
-                .backColor(IndexedColors.YELLOW)
-                // 金色字体
-                .color(IndexedColors.GOLD).done()
+                    // 区域相同, 合并时间
+                    .mergerRepeat("areaName")
+                    .pattern("yyyy-MM-dd")
+                    // 居左
+                    .align(HorizontalAlignment.LEFT)
+                    // 居中
+                    .valign(VerticalAlignment.CENTER)
+                    // 背景黄色
+                    .backColor(IndexedColors.YELLOW)
+                    // 金色字体
+                    .color(IndexedColors.GOLD)
                 .fields("leader", "scount")
-                .field("avg").pattern("0.00").done()
+                .field("avg").pattern("0.00")
                 .done()
                 // 尾行设计
                 .opsFooter()
@@ -252,7 +258,6 @@ public class ExportClass {
                 .text(String.format("=AVERAGE(K3:K%s)", 2 + data.size()), "1,1,K,K")
                 // 坐标合并
                 .text("作者:625", 0, 0, 8, 8)
-                .done()
                 .done()
                 // 执行导出
                 .export("src/test/java/excel/export/excel/simpleExport2.xlsx")
@@ -270,42 +275,41 @@ public class ExportClass {
         name.set("complexExport");
         ExcelHelper.opsExport(PoiWorkbookType.XLSX)
                 .opsSheet(data)
-                .autoNum()
+                    .autoNum()
+                // 自定义合并sheet
+                    .mergeCell("F4:G13")
+                    .addImage(imageParseBytes(new File("C:\\Users\\35361\\Documents\\code\\self\\poi-excel\\src\\test\\java\\excel\\export\\data\\1.jpg")), "F4:G13")
                 .opsHeader()
                 // 不冻结表头
-                .noFreeze()
-                // 复杂表头模式, 支持三种合并方式, 1数字坐标 2字母坐标 3Excel坐标
-                .complex()
-                // excel坐标
-                .text("项目资源统计", "A1:K1")
-                // 字母坐标
-                .text("序号", "2,3,A,A")
-                // 数字坐标
-                .text("基本信息", 1, 1, 1, 4)
-                .text("项目名称", "3,3,B,B")
-                .text("所属区域", "3,3,C,C")
-                .text("省份", "3,3,D,D")
-                .text("市", "3,3,E,E")
-                .text("项目所属人", "2,3,F,F")
-                .text("市项目领导人", "2,3,G,G")
-                .text("分值", "2,2,H,I")
-                .text("得分", "3,3,H,H")
-                .text("平均分", "3,3,I,I")
-                .text("项目图片", "2,3,J,J")
-                .text("创建时间", "2,3,K,K")
-                .done()
+                    .noFreeze()
+                    // 复杂表头模式, 支持三种合并方式, 1数字坐标 2字母坐标 3Excel坐标
+                    .complex()
+                        // excel坐标
+                        .text("项目资源统计", "A1:K1")
+                        // 字母坐标
+                        .text("序号", "2,3,A,A")
+                        // 数字坐标
+                        .text("基本信息", 1, 1, 1, 4)
+                        .text("项目名称", "3,3,B,B")
+                        .text("所属区域", "3,3,C,C")
+                        .text("省份", "3,3,D,D")
+                        .text("市", "3,3,E,E")
+                        .text("项目所属人", "2,3,F,F")
+                        .text("市项目领导人", "2,3,G,G")
+                        .text("分值", "2,2,H,I")
+                        .text("得分", "3,3,H,H")
+                        .text("平均分", "3,3,I,I")
+                        .text("项目图片", "2,3,J,J")
+                        .text("创建时间", "2,3,K,K")
+                        .done()
                 .opsColumn()
-                .fields("projectName", "areaName", "province", "city", "people", "leader", "scount", "avg", "img", "createTime")
-                .done()
+                    .fields("projectName", "areaName", "province", "city", "people", "leader", "scount", "avg", "img", "createTime")
+                    .done()
                 .opsFooter()
-                .text("合计:", 0, 1, 0, 2)
-                // 尾行合计,D1,K2中的 纵坐标从1开始计算,会自动计算数据行高度!  切记! 切记! 切记!
-                .text("=SUM(H4:H13)", "D1:K2")
-                .done()
-                // 自定义合并sheet
-                .mergeCell("F4:G13")
-                .addImage(imageParseBytes(new File("C:\\Users\\35361\\Documents\\code\\self\\poi-excel\\src\\test\\java\\excel\\export\\data\\1.jpg")), "F4:G13")
-                .done()
+                    .text("合计:", 0, 1, 0, 2)
+                    // 尾行合计,D1,K2中的 纵坐标从1开始计算,会自动计算数据行高度!  切记! 切记! 切记!
+                    .text("=SUM(H4:H13)", "D1:K2")
+                    .done()
                 .export("src/test/java/excel/export/excel/complexExport.xlsx");
     }
 
@@ -319,9 +323,13 @@ public class ExportClass {
         name.set("complexObject");
         ExcelHelper.opsExport(PoiWorkbookType.XLS)
                 .opsSheet(complexData)
-                .opsHeader().simple().texts("學生姓名", "學生姓名", "學生姓名", "所在班級", "所在學校", "更多父母姓名").done()
-                .opsColumn().fields("name", "name").field("name").color(IndexedColors.GOLD).done().fields("classRoom.name", "classRoom.school.name", "moreInfo.parent.age").done()
-                .done()
+                .opsHeader()
+                    .simple().texts("學生姓名", "學生姓名", "學生姓名", "所在班級", "所在學校", "更多父母姓名").done()
+                .opsColumn()
+                    .fields("name", "name")
+                    .field("name").color(IndexedColors.GOLD)
+                    .fields("classRoom.name", "classRoom.school.name", "moreInfo.parent.age")
+                    .done()
                 .export("src/test/java/excel/export/excel/complexObject.xls");
     }
 
@@ -337,7 +345,6 @@ public class ExportClass {
                 .opsSheet(mapData)
                 .opsHeader().simple().texts("姓名", "年龄").done()
                 .opsColumn().fields("name", "age").done()
-                .done()
                 .export("src/test/java/excel/export/excel/mapExport.xlsx");
     }
 
@@ -357,15 +364,14 @@ public class ExportClass {
                 .opsSheet(Collections.emptyList())
                 .opsHeader().simple().texts("宝宝姓名", "手机号码", "宝宝生日", "月龄", "宝宝性别", "来源渠道", "备注").done()
                 .opsColumn()
-                .field("宝宝姓名").done()
-                .field("手机号码").verifyText("11~11", "请输入11位的手机号码！").done()
-                .field("宝宝生日").pattern("yyyy-MM-dd").verifyDate("2000-01-01~3000-12-31").done()
-                .field("月龄").verifyCustom("VALUE(F3:F6000)", "月齡格式：如1年2个月则输入14").done()
-                .field("宝宝性别").dropdown("男", "女").done()
-                .field("来源渠道").dropdown(list).done()
-                .field("备注").done()
-                .done()
-                .done()
+                    .field("宝宝姓名")
+                    .field("手机号码").verifyText("11~11", "请输入11位的手机号码！")
+                    .field("宝宝生日").pattern("yyyy-MM-dd").verifyDate("2000-01-01~3000-12-31")
+                    .field("月龄").verifyCustom("VALUE(F3:F6000)", "月齡格式：如1年2个月则输入14")
+                    .field("宝宝性别").dropdown("男", "女")
+                    .field("来源渠道").dropdown(list)
+                    .field("备注")
+                    .done()
                 .export("src/test/java/excel/export/excel/templateExport.xls");
     }
 
@@ -381,20 +387,20 @@ public class ExportClass {
                 // 多线程导出多sheet, 默认为forkjoin线程池
                 .parallelSheet()
                 .opsSheet(mapData)
-                .sheetName("sheet1")
-                .opsHeader().simple().texts("姓名", "年龄").done()
-                .opsColumn().fields("name", "age").done()
-                .done()
+                    .sheetName("sheet1")
+                    .opsHeader().simple().texts("姓名", "年龄").done()
+                    .opsColumn().fields("name", "age").done()
+                    .done()
                 .opsSheet(complexData)
-                .sheetName("sheet2")
-                .opsHeader().simple().texts("學生姓名", "所在班級", "所在學校", "更多父母姓名").done()
-                .opsColumn().fields("name", "classRoom.name", "classRoom.school.name", "moreInfo.parent.age").done()
-                .done()
+                    .sheetName("sheet2")
+                    .opsHeader().simple().texts("學生姓名", "所在班級", "所在學校", "更多父母姓名").done()
+                    .opsColumn().fields("name", "classRoom.name", "classRoom.school.name", "moreInfo.parent.age").done()
+                    .done()
                 .opsSheet(bigData)
-                .sheetName("sheet3")
-                .opsHeader().simple().texts("项目名称", "项目图", "所属区域", "省份", "市", "项目所属人", "项目领导人", "得分", "平均分", "创建时间").done()
-                .opsColumn().fields("projectName", "img", "areaName", "province", "city", "people", "leader", "scount", "avg", "createTime").done()
-                .done()
+                    .sheetName("sheet3")
+                    .opsHeader().simple().texts("项目名称", "项目图", "所属区域", "省份", "市", "项目所属人", "项目领导人", "得分", "平均分", "创建时间").done()
+                    .opsColumn().fields("projectName", "img", "areaName", "province", "city", "people", "leader", "scount", "avg", "createTime").done()
+                    .done()
                 .export("src/test/java/excel/export/excel/mulSheet.xlsx");
     }
 
@@ -412,7 +418,6 @@ public class ExportClass {
                 .sheetName("1")
                 .opsHeader().simple().texts("项目名称", "项目图", "所属区域", "省份", "市", "项目所属人", "项目领导人", "得分", "平均分", "创建时间").done()
                 .opsColumn().fields("projectName", "img", "areaName", "province", "city", "people", "leader", "scount", "avg", "createTime").done()
-                .done()
                 .export("src/test/java/excel/export/excel/bigData.xlsx");
     }
 

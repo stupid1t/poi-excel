@@ -1,9 +1,9 @@
-package com.github.stupdit1t.excel.handler;
+package com.github.stupdit1t.excel.core.parse;
 
 import com.github.stupdit1t.excel.common.PoiConstant;
 import com.github.stupdit1t.excel.common.PoiException;
 import com.github.stupdit1t.excel.core.AbsParent;
-import com.github.stupdit1t.excel.core.parse.OpsColumn;
+import com.github.stupdit1t.excel.common.TypeHandler;
 import org.apache.commons.lang3.ObjectUtils;
 import org.apache.commons.lang3.reflect.TypeUtils;
 
@@ -17,7 +17,7 @@ import java.util.function.Function;
  *
  * @author 625
  */
-public class BaseVerifyRule<R> extends AbsParent<OpsColumn<R>> implements IVerifyRule<R> {
+public class BaseParseRule<R> extends AbsParent<OpsSheet<R>> implements IParseRule<R> {
 
     /**
      * 是否可为空
@@ -62,7 +62,7 @@ public class BaseVerifyRule<R> extends AbsParent<OpsColumn<R>> implements IVerif
     /**
      * 构建校验规则
      */
-    public BaseVerifyRule(OpsColumn<R> parent) {
+    public BaseParseRule(OpsSheet<R> parent) {
         super(parent);
     }
 
@@ -72,7 +72,7 @@ public class BaseVerifyRule<R> extends AbsParent<OpsColumn<R>> implements IVerif
      * @return InColumn<R>
      */
     @Override
-    public IVerifyRule<R> notNull() {
+    public IParseRule<R> notNull() {
         this.allowNull = false;
         return this;
     }
@@ -83,7 +83,7 @@ public class BaseVerifyRule<R> extends AbsParent<OpsColumn<R>> implements IVerif
      * @return InColumn<R>
      */
     @Override
-    public IVerifyRule<R> trim() {
+    public IParseRule<R> trim() {
         this.trim = true;
         return this;
     }
@@ -94,7 +94,7 @@ public class BaseVerifyRule<R> extends AbsParent<OpsColumn<R>> implements IVerif
      * @return InColumn<R>
      */
     @Override
-    public BaseVerifyRule<R> defaultValue(Object defaultValue) {
+    public BaseParseRule<R> defaultValue(Object defaultValue) {
         this.defaultValue = defaultValue;
         return this;
     }
@@ -104,7 +104,7 @@ public class BaseVerifyRule<R> extends AbsParent<OpsColumn<R>> implements IVerif
      * 转换or映射or判断
      */
     @Override
-    public BaseVerifyRule<R> map(Function<Object, Object> mapping) {
+    public BaseParseRule<R> map(Function<Object, Object> mapping) {
         this.mapping = mapping;
         return this;
     }
@@ -116,9 +116,14 @@ public class BaseVerifyRule<R> extends AbsParent<OpsColumn<R>> implements IVerif
      * @return
      */
     @Override
-    public BaseVerifyRule<R> type(Class<?> type) {
+    public BaseParseRule<R> type(Class<?> type) {
         this.type = type;
         return this;
+    }
+
+    @Override
+    public IParseRule<R> field(String index, String field) {
+        return this.parent.opsColumn().field(index, field);
     }
 
     /**
@@ -127,7 +132,7 @@ public class BaseVerifyRule<R> extends AbsParent<OpsColumn<R>> implements IVerif
      * @param regex 格式
      */
     @Override
-    public BaseVerifyRule<R> regex(String regex) {
+    public BaseParseRule<R> regex(String regex) {
         this.regex = regex;
         return this;
     }
@@ -138,13 +143,13 @@ public class BaseVerifyRule<R> extends AbsParent<OpsColumn<R>> implements IVerif
      * @param format 格式
      */
     @Override
-    public BaseVerifyRule<R> format(String format) {
+    public BaseParseRule<R> format(String format) {
         this.format = format;
         return this;
     }
 
     @Override
-    public IVerifyRule<R> scale(int scale) {
+    public IParseRule<R> scale(int scale) {
         this.scale = scale;
         return this;
     }

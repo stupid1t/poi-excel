@@ -56,7 +56,7 @@ public class ParseClass {
                 // 指定数据区域
                 .opsSheet(0, 1, 0)
                 .opsColumn()
-                .field("H","name").type(int.class).done()
+                .field("H", "name").type(int.class)
                 .done()
                 .parse();
         if (!parse.hasError()) {
@@ -99,39 +99,39 @@ public class ParseClass {
                 .opsSheet(0, 1, 0)
                 // 自定义列映射
                 .opsColumn()
-                // 强制输入字符串, 且不能为空
-                .field("A", "projectName").map((value) -> {
-                    if ("中青旅0".equals(value)) {
-                        throw new PoiException("数据有误!");
-                    }
-                    if ("中青旅1".equals(value)) {
-                        System.out.println(1 / 0);
-                    }
-                    // 重写值
-                    return value + "-Hello";
-                }).notNull().done()
-                // img类型. 导入图片必须这样写, 且字段为byte[]
-                .field("B", "img").type(byte[].class).done()
-                .field("C", "areaName").done()
-                .field("D", "province").done()
-                .field("E", "city").map(mapping::get).done()
-                // 不能为空
-                .field("F", "people").done()
-                // 不能为空
-                .field("G", "leader").defaultValue("巨无霸").done()
-                // 必须是数字
-                .field("H", "scount").notNull().done()
-                .field("I", "avg").notNull().done()
-                .field("J", "createTime").format("yyyy/MM/dd").trim().done()
-                .done()
-                .map((row, index) -> {
-                    // 行回调, 可以在这里改数据
-                    System.out.println("当前是第:" + index + " 数据是: " + row);
-                    Object projectName = row.get("projectName");
-                    if ("中青旅2-Hello".equals(projectName)) {
-                        throw new NullPointerException("");
-                    }
-                })
+                    // 强制输入字符串, 且不能为空
+                    .field("A", "projectName").map((value) -> {
+                        if ("中青旅0".equals(value)) {
+                            throw new PoiException("数据有误!");
+                        }
+                        if ("中青旅1".equals(value)) {
+                            System.out.println(1 / 0);
+                        }
+                        // 重写值
+                        return value + "-Hello";
+                    }).notNull()
+                    // img类型. 导入图片必须这样写, 且字段为byte[]
+                    .field("B", "img").type(byte[].class)
+                    .field("C", "areaName")
+                    .field("D", "province")
+                    .field("E", "city").map(mapping::get)
+                    // 不能为空
+                    .field("F", "people")
+                    // 不能为空
+                    .field("G", "leader").defaultValue("巨无霸")
+                    // 必须是数字
+                    .field("H", "scount").notNull()
+                    .field("I", "avg").type(long.class).scale(2).notNull()
+                    .field("J", "createTime").format("yyyy/MM/dd").trim()
+                    .done()
+                    .map((row, index) -> {
+                        // 行回调, 可以在这里改数据
+                        System.out.println("当前是第:" + index + " 数据是: " + row);
+                        Object projectName = row.get("projectName");
+                        if ("中青旅2-Hello".equals(projectName)) {
+                            throw new NullPointerException("");
+                        }
+                    })
                 .parse();
 
         if (result.hasError()) {
@@ -169,20 +169,20 @@ public class ParseClass {
                     }
                     // 重写值
                     return val + "-Hello";
-                }).notNull().done()
+                }).notNull()
                 // img类型. 导入图片必须这样写, 且字段为byte[]
-                .field("B", "img").done()
-                .field("C", "areaName").done()
-                .field("D", "province").done()
-                .field("E", "city").done()
+                .field("B", "img")
+                .field("C", "areaName")
+                .field("D", "province")
+                .field("E", "city")
                 // 不能为空
-                .field("F", "people").regex("\\d+").defaultValue("1").notNull().done()
+                .field("F", "people").regex("\\d+").defaultValue("1").notNull()
                 // 不能为空
-                .field("G", "leader").defaultValue("巨无霸").done()
+                .field("G", "leader").defaultValue("巨无霸")
                 // 必须是数字
-                .field("H", "scount").done()
-                .field("I", "avg").notNull().done()
-                .field("J", "createTime").format("yyyy").trim().done()
+                .field("H", "scount")
+                .field("I", "avg").notNull()
+                .field("J", "createTime").format("yyyy").trim()
                 .done()
                 .map((row, index) -> {
                     // 行回调, 可以在这里改数据

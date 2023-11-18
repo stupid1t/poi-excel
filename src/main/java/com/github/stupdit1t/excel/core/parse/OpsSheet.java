@@ -5,7 +5,7 @@ import com.github.stupdit1t.excel.common.ErrorMessage;
 import com.github.stupdit1t.excel.common.PoiResult;
 import com.github.stupdit1t.excel.common.PoiSheetDataArea;
 import com.github.stupdit1t.excel.core.AbsParent;
-import com.github.stupdit1t.excel.core.ExcelUtil;
+import com.github.stupdit1t.excel.core.OpsPoiUtil;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.poi.openxml4j.opc.OPCPackage;
 import org.apache.poi.openxml4j.opc.PackageAccess;
@@ -210,14 +210,14 @@ public class OpsSheet<R> extends AbsParent<OpsParse<R>> {
         }
         if (this.parent.fromMode == 1) {
             if (this.parent.password != null) {
-                return ExcelUtil.readSheet(this.parent.fromPath, this.parent.password, poiSheetArea, columns, this.map, this.parent.rowClass, this.parent.allFields);
+                return OpsPoiUtil.readSheet(this.parent.fromPath, this.parent.password, poiSheetArea, columns, this.map, this.parent.rowClass, this.parent.allFields);
             }
-            return ExcelUtil.readSheet(this.parent.fromPath, poiSheetArea, columns, this.map, this.parent.rowClass, this.parent.allFields);
+            return OpsPoiUtil.readSheet(this.parent.fromPath, poiSheetArea, columns, this.map, this.parent.rowClass, this.parent.allFields);
         } else if (this.parent.fromMode == 2) {
             if (this.parent.password != null) {
-                return ExcelUtil.readSheet(this.parent.fromStream, this.parent.password, poiSheetArea, columns, this.map, this.parent.rowClass, this.parent.allFields);
+                return OpsPoiUtil.readSheet(this.parent.fromStream, this.parent.password, poiSheetArea, columns, this.map, this.parent.rowClass, this.parent.allFields);
             }
-            return ExcelUtil.readSheet(this.parent.fromStream, poiSheetArea, columns, this.map, this.parent.rowClass, this.parent.allFields);
+            return OpsPoiUtil.readSheet(this.parent.fromStream, poiSheetArea, columns, this.map, this.parent.rowClass, this.parent.allFields);
         }
         return PoiResult.fail(null);
     }

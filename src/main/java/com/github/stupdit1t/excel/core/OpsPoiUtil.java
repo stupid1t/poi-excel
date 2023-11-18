@@ -52,14 +52,14 @@ import java.util.stream.Collectors;
  *
  * @author 625
  */
-public class ExcelUtil {
+public class OpsPoiUtil {
 
-    private static final Logger LOG = LogManager.getLogger(ExcelUtil.class);
+    private static final Logger LOG = LogManager.getLogger(OpsPoiUtil.class);
 
     /**
      * 私有
      */
-    private ExcelUtil() {
+    private OpsPoiUtil() {
     }
 
     /**
@@ -259,7 +259,7 @@ public class ExcelUtil {
 
         String sheetName = exportRules.getSheetName();
         Sheet sheet = safeCreateSheet(wb, sheetName);
-        ExcelUtil.printSetup(sheet);
+        OpsPoiUtil.printSetup(sheet);
 
         // ----------------------- 表头设置 start ------------------------
 
@@ -454,7 +454,7 @@ public class ExcelUtil {
      */
     private static synchronized Drawing<?> safeCreateDrawing(Sheet sheet) {
         Drawing<?> createDrawingPatriarch;
-        synchronized (ExcelUtil.class) {
+        synchronized (OpsPoiUtil.class) {
             createDrawingPatriarch = sheet.createDrawingPatriarch();
         }
         return createDrawingPatriarch;

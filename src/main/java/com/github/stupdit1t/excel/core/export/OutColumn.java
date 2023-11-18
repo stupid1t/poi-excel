@@ -13,7 +13,7 @@ import java.util.Collection;
  *
  * @author 625
  */
-public class OutColumn<R> extends AbsParent<OpsColumn<R>> implements Cloneable {
+public class OutColumn<R> extends AbsParent<OpsSheet<R>> {
 
     /**
      * 字段名称
@@ -75,8 +75,14 @@ public class OutColumn<R> extends AbsParent<OpsColumn<R>> implements Cloneable {
      */
     OutCallback<R> outHandle;
 
+    /**
+     * 当前父级
+     */
+    OpsColumn<R> opsColumn;
+
     public OutColumn(OpsColumn<R> opsColumn, String field) {
-        super(opsColumn);
+        super(opsColumn.parent);
+        this.opsColumn = opsColumn;
         this.field = field;
     }
 
@@ -342,6 +348,36 @@ public class OutColumn<R> extends AbsParent<OpsColumn<R>> implements Cloneable {
     public OutColumn<R> map(OutCallback<R> map) {
         this.outHandle = map;
         return this;
+    }
+
+    /**
+     * 导出字段
+     *
+     * @param field 字段
+     * @return OutColumn
+     */
+    public OutColumn<R> field(String field) {
+        return this.opsColumn.field(field);
+    }
+
+    /**
+     * 字段
+     *
+     * @param fields 字段
+     * @return OpsColumn
+     */
+    public OpsColumn<R> fields(String... fields) {
+        return this.opsColumn.fields(fields);
+    }
+
+    /**
+     * 字段
+     *
+     * @param fields 字段
+     * @return OpsColumn
+     */
+    public OpsColumn<R> fields(Collection<String> fields) {
+        return this.opsColumn.fields(fields);
     }
 
     /**

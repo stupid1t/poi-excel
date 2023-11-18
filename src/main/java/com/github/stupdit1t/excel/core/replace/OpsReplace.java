@@ -1,6 +1,6 @@
 package com.github.stupdit1t.excel.core.replace;
 
-import com.github.stupdit1t.excel.core.ExcelUtil;
+import com.github.stupdit1t.excel.core.OpsPoiUtil;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.poi.ss.usermodel.Workbook;
 
@@ -91,7 +91,7 @@ public class OpsReplace {
      * @param variable 变量
      * @return OpsReplace
      */
-    public OpsReplace variables(Map<String, Object> variable) {
+    public OpsReplace var(Map<String, Object> variable) {
         this.variable.putAll(variable);
         return this;
     }
@@ -103,7 +103,7 @@ public class OpsReplace {
      * @param value 变量值
      * @return OpsReplace
      */
-    public OpsReplace variable(String key, Object value) {
+    public OpsReplace var(String key, Object value) {
         this.variable.put(key, value);
         return this;
     }
@@ -120,15 +120,15 @@ public class OpsReplace {
         final Workbook workbook;
         if (this.fromMode == 1) {
             if(this.password != null){
-                workbook = ExcelUtil.readExcelWrite(fromPath, this.password, variable);
+                workbook = OpsPoiUtil.readExcelWrite(fromPath, this.password, variable);
             }else{
-                workbook = ExcelUtil.readExcelWrite(fromPath, variable);
+                workbook = OpsPoiUtil.readExcelWrite(fromPath, variable);
             }
         } else {
             if(this.password != null){
-                workbook = ExcelUtil.readExcelWrite(fromStream, this.password, variable);
+                workbook = OpsPoiUtil.readExcelWrite(fromStream, this.password, variable);
             }else{
-                workbook = ExcelUtil.readExcelWrite(fromStream, variable);
+                workbook = OpsPoiUtil.readExcelWrite(fromStream, variable);
             }
         }
         return workbook;
@@ -141,7 +141,7 @@ public class OpsReplace {
      */
     public void replaceTo(String path) {
         Workbook workbook = replace();
-        ExcelUtil.export(workbook, path, this.password);
+        OpsPoiUtil.export(workbook, path, this.password);
     }
 
     /**
@@ -151,7 +151,7 @@ public class OpsReplace {
      */
     public void replaceTo(OutputStream out) {
         Workbook workbook = replace();
-        ExcelUtil.export(workbook, out, this.password);
+        OpsPoiUtil.export(workbook, out, this.password);
     }
 
     /**
@@ -162,6 +162,6 @@ public class OpsReplace {
      */
     public void replaceTo(HttpServletResponse response, String filename) {
         Workbook workbook = replace();
-        ExcelUtil.export(workbook, response, filename, this.password);
+        OpsPoiUtil.export(workbook, response, filename, this.password);
     }
 }
