@@ -1,9 +1,7 @@
 package com.github.stupdit1t.excel.core.parse;
 
-import com.github.stupdit1t.excel.common.PoiConstant;
-import com.github.stupdit1t.excel.common.PoiException;
+import com.github.stupdit1t.excel.common.*;
 import com.github.stupdit1t.excel.core.AbsParent;
-import com.github.stupdit1t.excel.common.TypeHandler;
 import org.apache.commons.lang3.ObjectUtils;
 import org.apache.commons.lang3.reflect.TypeUtils;
 
@@ -132,6 +130,21 @@ public class BaseParseRule<R> extends AbsParent<OpsSheet<R>> implements IParseRu
         return this.opsColumn.field(index, field);
     }
 
+    @Override
+    public IParseRule<R> field(Col index, String field) {
+        return this.opsColumn.field(index, field);
+    }
+
+    @Override
+    public <F> IParseRule<R> field(String index, Fn<R, F> field) {
+        return this.opsColumn.field(index, field);
+    }
+
+    @Override
+    public <F> IParseRule<R> field(Col index, Fn<R, F> field) {
+        return this.opsColumn.field(index, field);
+    }
+
     /**
      * 正则校验
      *
@@ -187,38 +200,45 @@ public class BaseParseRule<R> extends AbsParent<OpsSheet<R>> implements IParseRu
         if (ObjectUtils.isEmpty(cellValue)) {
             return this.defaultValue;
         }
-
-        // 数据映射转换，也可做判断
+        // 自定义逻辑转换
         if (mapping != null) {
             cellValue = mapping.apply(cellValue);
-        }
-        if (typeCls == null) {
-            typeCls = this.type;
-        }
-
-        if (typeCls != null) {
-            // 类型转换
-            if (TypeUtils.equals(String.class, typeCls)) {
-                cellValue = TypeHandler.stringValue(cellValue, this.trim, this.regex);
-            } else if (TypeUtils.equals(Short.class, typeCls) || TypeUtils.equals(short.class, typeCls)) {
-                cellValue = TypeHandler.shortValue(cellValue, this.trim, this.regex);
-            } else if (TypeUtils.equals(Long.class, typeCls) || TypeUtils.equals(long.class, typeCls)) {
-                cellValue = TypeHandler.longValue(cellValue, this.trim, this.regex);
-            } else if (TypeUtils.equals(Integer.class, typeCls) || TypeUtils.equals(int.class, typeCls)) {
-                cellValue = TypeHandler.intValue(cellValue, this.trim, this.regex);
-            } else if (TypeUtils.equals(Float.class, typeCls) || TypeUtils.equals(float.class, typeCls)) {
-                cellValue = TypeHandler.floatValue(cellValue, this.trim, this.regex);
-            } else if (TypeUtils.equals(Double.class, typeCls) || TypeUtils.equals(double.class, typeCls)) {
-                cellValue = TypeHandler.doubleValue(cellValue, this.trim, this.regex, this.scale);
-            } else if (TypeUtils.equals(Date.class, typeCls)) {
-                cellValue = TypeHandler.dateValue(cellValue, this.trim, this.regex, this.format, false);
-            } else if (TypeUtils.equals(Boolean.class, typeCls) || TypeUtils.equals(boolean.class, typeCls)) {
-                cellValue = TypeHandler.boolValue(cellValue, this.trim, this.regex);
-            } else if (TypeUtils.equals(byte[].class, typeCls) || TypeUtils.equals(Byte[].class, typeCls)) {
-                cellValue = TypeHandler.imgValue(cellValue, this.trim, this.regex);
-            } else if (TypeUtils.equals(BigDecimal.class, typeCls)) {
-                cellValue = TypeHandler.decimalValue(cellValue, this.trim, this.regex, this.scale);
+            cellValue = handleValue(cellValue, cellValue.getClass());
+        }else{
+            if (typeCls == null) {
+                typeCls = this.type;
             }
+            // 如果还为空，取cellValue的类型
+            if (typeCls == null) {
+                typeCls = cellValue.getClass();
+            }
+            // 类型转换
+            cellValue = handleValue(cellValue, typeCls);
+        }
+        return cellValue;
+    }
+
+    private Object handleValue(Object cellValue, Type typeCls) throws Exception {
+        if (TypeUtils.equals(String.class, typeCls)) {
+            cellValue = TypeHandler.stringValue(cellValue, this.trim, this.regex);
+        } else if (TypeUtils.equals(Short.class, typeCls) || TypeUtils.equals(short.class, typeCls)) {
+            cellValue = TypeHandler.shortValue(cellValue, this.trim, this.regex);
+        } else if (TypeUtils.equals(Long.class, typeCls) || TypeUtils.equals(long.class, typeCls)) {
+            cellValue = TypeHandler.longValue(cellValue, this.trim, this.regex);
+        } else if (TypeUtils.equals(Integer.class, typeCls) || TypeUtils.equals(int.class, typeCls)) {
+            cellValue = TypeHandler.intValue(cellValue, this.trim, this.regex);
+        } else if (TypeUtils.equals(Float.class, typeCls) || TypeUtils.equals(float.class, typeCls)) {
+            cellValue = TypeHandler.floatValue(cellValue, this.trim, this.regex);
+        } else if (TypeUtils.equals(Double.class, typeCls) || TypeUtils.equals(double.class, typeCls)) {
+            cellValue = TypeHandler.doubleValue(cellValue, this.trim, this.regex, this.scale);
+        } else if (TypeUtils.equals(Date.class, typeCls)) {
+            cellValue = TypeHandler.dateValue(cellValue, this.trim, this.regex, this.format, false);
+        } else if (TypeUtils.equals(Boolean.class, typeCls) || TypeUtils.equals(boolean.class, typeCls)) {
+            cellValue = TypeHandler.boolValue(cellValue, this.trim, this.regex);
+        } else if (TypeUtils.equals(byte[].class, typeCls) || TypeUtils.equals(Byte[].class, typeCls)) {
+            cellValue = TypeHandler.imgValue(cellValue, this.trim, this.regex);
+        } else if (TypeUtils.equals(BigDecimal.class, typeCls)) {
+            cellValue = TypeHandler.decimalValue(cellValue, this.trim, this.regex, this.scale);
         }
         return cellValue;
     }

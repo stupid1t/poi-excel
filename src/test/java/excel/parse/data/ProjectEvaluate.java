@@ -28,6 +28,11 @@ public class ProjectEvaluate implements Serializable {
     private String province;
 
     /**
+     * 市Key
+     */
+    private Integer cityKey;
+
+    /**
      * 市
      */
     private String city;
@@ -46,7 +51,7 @@ public class ProjectEvaluate implements Serializable {
     /**
      * 总分
      */
-    private double scount;
+    private double score;
 
     /**
      * 历史平均分
@@ -114,12 +119,12 @@ public class ProjectEvaluate implements Serializable {
         this.leader = leader;
     }
 
-    public double getScount() {
-        return scount;
+    public double getScore() {
+        return score;
     }
 
-    public void setScount(double scount) {
-        this.scount = scount;
+    public void setScore(double score) {
+        this.score = score;
     }
 
     public String getAvg() {
@@ -146,9 +151,10 @@ public class ProjectEvaluate implements Serializable {
                 ", areaName='" + areaName + '\'' +
                 ", province='" + province + '\'' +
                 ", city='" + city + '\'' +
+                ", cityKey='" + cityKey + '\'' +
                 ", people='" + people + '\'' +
                 ", leader='" + leader + '\'' +
-                ", scount=" + scount +
+                ", score=" + score +
                 ", avg=" + avg +
                 ", createTime=" + createTime +
                 '}';

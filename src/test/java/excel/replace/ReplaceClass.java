@@ -19,6 +19,7 @@ public class ReplaceClass {
                 .var("reciveSb", "张三")
                 .var("phone", "15594980303")
                 .var("address", "陕西省xxxx")
+                .var("address",new String[]{"1","2"})
                 .var("company", FileUtils.readFileToByteArray(new File("C:\\Users\\35361\\Desktop\\1.png")))
                 .var("remark", FileUtils.readFileToByteArray(new File("C:\\Users\\35361\\Desktop\\1.png")))
                 .replaceTo("src/test/java/excel/replace/replace2.xlsx");
