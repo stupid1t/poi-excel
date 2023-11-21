@@ -50,9 +50,12 @@ public class SheetHandler<T> implements XSSFSheetXMLHandler.SheetContentsHandler
 
     private final List<ErrorMessage> rowError = new ArrayList<>();
 
-    private Map<String, Field> allField;
+    private final Map<String, Field> allField;
 
-    public SheetHandler(int sheetIndex, Class<T> entityClass, int headerRowNum, Map<String, InColumn<?>> columns, InCallback<T> map, int batchSize, Consumer<PoiResult<T>> partResult, Map<String, Field> allField) {
+    private final boolean autoField;
+
+    public SheetHandler(boolean autoField, int sheetIndex, Class<T> entityClass, int headerRowNum, Map<String, InColumn<?>> columns, InCallback<T> map, int batchSize, Consumer<PoiResult<T>> partResult, Map<String, Field> allField) {
+        this.autoField = autoField;
         this.sheetIndex = sheetIndex;
         this.entityClass = entityClass;
         this.mapClass = PoiCommon.isMapData(this.entityClass);
@@ -92,28 +95,24 @@ public class SheetHandler<T> implements XSSFSheetXMLHandler.SheetContentsHandler
             String columnIndexChar = PoiConstant.numsRefCell.get(cellRangeAddress.getFirstColumn());
             String location = columnIndexChar + cellRangeAddress.getFirstRow();
             try {
-                InColumn<?> inColumn = this.columns.get(columnIndexChar);
-                Object cellValue = formattedValue;
-                String fieldName;
-                if (inColumn != null) {
-                    fieldName = inColumn.getField();
-                } else {
-                    // 只有map的情况下, 才使用列字符串
-                    if (mapClass) {
-                        fieldName = columnIndexChar;
-                    } else {
-                        fieldName = null;
-                    }
+                InColumn<?> inColumn;
+                if(this.autoField && this.mapClass){
+                    inColumn = this.columns.computeIfAbsent(columnIndexChar, (key) -> new InColumn<>(null ,columnIndexChar, columnIndexChar));
+                }else{
+                    inColumn = this.columns.get(columnIndexChar);
                 }
+                if (inColumn == null) {
+                    return;
+                }
+                Object cellValue = formattedValue;
+                String fieldName = inColumn.getField();
                 if (fieldName == null) {
                     return;
                 }
 
                 // 校验类型转换处理
-                if (inColumn != null) {
-                    Type genericType = mapClass ? null : allField.get(fieldName).getGenericType();
-                    cellValue = inColumn.getCellVerifyRule().handle(cellRangeAddress.getFirstRow(), cellRangeAddress.getFirstColumn(), cellValue, genericType);
-                }
+                Type genericType = mapClass ? null : allField.get(fieldName).getGenericType();
+                cellValue = inColumn.getCellVerifyRule().handle(cellRangeAddress.getFirstRow(), cellRangeAddress.getFirstColumn(), cellValue, genericType);
 
                 if (mapClass) {
                     ((Map) rowEntity).put(fieldName, cellValue);

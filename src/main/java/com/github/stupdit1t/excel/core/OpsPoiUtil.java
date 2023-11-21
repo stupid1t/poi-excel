@@ -1065,18 +1065,6 @@ public class OpsPoiUtil {
                     continue;
                 }
                 int lastCellNum = row.getLastCellNum();
-
-                // 如果是map且自动填充
-                if (mapClass && autoField && mapAutoField.isEmpty()) {
-                    for (int i = 0; i < lastCellNum; i++) {
-                        String colChar = PoiCommon.convertToCellChar(i);
-                        mapAutoField.put(colChar, new InColumn<>(null, colChar, colChar));
-                    }
-
-                    // 自定义覆盖自动填充
-                    mapAutoField.putAll(columns);
-                    columns = mapAutoField;
-                }
                 for (int k = 0; k < lastCellNum; k++) {
                     String fieldName;
                     // 列名称获取
@@ -1084,7 +1072,12 @@ public class OpsPoiUtil {
                     String location = columnIndexChar + (j + 1);
                     try {
                         Object cellValue = null;
-                        InColumn<?> inColumn = columns.get(columnIndexChar);
+                        InColumn<?> inColumn;
+                        if(autoField && mapClass){
+                            inColumn = columns.computeIfAbsent(columnIndexChar, (key) -> new InColumn<>(null ,columnIndexChar, columnIndexChar));
+                        }else{
+                            inColumn = columns.get(columnIndexChar);
+                        }
                         if (inColumn == null) {
                             continue;
                         }

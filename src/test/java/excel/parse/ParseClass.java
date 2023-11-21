@@ -39,7 +39,7 @@ public class ParseClass {
                 .from("src/test/java/excel/parse/excel/simpleExport.xlsx")
                 // 指定数据区域
                 .opsSheet(0, 1, 0)
-                .opsColumn(true)
+                .opsColumn()
                 .field("A","a")
                 .done()
                 .parse();
@@ -76,6 +76,9 @@ public class ParseClass {
                 .from("src/test/java/excel/parse/excel/simpleExport.xlsx")
                 // 指定数据区域
                 .opsSheet(0, 1, 1)
+                .opsColumn(true)
+                .field("A","name")
+                .done()
                 .parsePart(1000, (result) -> {
                     if (!result.hasError()) {
                         // 输出验证不通过的信息
