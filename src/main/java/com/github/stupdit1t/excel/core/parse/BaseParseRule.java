@@ -136,12 +136,12 @@ public class BaseParseRule<R> extends AbsParent<OpsSheet<R>> implements IParseRu
     }
 
     @Override
-    public <F> IParseRule<R> field(String index, Fn<R, F> field) {
+    public IParseRule<R> field(String index, Fn<R, ?> field) {
         return this.opsColumn.field(index, field);
     }
 
     @Override
-    public <F> IParseRule<R> field(Col index, Fn<R, F> field) {
+    public IParseRule<R> field(Col index, Fn<R, ?> field) {
         return this.opsColumn.field(index, field);
     }
 

@@ -77,7 +77,7 @@ public interface IParseRule<R> {
 
     IParseRule<R> field(Col index, String field);
 
-    <F> IParseRule<R> field(String index, Fn<R, F> field);
+    IParseRule<R> field(String index, Fn<R, ?> field);
 
-    <F> IParseRule<R> field(Col index, Fn<R, F> field);
+    IParseRule<R> field(Col index, Fn<R, ?> field);
 }

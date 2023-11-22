@@ -1,6 +1,7 @@
 package com.github.stupdit1t.excel.core.export;
 
 import com.github.stupdit1t.excel.callback.OutCallback;
+import com.github.stupdit1t.excel.common.Fn;
 import com.github.stupdit1t.excel.core.AbsParent;
 import org.apache.poi.ss.usermodel.HorizontalAlignment;
 import org.apache.poi.ss.usermodel.IndexedColors;
@@ -377,6 +378,26 @@ public class OutColumn<R> extends AbsParent<OpsSheet<R>> {
      * @return OpsColumn
      */
     public OpsColumn<R> fields(Collection<String> fields) {
+        return this.opsColumn.fields(fields);
+    }
+
+    /**
+     * 导出字段
+     *
+     * @param field 字段
+     * @return OutColumn
+     */
+    public OutColumn<R> field(Fn<R,?> field) {
+        return this.opsColumn.field(field);
+    }
+
+    /**
+     * 字段
+     *
+     * @param fields 字段
+     * @return OpsColumn
+     */
+    public OpsColumn<R> fields(Fn<R,?>... fields) {
         return this.opsColumn.fields(fields);
     }
 

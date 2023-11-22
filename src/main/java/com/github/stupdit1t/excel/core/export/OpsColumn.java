@@ -1,10 +1,14 @@
 package com.github.stupdit1t.excel.core.export;
 
+import com.github.stupdit1t.excel.common.Fn;
+import com.github.stupdit1t.excel.common.PoiCommon;
 import com.github.stupdit1t.excel.core.AbsParent;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * 导出数据列定义
@@ -67,5 +71,25 @@ public class OpsColumn<R> extends AbsParent<OpsSheet<R>> {
      */
     public OpsColumn<R> fields(Collection<String> fields) {
         return fields(fields.toArray(new String[]{}));
+    }
+
+    /**
+     * 导出字段
+     *
+     * @param field 字段
+     * @return OutColumn
+     */
+    public OutColumn<R> field(Fn<R,?> field) {
+        return this.field(PoiCommon.getField(field));
+    }
+
+    /**
+     * 字段
+     *
+     * @param fields 字段
+     * @return OpsColumn
+     */
+    public OpsColumn<R> fields(Fn<R,?> ... fields) {
+        return this.fields(Arrays.stream(fields).map(PoiCommon::getField).collect(Collectors.toList()).toArray(new String[]{}));
     }
 }
