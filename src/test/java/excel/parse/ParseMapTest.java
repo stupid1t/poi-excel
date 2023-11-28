@@ -93,7 +93,7 @@ public class ParseMapTest {
                 .opsSheet(0, 1, 1)
                 .opsColumn()
                 .field(Col.A, "name").trim().notNull().defaultValue("张三").regex("中青旅\\d{1}")
-                .field(Col.H,"score").notNull()
+                .field(Col.H, "score").notNull().scale(2)
                 .done()
                 .parse();
         if (parse.hasError()) {

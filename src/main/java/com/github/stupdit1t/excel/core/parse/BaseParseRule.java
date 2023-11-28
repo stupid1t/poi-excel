@@ -55,7 +55,7 @@ public class BaseParseRule<R> extends AbsParent<OpsSheet<R>> implements IParseRu
     /**
      * 精度
      */
-    private int scale;
+    private Integer scale;
 
     /**
      * 操作列
@@ -168,7 +168,7 @@ public class BaseParseRule<R> extends AbsParent<OpsSheet<R>> implements IParseRu
     }
 
     @Override
-    public IParseRule<R> scale(int scale) {
+    public IParseRule<R> scale(Integer scale) {
         this.scale = scale;
         return this;
     }
@@ -220,7 +220,7 @@ public class BaseParseRule<R> extends AbsParent<OpsSheet<R>> implements IParseRu
 
     private Object handleValue(Object cellValue, Type typeCls) throws Exception {
         if (TypeUtils.equals(String.class, typeCls)) {
-            cellValue = TypeHandler.stringValue(cellValue, this.trim, this.regex);
+            cellValue = TypeHandler.stringValue(cellValue, this.trim, this.regex, this.scale);
         } else if (TypeUtils.equals(Short.class, typeCls) || TypeUtils.equals(short.class, typeCls)) {
             cellValue = TypeHandler.shortValue(cellValue, this.trim, this.regex);
         } else if (TypeUtils.equals(Long.class, typeCls) || TypeUtils.equals(long.class, typeCls)) {
@@ -228,7 +228,7 @@ public class BaseParseRule<R> extends AbsParent<OpsSheet<R>> implements IParseRu
         } else if (TypeUtils.equals(Integer.class, typeCls) || TypeUtils.equals(int.class, typeCls)) {
             cellValue = TypeHandler.intValue(cellValue, this.trim, this.regex);
         } else if (TypeUtils.equals(Float.class, typeCls) || TypeUtils.equals(float.class, typeCls)) {
-            cellValue = TypeHandler.floatValue(cellValue, this.trim, this.regex);
+            cellValue = TypeHandler.floatValue(cellValue, this.trim, this.regex, this.scale);
         } else if (TypeUtils.equals(Double.class, typeCls) || TypeUtils.equals(double.class, typeCls)) {
             cellValue = TypeHandler.doubleValue(cellValue, this.trim, this.regex, this.scale);
         } else if (TypeUtils.equals(Date.class, typeCls)) {
