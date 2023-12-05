@@ -298,14 +298,14 @@ ExcelHelper.opsExport(PoiWorkbookType.BIG_XLSX)
 ```java
 ExcelHelper.opsReplace()
         .from("src/test/java/excel/replace/replace.xlsx")
-        .variable("projectName", "中青旅")
-        .variable("buildName", "管材生产")
-        .variable("sendDate", "2020-02-02")
-        .variable("reciveSb", "张三")
-        .variable("phone", "15594980303")
-        .variable("address", "陕西省xxxx")
-        .variable("company", "社保局")
-        .variable("remark", "李四")
+        .var("projectName","中青旅")
+        .var("buildName","管材生产")
+        .var("sendDate","2020-02-02")
+        .var("reciveSb","张三")
+        .var("phone","15594980303")
+        .var("address","陕西省xxxx")
+        .var("company","社保局")
+        .var("remark","李四")
         .replaceTo("src/test/java/excel/replace/replace2.xlsx");
 ```
 
