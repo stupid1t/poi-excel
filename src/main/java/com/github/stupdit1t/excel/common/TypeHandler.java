@@ -1,5 +1,7 @@
 package com.github.stupdit1t.excel.common;
 
+import com.github.stupdit1t.excel.common.PoiConstant;
+import com.github.stupdit1t.excel.common.PoiException;
 import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.math.NumberUtils;
@@ -19,21 +21,17 @@ public class TypeHandler {
         if (cellValue instanceof byte[]) {
             return (byte[]) cellValue;
         } else {
-            String value = stringValue(cellValue, trim, regex, null);
+            String value = stringValue(cellValue, trim, regex);
             return Base64.decodeBase64(value);
         }
     }
 
-    public static BigDecimal decimalValue(Object cellValue, boolean trim, String regex, Integer precision) {
+    public static BigDecimal decimalValue(Object cellValue, boolean trim, String regex, int precision) {
         if (cellValue instanceof BigDecimal) {
             return (BigDecimal) cellValue;
         } else {
-            String value = stringValue(cellValue, trim, regex, null);
-            if (precision != null) {
-                return NumberUtils.toScaledBigDecimal(value, precision, RoundingMode.HALF_UP);
-            } else {
-                return new BigDecimal(value);
-            }
+            String value = stringValue(cellValue, trim, regex);
+            return NumberUtils.toScaledBigDecimal(value, precision, RoundingMode.HALF_UP);
         }
     }
 
@@ -41,18 +39,17 @@ public class TypeHandler {
         if (cellValue instanceof Boolean) {
             return (Boolean) cellValue;
         } else {
-            String value = stringValue(cellValue, trim, regex, null);
+            String value = stringValue(cellValue, trim, regex);
             return Boolean.parseBoolean(value);
         }
     }
-
     public static Date dateValue(Object cellValue, boolean trim, String regex, String format, boolean is1904Date) throws Exception {
         if (cellValue instanceof Date) {
             // 如果是日期格式通过
             Date date = (Date) cellValue;
             return StringUtils.isBlank(format) ? date : DateUtils.parseDate(DateFormatUtils.format(date, format), format);
         } else {
-            String value = stringValue(cellValue, trim, regex, null);
+            String value = stringValue(cellValue, trim, regex);
             if (NumberUtils.isCreatable(value)) {
                 // 如果是数字
                 BigDecimal sourceValue = new BigDecimal(value);
@@ -74,29 +71,21 @@ public class TypeHandler {
         }
     }
 
-    public static Double doubleValue(Object cellValue, boolean trim, String regex, Integer precision) {
+    public static Double doubleValue(Object cellValue, boolean trim, String regex, int precision) {
         if (cellValue instanceof Double) {
             return (Double) cellValue;
         } else {
-            String value = stringValue(cellValue, trim, regex, null);
-            if (precision != null) {
-                return NumberUtils.toScaledBigDecimal(value, precision, RoundingMode.HALF_UP).doubleValue();
-            } else {
-                return NumberUtils.toDouble(value);
-            }
+            String value = stringValue(cellValue, trim, regex);
+            return NumberUtils.toScaledBigDecimal(value, precision, RoundingMode.HALF_UP).doubleValue();
         }
     }
 
-    public static Float floatValue(Object cellValue, boolean trim, String regex, Integer precision) {
+    public static Float floatValue(Object cellValue, boolean trim, String regex) {
         if (cellValue instanceof Float) {
             return (Float) cellValue;
         } else {
-            String value = stringValue(cellValue, trim, regex, null);
-            if (precision != null) {
-                return NumberUtils.toScaledBigDecimal(value, precision, RoundingMode.HALF_UP).floatValue();
-            } else {
-                return NumberUtils.toFloat(value);
-            }
+            String value = stringValue(cellValue, trim, regex);
+            return NumberUtils.toFloat(value);
         }
     }
 
@@ -104,7 +93,7 @@ public class TypeHandler {
         if (cellValue instanceof Integer) {
             return (Integer) cellValue;
         } else {
-            String value = stringValue(cellValue, trim, regex, null);
+            String value = stringValue(cellValue, trim, regex);
             return NumberUtils.toInt(value);
         }
     }
@@ -113,7 +102,7 @@ public class TypeHandler {
         if (cellValue instanceof Long) {
             return (Long) cellValue;
         } else {
-            String value = stringValue(cellValue, trim, regex, null);
+            String value = stringValue(cellValue, trim, regex);
             return NumberUtils.toLong(value);
         }
     }
@@ -122,19 +111,16 @@ public class TypeHandler {
         if (cellValue instanceof Short) {
             return (Short) cellValue;
         } else {
-            String value = stringValue(cellValue, trim, regex, null);
+            String value = stringValue(cellValue, trim, regex);
             return NumberUtils.toShort(value);
         }
     }
 
-    public static String stringValue(Object cellValue, boolean trim, String regex, Integer precision) {
+    public static String stringValue(Object cellValue, boolean trim, String regex) {
         String value;
         // 处理数值 转为 string包含E科学计数的问题
         if (cellValue instanceof Number) {
             value = NumberToTextConverter.toText(((Number) cellValue).doubleValue());
-            if (precision != null) {
-                return NumberUtils.toScaledBigDecimal(value, precision, RoundingMode.HALF_UP).toString();
-            }
         } else {
             value = String.valueOf(cellValue);
         }
@@ -143,11 +129,6 @@ public class TypeHandler {
         }
         if (regex != null && !Pattern.matches(regex, value)) {
             throw PoiException.error(PoiConstant.INCORRECT_FORMAT_STR);
-        }
-
-        // 如果是数字字符串，应用数字属性
-        if (NumberUtils.isParsable(value) && precision != null) {
-            value = NumberUtils.toScaledBigDecimal(value, precision, RoundingMode.HALF_UP).toString();
         }
         return value;
     }

@@ -49,7 +49,7 @@ public interface IParseRule<R> {
      * @param precision
      * @return
      */
-    IParseRule<R> scale(Integer precision);
+    IParseRule<R> scale(int precision);
 
 
 
