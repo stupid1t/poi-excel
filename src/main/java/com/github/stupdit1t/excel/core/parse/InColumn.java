@@ -22,18 +22,12 @@ public class InColumn<R> extends AbsParent<OpsColumn<R>> {
     /**
      * 验证规则
      */
-    BaseParseRule<R> cellVerifyRule;
+    BaseParseRule<R> cellVerifyRule = new BaseParseRule<>(this.parent, this.parent.parent);
 
     public InColumn(OpsColumn<R> opsColumn, String index, String field) {
         super(opsColumn);
         this.index = index;
         this.field = field;
-        if(opsColumn!=null){
-            cellVerifyRule = new BaseParseRule<>(this.parent, this.parent.parent);
-        }else{
-            cellVerifyRule = new BaseParseRule<>(null, null);
-        }
-
     }
 
     /**

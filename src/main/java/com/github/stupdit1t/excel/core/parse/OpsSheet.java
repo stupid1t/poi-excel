@@ -19,7 +19,6 @@ import org.xml.sax.helpers.XMLReaderFactory;
 
 import java.io.InputStream;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.Map;
 import java.util.function.Consumer;
 
@@ -92,16 +91,7 @@ public class OpsSheet<R> extends AbsParent<OpsParse<R>> {
     }
 
     public OpsColumn<R> opsColumn() {
-       return this.opsColumn(false);
-    }
-
-    /**
-     * 列设置
-     * @param autoField 是否自动字段
-     * @return
-     */
-    public OpsColumn<R> opsColumn(boolean autoField) {
-        this.opsColumn = new OpsColumn<>( this, autoField);
+        this.opsColumn = new OpsColumn<>(this);
         return this.opsColumn;
     }
 
@@ -197,7 +187,7 @@ public class OpsSheet<R> extends AbsParent<OpsParse<R>> {
      * @return PoiResult
      */
     public PoiResult<R> parse() {
-        Map<String, InColumn<?>> columns = new HashMap<>();
+        Map<String, InColumn<?>> columns = Collections.emptyMap();
         if (this.opsColumn != null) {
             columns = this.opsColumn.columns;
         }
@@ -207,10 +197,11 @@ public class OpsSheet<R> extends AbsParent<OpsParse<R>> {
             throw new UnsupportedOperationException("Excel来源不能为空!");
         }
         // 校验用户输入, 非Map, 列必填
-        if (columns.isEmpty()) {
-            throw new UnsupportedOperationException("导入的opsColumn字段不能为空!");
+        if (!this.parent.mapData) {
+            if (columns.isEmpty()) {
+                throw new UnsupportedOperationException("导入的opsColumn字段不能为空!");
+            }
         }
-
         PoiSheetDataArea poiSheetArea;
         if (StringUtils.isNotBlank(this.sheetName)) {
             poiSheetArea = new PoiSheetDataArea(this.sheetName, this.headerCount, this.footerCount);
@@ -219,14 +210,14 @@ public class OpsSheet<R> extends AbsParent<OpsParse<R>> {
         }
         if (this.parent.fromMode == 1) {
             if (this.parent.password != null) {
-                return OpsPoiUtil.readSheet(this.parent.fromPath, this.parent.password, poiSheetArea, columns, this.map, this.parent.rowClass, this.parent.allFields, this.opsColumn.autoField);
+                return OpsPoiUtil.readSheet(this.parent.fromPath, this.parent.password, poiSheetArea, columns, this.map, this.parent.rowClass, this.parent.allFields);
             }
-            return OpsPoiUtil.readSheet(this.parent.fromPath, poiSheetArea, columns, this.map, this.parent.rowClass, this.parent.allFields, this.opsColumn.autoField);
+            return OpsPoiUtil.readSheet(this.parent.fromPath, poiSheetArea, columns, this.map, this.parent.rowClass, this.parent.allFields);
         } else if (this.parent.fromMode == 2) {
             if (this.parent.password != null) {
-                return OpsPoiUtil.readSheet(this.parent.fromStream, this.parent.password, poiSheetArea, columns, this.map, this.parent.rowClass, this.parent.allFields, this.opsColumn.autoField);
+                return OpsPoiUtil.readSheet(this.parent.fromStream, this.parent.password, poiSheetArea, columns, this.map, this.parent.rowClass, this.parent.allFields);
             }
-            return OpsPoiUtil.readSheet(this.parent.fromStream, poiSheetArea, columns, this.map, this.parent.rowClass, this.parent.allFields, this.opsColumn.autoField);
+            return OpsPoiUtil.readSheet(this.parent.fromStream, poiSheetArea, columns, this.map, this.parent.rowClass, this.parent.allFields);
         }
         return PoiResult.fail(null);
     }
