@@ -60,16 +60,10 @@ public class BaseParseRule<R> extends AbsParent<OpsSheet<R>> implements IParseRu
     private int scale;
 
     /**
-     * 操作列
-     */
-    private OpsColumn<R> opsColumn;
-
-    /**
      * 构建校验规则
      */
-    public BaseParseRule(OpsColumn<R> opsColumn, OpsSheet<R> parent) {
+    public BaseParseRule(OpsSheet<R> parent) {
         super(parent);
-        this.opsColumn = opsColumn;
     }
 
     /**
@@ -129,7 +123,7 @@ public class BaseParseRule<R> extends AbsParent<OpsSheet<R>> implements IParseRu
 
     @Override
     public IParseRule<R> field(String index, String field) {
-        return this.opsColumn.field(index, field);
+        return this.parent.opsColumn().field(index, field);
     }
 
     /**

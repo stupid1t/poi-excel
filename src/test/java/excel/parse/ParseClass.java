@@ -120,7 +120,7 @@ public class ParseClass {
                     // 不能为空
                     .field("G", "leader").defaultValue("巨无霸")
                     // 必须是数字
-                    .field("H", "scount").type(double.class).scale(5).notNull()
+                    .field("H", "scount").notNull()
                     .field("I", "avg").type(long.class).scale(2).notNull()
                     .field("J", "createTime").format("yyyy/MM/dd").trim()
                     .done()
