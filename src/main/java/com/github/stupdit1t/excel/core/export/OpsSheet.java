@@ -3,10 +3,7 @@ package com.github.stupdit1t.excel.core.export;
 import com.github.stupdit1t.excel.common.PoiCommon;
 import com.github.stupdit1t.excel.core.AbsParent;
 import com.github.stupdit1t.excel.style.CellPosition;
-import org.apache.poi.ss.usermodel.Workbook;
 
-import javax.servlet.http.HttpServletResponse;
-import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -15,7 +12,7 @@ import java.util.Map;
 /**
  * 导出规则定义
  */
-public class OpsSheet<R> extends AbsParent<OpsExport> implements OpsFinish {
+public class OpsSheet<R> extends AbsParent<OpsExport> {
 
     /**
      * 标题高度
@@ -265,25 +262,5 @@ public class OpsSheet<R> extends AbsParent<OpsExport> implements OpsFinish {
             mergeCell(location);
         }
         return this;
-    }
-
-    @Override
-    public void export(String toPath) {
-        this.parent.export(toPath);
-    }
-
-    @Override
-    public void export(OutputStream toStream) {
-        this.parent.export(toStream);
-    }
-
-    @Override
-    public void export(HttpServletResponse toResponse, String fileName) {
-        this.parent.export(toResponse, fileName);
-    }
-
-    @Override
-    public void export(Workbook workbook) {
-        this.parent.export(workbook);
     }
 }

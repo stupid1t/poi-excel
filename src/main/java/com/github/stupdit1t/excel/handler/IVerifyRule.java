@@ -1,15 +1,19 @@
-package com.github.stupdit1t.excel.core.parse;
+package com.github.stupdit1t.excel.handler;
+
+import com.github.stupdit1t.excel.core.AbsParent;
+import com.github.stupdit1t.excel.core.parse.OpsColumn;
+import org.apache.poi.ss.formula.functions.T;
 
 import java.util.function.Function;
 
-public interface IParseRule<R> {
+public interface IVerifyRule<R> {
 
     /**
      * 不能为空
      *
      * @return InColumn<R>
      */
-    IParseRule<R> notNull();
+    IVerifyRule<R> notNull();
 
 
     /**
@@ -17,28 +21,28 @@ public interface IParseRule<R> {
      *
      * @return InColumn<R>
      */
-    IParseRule<R> trim();
+    IVerifyRule<R> trim();
 
     /**
      * 去除两边空格
      *
      * @return InColumn<R>
      */
-    IParseRule<R> defaultValue(Object defaultValue);
+    IVerifyRule<R> defaultValue(Object defaultValue);
 
     /**
      * 正则校验
      * @param regex
      * @return
      */
-    IParseRule<R> regex(String regex);
+    IVerifyRule<R> regex(String regex);
 
     /**
      * 格式化，日期
      * @param format
      * @return
      */
-    IParseRule<R> format(String format);
+    IVerifyRule<R> format(String format);
 
     /**
      * 如果是数字设置精度
@@ -46,7 +50,7 @@ public interface IParseRule<R> {
      * @param precision
      * @return
      */
-    IParseRule<R> scale(int precision);
+    IVerifyRule<R> scale(int precision);
 
 
 
@@ -56,7 +60,7 @@ public interface IParseRule<R> {
      * @param mapping
      * @return
      */
-    IParseRule<R> map(Function<Object, Object> mapping);
+    IVerifyRule<R> map(Function<Object, Object> mapping);
 
     /**
      * 如果转map，进行类型强制转换，非必须
@@ -64,11 +68,9 @@ public interface IParseRule<R> {
      * @param covertCls
      * @return
      */
-    IParseRule<R> type(Class<?> covertCls);
+    IVerifyRule<R> type(Class<?> covertCls);
 
 
-    OpsSheet<R> done();
+    OpsColumn<R> done();
 
-
-    IParseRule<R> field(String index, String field);
 }

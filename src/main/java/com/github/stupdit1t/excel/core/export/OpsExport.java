@@ -1,7 +1,7 @@
 package com.github.stupdit1t.excel.core.export;
 
 import com.github.stupdit1t.excel.common.PoiWorkbookType;
-import com.github.stupdit1t.excel.core.OpsPoiUtil;
+import com.github.stupdit1t.excel.core.ExcelUtil;
 import com.github.stupdit1t.excel.style.DefaultCellStyleEnum;
 import com.github.stupdit1t.excel.style.ICellStyle;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
@@ -22,7 +22,7 @@ import java.util.function.BiConsumer;
 /**
  * 导出规则定义
  */
-public class OpsExport implements OpsFinish {
+public class OpsExport {
 
 	/**
 	 * 输出的sheet
@@ -160,7 +160,6 @@ public class OpsExport implements OpsFinish {
 	 *
 	 * @param toPath 输出磁盘路径
 	 */
-	@Override
 	public void export(String toPath) {
 		checkSetToMode(1);
 		this.path = toPath;
@@ -173,7 +172,6 @@ public class OpsExport implements OpsFinish {
 	 *
 	 * @param toStream 输出流
 	 */
-	@Override
 	public void export(OutputStream toStream) {
 		checkSetToMode(2);
 		this.stream = toStream;
@@ -187,7 +185,6 @@ public class OpsExport implements OpsFinish {
 	 * @param toResponse 输出servlet
 	 * @param fileName   文件名
 	 */
-	@Override
 	public void export(HttpServletResponse toResponse, String fileName) {
 		checkSetToMode(3);
 		this.response = toResponse;
@@ -201,18 +198,17 @@ public class OpsExport implements OpsFinish {
 	 *
 	 * @param workbook 导出workbook
 	 */
-	@Override
 	public void export(Workbook workbook) {
 		// 5.执行导出
 		switch (this.toMode) {
 			case 1:
-				OpsPoiUtil.export(workbook, this.path, this.password);
+				ExcelUtil.export(workbook, this.path, this.password);
 				break;
 			case 2:
-				OpsPoiUtil.export(workbook, this.stream, this.password);
+				ExcelUtil.export(workbook, this.stream, this.password);
 				break;
 			case 3:
-				OpsPoiUtil.export(workbook, this.response, this.responseName, this.password);
+				ExcelUtil.export(workbook, this.response, this.responseName, this.password);
 				break;
 		}
 	}
@@ -297,7 +293,7 @@ public class OpsExport implements OpsFinish {
 		}
 
 		// 4.填充表格
-		OpsPoiUtil.fillBook(workbook, opsSheet.data, exportRules);
+		ExcelUtil.fillBook(workbook, opsSheet.data, exportRules);
 	}
 
 

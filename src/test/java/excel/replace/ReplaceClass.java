@@ -13,14 +13,14 @@ public class ReplaceClass {
     public void parseMap1() throws IOException {
         ExcelHelper.opsReplace()
                 .from("src/test/java/excel/replace/replace.xlsx")
-                .var("projectName", "中青旅")
-                .var("buildName", "管材生产")
-                .var("sendDate", "2020-02-02")
-                .var("reciveSb", "张三")
-                .var("phone", "15594980303")
-                .var("address", "陕西省xxxx")
-                .var("company", FileUtils.readFileToByteArray(new File("C:\\Users\\35361\\Desktop\\1.png")))
-                .var("remark", FileUtils.readFileToByteArray(new File("C:\\Users\\35361\\Desktop\\1.png")))
+                .variable("projectName", "中青旅")
+                .variable("buildName", "管材生产")
+                .variable("sendDate", "2020-02-02")
+                .variable("reciveSb", "张三")
+                .variable("phone", "15594980303")
+                .variable("address", "陕西省xxxx")
+                .variable("company", FileUtils.readFileToByteArray(new File("C:\\Users\\35361\\Desktop\\1.png")))
+                .variable("remark", FileUtils.readFileToByteArray(new File("C:\\Users\\35361\\Desktop\\1.png")))
                 .replaceTo("src/test/java/excel/replace/replace2.xlsx");
     }
 }

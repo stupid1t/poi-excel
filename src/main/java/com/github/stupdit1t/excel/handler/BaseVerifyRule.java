@@ -1,9 +1,9 @@
-package com.github.stupdit1t.excel.core.parse;
+package com.github.stupdit1t.excel.handler;
 
 import com.github.stupdit1t.excel.common.PoiConstant;
 import com.github.stupdit1t.excel.common.PoiException;
 import com.github.stupdit1t.excel.core.AbsParent;
-import com.github.stupdit1t.excel.common.TypeHandler;
+import com.github.stupdit1t.excel.core.parse.OpsColumn;
 import org.apache.commons.lang3.ObjectUtils;
 import org.apache.commons.lang3.reflect.TypeUtils;
 
@@ -17,7 +17,7 @@ import java.util.function.Function;
  *
  * @author 625
  */
-public class BaseParseRule<R> extends AbsParent<OpsSheet<R>> implements IParseRule<R> {
+public class BaseVerifyRule<R> extends AbsParent<OpsColumn<R>> implements IVerifyRule<R> {
 
     /**
      * 是否可为空
@@ -62,7 +62,7 @@ public class BaseParseRule<R> extends AbsParent<OpsSheet<R>> implements IParseRu
     /**
      * 构建校验规则
      */
-    public BaseParseRule(OpsSheet<R> parent) {
+    public BaseVerifyRule(OpsColumn<R> parent) {
         super(parent);
     }
 
@@ -72,7 +72,7 @@ public class BaseParseRule<R> extends AbsParent<OpsSheet<R>> implements IParseRu
      * @return InColumn<R>
      */
     @Override
-    public IParseRule<R> notNull() {
+    public IVerifyRule<R> notNull() {
         this.allowNull = false;
         return this;
     }
@@ -83,7 +83,7 @@ public class BaseParseRule<R> extends AbsParent<OpsSheet<R>> implements IParseRu
      * @return InColumn<R>
      */
     @Override
-    public IParseRule<R> trim() {
+    public IVerifyRule<R> trim() {
         this.trim = true;
         return this;
     }
@@ -94,7 +94,7 @@ public class BaseParseRule<R> extends AbsParent<OpsSheet<R>> implements IParseRu
      * @return InColumn<R>
      */
     @Override
-    public BaseParseRule<R> defaultValue(Object defaultValue) {
+    public BaseVerifyRule<R> defaultValue(Object defaultValue) {
         this.defaultValue = defaultValue;
         return this;
     }
@@ -104,7 +104,7 @@ public class BaseParseRule<R> extends AbsParent<OpsSheet<R>> implements IParseRu
      * 转换or映射or判断
      */
     @Override
-    public BaseParseRule<R> map(Function<Object, Object> mapping) {
+    public BaseVerifyRule<R> map(Function<Object, Object> mapping) {
         this.mapping = mapping;
         return this;
     }
@@ -116,14 +116,9 @@ public class BaseParseRule<R> extends AbsParent<OpsSheet<R>> implements IParseRu
      * @return
      */
     @Override
-    public BaseParseRule<R> type(Class<?> type) {
+    public BaseVerifyRule<R> type(Class<?> type) {
         this.type = type;
         return this;
-    }
-
-    @Override
-    public IParseRule<R> field(String index, String field) {
-        return this.parent.opsColumn().field(index, field);
     }
 
     /**
@@ -132,7 +127,7 @@ public class BaseParseRule<R> extends AbsParent<OpsSheet<R>> implements IParseRu
      * @param regex 格式
      */
     @Override
-    public BaseParseRule<R> regex(String regex) {
+    public BaseVerifyRule<R> regex(String regex) {
         this.regex = regex;
         return this;
     }
@@ -143,13 +138,13 @@ public class BaseParseRule<R> extends AbsParent<OpsSheet<R>> implements IParseRu
      * @param format 格式
      */
     @Override
-    public BaseParseRule<R> format(String format) {
+    public BaseVerifyRule<R> format(String format) {
         this.format = format;
         return this;
     }
 
     @Override
-    public IParseRule<R> scale(int scale) {
+    public IVerifyRule<R> scale(int scale) {
         this.scale = scale;
         return this;
     }
