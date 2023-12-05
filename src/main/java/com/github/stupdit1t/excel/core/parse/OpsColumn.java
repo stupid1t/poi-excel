@@ -5,10 +5,16 @@ import com.github.stupdit1t.excel.common.Fn;
 import com.github.stupdit1t.excel.common.PoiCommon;
 import com.github.stupdit1t.excel.core.AbsParent;
 
+import java.beans.Introspector;
+import java.lang.invoke.SerializedLambda;
 import java.lang.reflect.Field;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
+import java.util.function.Function;
+import java.util.regex.Pattern;
 
 /**
  * 数据列定义
@@ -16,6 +22,10 @@ import java.util.Set;
  * @param <R>
  */
 public class OpsColumn<R> extends AbsParent<OpsSheet<R>> {
+
+    private static final Pattern GET_PATTERN = Pattern.compile("^get[A-Z].*");
+
+    private static final Pattern IS_PATTERN = Pattern.compile("^is[A-Z].*");
 
     /**
      * 导入列定义
@@ -69,8 +79,12 @@ public class OpsColumn<R> extends AbsParent<OpsSheet<R>> {
      * @return InColumn
      */
     public <F> IParseRule<R> field(String index, Fn<R, F> fieldFun) {
-        String field = PoiCommon.getField(fieldFun);
-        return this.field(index, field);
+        try {
+            String field = getField(fieldFun);
+            return this.field(index, field);
+        } catch (ReflectiveOperationException var4) {
+            throw new UnsupportedOperationException("field 字段设置异常", var4);
+        }
     }
 
     /**
@@ -91,7 +105,29 @@ public class OpsColumn<R> extends AbsParent<OpsSheet<R>> {
      * @param fieldFun 对应的字段
      * @return InColumn
      */
-    public IParseRule<R> field(Col index, Fn<R, ?> fieldFun) {
+    public <F> IParseRule<R> field(Col index, Fn<R, F> fieldFun) {
         return this.field(index.name(), fieldFun);
+    }
+
+    /**
+     * 获取字段
+     *
+     * @param fieldFun
+     * @return
+     * @throws NoSuchMethodException
+     * @throws IllegalAccessException
+     * @throws InvocationTargetException
+     */
+    private String getField(Fn<R,?> fieldFun) throws NoSuchMethodException, IllegalAccessException, InvocationTargetException {
+        Method method = fieldFun.getClass().getDeclaredMethod("writeReplace");
+        method.setAccessible(Boolean.TRUE);
+        SerializedLambda serializedLambda = (SerializedLambda) method.invoke(fieldFun);
+        String getter = serializedLambda.getImplMethodName();
+        if (GET_PATTERN.matcher(getter).matches()) {
+            getter = getter.substring(3);
+        } else if (IS_PATTERN.matcher(getter).matches()) {
+            getter = getter.substring(2);
+        }
+        return Introspector.decapitalize(getter);
     }
 }

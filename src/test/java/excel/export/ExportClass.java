@@ -140,7 +140,7 @@ public class ExportClass {
                         .done()
                     .opsColumn()
                         .fields("projectName", "img", "areaName", "province", "city", "people", "leader")
-                        .field(ProjectEvaluate::getScount).width(10000)
+                        .field("scount").width(10000)
                         .field("avg").pattern("0.00%").fields("createTime")
                         .done()
                     .export("src/test/java/excel/export/excel/simpleExport.xls");

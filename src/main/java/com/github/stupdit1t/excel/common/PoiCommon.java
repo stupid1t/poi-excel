@@ -6,13 +6,8 @@ import org.apache.poi.ss.usermodel.CellStyle;
 import org.apache.poi.ss.usermodel.Font;
 import org.apache.poi.ss.util.CellRangeAddress;
 
-import java.beans.Introspector;
-import java.lang.invoke.SerializedLambda;
 import java.lang.reflect.Field;
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
 import java.util.*;
-import java.util.regex.Pattern;
 
 /**
  * 一些公用的方法
@@ -192,35 +187,5 @@ public class PoiCommon {
             }
         }
         return mapData;
-    }
-
-    private static final Pattern GET_PATTERN = Pattern.compile("^get[A-Z].*");
-
-    private static final Pattern IS_PATTERN = Pattern.compile("^is[A-Z].*");
-
-    /**
-     * 获取字段
-     *
-     * @param fieldFun
-     * @return
-     * @throws NoSuchMethodException
-     * @throws IllegalAccessException
-     * @throws InvocationTargetException
-     */
-    public static <R> String getField(Fn<R,?> fieldFun){
-        try {
-            Method method = fieldFun.getClass().getDeclaredMethod("writeReplace");
-            method.setAccessible(Boolean.TRUE);
-            SerializedLambda serializedLambda = (SerializedLambda) method.invoke(fieldFun);
-            String getter = serializedLambda.getImplMethodName();
-            if (GET_PATTERN.matcher(getter).matches()) {
-                getter = getter.substring(3);
-            } else if (IS_PATTERN.matcher(getter).matches()) {
-                getter = getter.substring(2);
-            }
-            return Introspector.decapitalize(getter);
-        }catch (Exception e){
-            throw new UnsupportedOperationException("field 字段设置异常", e);
-        }
     }
 }
