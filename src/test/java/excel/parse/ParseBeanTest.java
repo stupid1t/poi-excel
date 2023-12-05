@@ -1,8 +1,6 @@
 package excel.parse;
 
 import com.github.stupdit1t.excel.common.Col;
-import com.github.stupdit1t.excel.common.ErrorMessage;
-import com.github.stupdit1t.excel.common.PoiException;
 import com.github.stupdit1t.excel.common.PoiResult;
 import com.github.stupdit1t.excel.core.ExcelHelper;
 import excel.parse.data.ProjectEvaluate;
@@ -11,7 +9,6 @@ import org.junit.Before;
 import org.junit.Test;
 
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 public class ParseBeanTest {
@@ -103,7 +100,7 @@ public class ParseBeanTest {
                 // 指定数据区域
                 .opsSheet(0, 1, 1)
                 .opsColumn()
-                .field(Col.A, "projectName").trim().notNull().defaultValue("张三").regex("中青旅\\d{1}")
+                .field(Col.A, "projectName").trim().notNull().defaultValue("张三").regex("中青旅\\d{2}")
                 .field(Col.D, ProjectEvaluate::getProvince)
                 // 值映射转换，也可以异常处理校验等
                 .field(Col.E, "cityKey").notNull().map(cityMapping::get)
