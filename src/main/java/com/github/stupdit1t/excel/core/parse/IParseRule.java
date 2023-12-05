@@ -1,8 +1,5 @@
 package com.github.stupdit1t.excel.core.parse;
 
-import com.github.stupdit1t.excel.common.Col;
-import com.github.stupdit1t.excel.common.Fn;
-
 import java.util.function.Function;
 
 public interface IParseRule<R> {
@@ -74,10 +71,4 @@ public interface IParseRule<R> {
 
 
     IParseRule<R> field(String index, String field);
-
-    IParseRule<R> field(Col index, String field);
-
-    <F> IParseRule<R> field(String index, Fn<R, F> field);
-
-    <F> IParseRule<R> field(Col index, Fn<R, F> field);
 }

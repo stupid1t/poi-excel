@@ -1056,6 +1056,7 @@ public class OpsPoiUtil {
         // 获取真实的数据行尾数
         int rowEnd = getLastRealLastRow(sheet.getRow(sheet.getLastRowNum())) - dataEndRowCount;
         List<ErrorMessage> error = new ArrayList<>();
+        Map<String, InColumn<?>> mapAutoField = new HashMap<>();
         try {
             for (int j = rowStart; j <= rowEnd; j++) {
                 T data = rowClass.newInstance();
@@ -1064,7 +1065,6 @@ public class OpsPoiUtil {
                     continue;
                 }
                 int lastCellNum = row.getLastCellNum();
-                boolean rowError = false;
                 for (int k = 0; k < lastCellNum; k++) {
                     String fieldName;
                     // 列名称获取
@@ -1072,9 +1072,11 @@ public class OpsPoiUtil {
                     String location = columnIndexChar + (j + 1);
                     try {
                         Object cellValue = null;
-                        InColumn<?> inColumn = columns.get(columnIndexChar);
-                        if(autoField && mapClass && inColumn == null){
+                        InColumn<?> inColumn;
+                        if(autoField && mapClass){
                             inColumn = columns.computeIfAbsent(columnIndexChar, (key) -> new InColumn<>(null ,columnIndexChar, columnIndexChar));
+                        }else{
+                            inColumn = columns.get(columnIndexChar);
                         }
                         if (inColumn == null) {
                             continue;
@@ -1113,7 +1115,6 @@ public class OpsPoiUtil {
                             }
                         }
                     } catch (Exception e) {
-                        rowError = true;
                         error.add(new ErrorMessage(location, j, k, e));
                     }
                 }
@@ -1123,11 +1124,10 @@ public class OpsPoiUtil {
                     try {
                         map.callback(data, rowNum);
                     } catch (Exception e) {
-                        rowError = true;
                         error.add(new ErrorMessage("第" + rowNum + "行", j, -1, e));
                     }
                 }
-                if (!rowError) {
+                if (error.isEmpty()) {
                     beans.add(data);
                 }
             }
@@ -1136,7 +1136,7 @@ public class OpsPoiUtil {
             error.add(new ErrorMessage(e));
         } finally {
             // throw parse exception
-            if (!error.isEmpty()) {
+            if (error.size() > 0) {
                 rsp.setHasError(true);
             }
             rsp.setData(beans);
