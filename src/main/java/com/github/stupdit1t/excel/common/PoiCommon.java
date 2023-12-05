@@ -183,8 +183,8 @@ public class PoiCommon {
         } else {
             Class<?>[] interfaces = cls.getInterfaces();
             for (Class<?> anInterface : interfaces) {
-                mapData = isMapData(anInterface);
-                if(mapData){
+                if (anInterface == Map.class) {
+                    mapData = true;
                     break;
                 }
             }

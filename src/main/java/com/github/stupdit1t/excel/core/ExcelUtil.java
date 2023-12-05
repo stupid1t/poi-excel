@@ -6,10 +6,12 @@ import com.github.stupdit1t.excel.core.export.ComplexCell;
 import com.github.stupdit1t.excel.core.export.ExportRules;
 import com.github.stupdit1t.excel.core.export.OutColumn;
 import com.github.stupdit1t.excel.core.parse.InColumn;
+import com.github.stupdit1t.excel.handle.ImgHandler;
+import com.github.stupdit1t.excel.handle.rule.BaseVerifyRule;
 import com.github.stupdit1t.excel.style.CellPosition;
 import com.github.stupdit1t.excel.style.ICellStyle;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.commons.lang3.reflect.TypeUtils;
+import org.apache.commons.lang3.reflect.FieldUtils;
 import org.apache.commons.lang3.time.DateUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -32,11 +34,8 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.*;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
-import java.lang.reflect.Type;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
-import java.nio.file.Files;
-import java.nio.file.Paths;
 import java.security.GeneralSecurityException;
 import java.text.ParseException;
 import java.time.LocalDate;
@@ -955,9 +954,9 @@ public class ExcelUtil {
      * @param rowClass     数据类
      * @return PoiResult
      */
-    public static <T> PoiResult<T> readSheet(String filePath, PoiSheetDataArea poiSheetArea, Map<String, InColumn<?>> columns, InCallback<T> map, Class<T> rowClass, Map<String, Field> allField) {
-        try (InputStream is = Files.newInputStream(Paths.get(filePath))) {
-            return readSheet(is, poiSheetArea, columns, map, rowClass, allField);
+    public static <T> PoiResult<T> readSheet(String filePath, PoiSheetDataArea poiSheetArea, Map<String, InColumn<?>> columns, InCallback<T> map, Class<T> rowClass) {
+        try (InputStream is = new FileInputStream(filePath)) {
+            return readSheet(is, poiSheetArea, columns, map, rowClass);
         } catch (Exception e) {
             LOG.error(e);
             return PoiResult.fail(new ErrorMessage(e));
@@ -974,9 +973,9 @@ public class ExcelUtil {
      * @param rowClass     数据类
      * @return PoiResult
      */
-    public static <T> PoiResult<T> readSheet(String filePath, String password, PoiSheetDataArea poiSheetArea, Map<String, InColumn<?>> columns, InCallback<T> map, Class<T> rowClass, Map<String, Field> allField) {
-        try (InputStream is = Files.newInputStream(Paths.get(filePath))) {
-            return readSheet(is, password, poiSheetArea, columns, map, rowClass, allField);
+    public static <T> PoiResult<T> readSheet(String filePath, String password, PoiSheetDataArea poiSheetArea, Map<String, InColumn<?>> columns, InCallback<T> map, Class<T> rowClass) {
+        try (InputStream is = new FileInputStream(filePath)) {
+            return readSheet(is, password, poiSheetArea, columns, map, rowClass);
         } catch (Exception e) {
             LOG.error(e);
             return PoiResult.fail(new ErrorMessage(e));
@@ -993,7 +992,7 @@ public class ExcelUtil {
      * @param rowClass     数据类
      * @return PoiResult
      */
-    public static <T> PoiResult<T> readSheet(InputStream is, PoiSheetDataArea poiSheetArea, Map<String, InColumn<?>> columns, InCallback<T> map, Class<T> rowClass, Map<String, Field> allField) {
+    public static <T> PoiResult<T> readSheet(InputStream is, PoiSheetDataArea poiSheetArea, Map<String, InColumn<?>> columns, InCallback<T> map, Class<T> rowClass) {
         try (Workbook wb = WorkbookFactory.create(is)) {
             String sheetName = poiSheetArea.getSheetName();
             Sheet sheet;
@@ -1002,7 +1001,7 @@ public class ExcelUtil {
             } else {
                 sheet = wb.getSheet(sheetName);
             }
-            return readSheet(sheet, poiSheetArea.getHeaderRowCount(), poiSheetArea.getFooterRowCount(), columns, map, rowClass, allField);
+            return readSheet(sheet, poiSheetArea.getHeaderRowCount(), poiSheetArea.getFooterRowCount(), columns, map, rowClass);
         } catch (Exception e) {
             LOG.error(e);
             return PoiResult.fail(new ErrorMessage(e));
@@ -1019,7 +1018,7 @@ public class ExcelUtil {
      * @param rowClass     数据类
      * @return PoiResult
      */
-    public static <T> PoiResult<T> readSheet(InputStream is, String password, PoiSheetDataArea poiSheetArea, Map<String, InColumn<?>> columns, InCallback<T> map, Class<T> rowClass, Map<String, Field> allField) {
+    public static <T> PoiResult<T> readSheet(InputStream is, String password, PoiSheetDataArea poiSheetArea, Map<String, InColumn<?>> columns, InCallback<T> map, Class<T> rowClass) {
         try (Workbook wb = WorkbookFactory.create(is, password)) {
             String sheetName = poiSheetArea.getSheetName();
             Sheet sheet;
@@ -1028,7 +1027,7 @@ public class ExcelUtil {
             } else {
                 sheet = wb.getSheet(sheetName);
             }
-            return readSheet(sheet, poiSheetArea.getHeaderRowCount(), poiSheetArea.getFooterRowCount(), columns, map, rowClass, allField);
+            return readSheet(sheet, poiSheetArea.getHeaderRowCount(), poiSheetArea.getFooterRowCount(), columns, map, rowClass);
         } catch (Exception e) {
             LOG.error(e);
             return PoiResult.fail(new ErrorMessage(e));
@@ -1043,27 +1042,22 @@ public class ExcelUtil {
      * @param dataEndRowCount 尾部非数据行数量
      * @return PoiResult<T>
      */
-    public static <T> PoiResult<T> readSheet(Sheet sheet, int dataStartRow, int dataEndRowCount, Map<String, InColumn<?>> columns, InCallback<T> map, Class<T> rowClass, Map<String, Field> allField) {
+    public static <T> PoiResult<T> readSheet(Sheet sheet, int dataStartRow, int dataEndRowCount, Map<String, InColumn<?>> columns, InCallback<T> map, Class<T> rowClass) {
         boolean mapClass = PoiCommon.isMapData(rowClass);
         PoiResult<T> rsp = new PoiResult<>();
         List<T> beans = new ArrayList<>();
         // 获取excel中所有图片
         Set<String> hasImgField = new HashSet<>();
+        Map<String, PictureData> pictures = null;
         Collection<InColumn<?>> values = columns.values();
         int sheetIndex = sheet.getWorkbook().getSheetIndex(sheet);
-        // 获取图片
-        Map<String, PictureData> pictures = null;
-        if (values.isEmpty()) {
-            pictures = getSheetPictures(sheetIndex, sheet);
-        } else {
-            for (InColumn<?> inColumn : values) {
-                Type genericType = mapClass ? inColumn.getCellVerifyRule().getType() : allField.get(inColumn.getField()).getGenericType();
-                if (genericType != null && (TypeUtils.equals(genericType, byte[].class) || TypeUtils.equals(genericType, Byte[].class))) {
-                    if (pictures == null) {
-                        pictures = getSheetPictures(sheetIndex, sheet);
-                    }
-                    hasImgField.add(inColumn.getField());
+        for (InColumn<?> inColumn : values) {
+            BaseVerifyRule<?, ?> cellVerify = inColumn.getCellVerifyRule();
+            if (cellVerify instanceof ImgHandler) {
+                if (pictures == null) {
+                    pictures = getSheetPictures(sheetIndex, sheet);
                 }
+                hasImgField.add(inColumn.getField());
             }
         }
 
@@ -1080,61 +1074,46 @@ public class ExcelUtil {
                 if (row == null) {
                     continue;
                 }
-                boolean hasColumn = !columns.isEmpty();
-                int lastCellNum = row.getLastCellNum();
+                int lastCellNum = columns.size() == 0 ? row.getLastCellNum() : columns.size();
                 for (int k = 0; k < lastCellNum; k++) {
                     String fieldName;
                     // 列名称获取
                     String columnIndexChar = PoiConstant.numsRefCell.get(k);
                     String location = columnIndexChar + (j + 1);
                     try {
+                        InColumn<?> inColumn = columns.get(columnIndexChar);
                         Object cellValue;
-                        InColumn<?> inColumn = null;
-                        if (hasColumn) {
-                            inColumn = columns.get(columnIndexChar);
-                            if (inColumn == null) {
-                                continue;
-                            }
+                        if (inColumn != null) {
                             fieldName = inColumn.getField();
                         } else {
                             // 只有map的情况下, 才使用列字符串
-                            fieldName = columnIndexChar;
+                            if (mapClass) {
+                                fieldName = columnIndexChar;
+                            } else {
+                                fieldName = null;
+                            }
                         }
                         if (fieldName == null) {
                             continue;
                         }
 
-                        // 尝试设置图片
                         if (pictures != null && hasImgField.contains(fieldName)) {
                             String pictureIndex = sheetIndex + "," + j + "," + k;
                             PictureData remove = pictures.remove(pictureIndex);
                             cellValue = remove == null ? null : remove.getData();
-                        }else if (pictures != null && mapClass && !hasColumn) {
-                            // 处理导入map，有图片的情况
-                            String pictureIndex = sheetIndex + "," + j + "," + k;
-                            PictureData remove = pictures.remove(pictureIndex);
-                            if(remove == null){
-                                cellValue = getCellValue(row, k, formulaEvaluator);
-                            }else{
-                                cellValue = remove.getData();
-                            }
                         } else {
                             cellValue = getCellValue(row, k, formulaEvaluator);
                         }
 
                         // 校验类型转换处理
                         if (inColumn != null) {
-                            Type genericType = mapClass ? null : allField.get(fieldName).getGenericType();
-                            cellValue = inColumn.getCellVerifyRule().handle(j, k, cellValue, genericType);
+                            cellValue = inColumn.getCellVerifyRule().handle(j, k, cellValue);
                         }
 
                         if (mapClass) {
                             ((Map) data).put(fieldName, cellValue);
                         } else {
-                            Field field = allField.get(fieldName);
-                            if (field != null) {
-                                field.set(data, cellValue);
-                            }
+                            FieldUtils.writeField(data, fieldName, cellValue, true);
                         }
                     } catch (Exception e) {
                         error.add(new ErrorMessage(location, j, k, e));

@@ -12,10 +12,7 @@ import org.apache.poi.ss.util.CellRangeAddress;
 import org.apache.poi.xssf.eventusermodel.XSSFSheetXMLHandler;
 import org.apache.poi.xssf.usermodel.XSSFComment;
 
-import java.lang.reflect.Field;
-import java.lang.reflect.Type;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.function.Consumer;
@@ -50,9 +47,7 @@ public class SheetHandler<T> implements XSSFSheetXMLHandler.SheetContentsHandler
 
     private final List<ErrorMessage> rowError = new ArrayList<>();
 
-    private Map<String, Field> allField;
-
-    public SheetHandler(int sheetIndex, Class<T> entityClass, int headerRowNum, Map<String, InColumn<?>> columns, InCallback<T> map, int batchSize, Consumer<PoiResult<T>> partResult, Map<String, Field> allField) {
+    public SheetHandler(int sheetIndex, Class<T> entityClass, int headerRowNum, Map<String, InColumn<?>> columns, InCallback<T> map, int batchSize, Consumer<PoiResult<T>> partResult) {
         this.sheetIndex = sheetIndex;
         this.entityClass = entityClass;
         this.mapClass = PoiCommon.isMapData(this.entityClass);
@@ -61,7 +56,6 @@ public class SheetHandler<T> implements XSSFSheetXMLHandler.SheetContentsHandler
         this.map = map;
         this.batchSize = batchSize;
         this.partResult = partResult;
-        this.allField = allField;
     }
 
     /**
@@ -111,8 +105,7 @@ public class SheetHandler<T> implements XSSFSheetXMLHandler.SheetContentsHandler
 
                 // 校验类型转换处理
                 if (inColumn != null) {
-                    Type genericType = mapClass ? null : allField.get(fieldName).getGenericType();
-                    cellValue = inColumn.getCellVerifyRule().handle(cellRangeAddress.getFirstRow(), cellRangeAddress.getFirstColumn(), cellValue, genericType);
+                    cellValue = inColumn.getCellVerifyRule().handle(cellRangeAddress.getFirstRow(), cellRangeAddress.getFirstColumn(), cellValue);
                 }
 
                 if (mapClass) {

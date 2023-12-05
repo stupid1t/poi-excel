@@ -137,7 +137,7 @@ public class OpsSheet<R> extends AbsParent<OpsParse<R>> {
             // 校验用户输入, 非Map, 列必填
             if (!this.parent.mapData) {
                 if (columns.isEmpty()) {
-                    throw new UnsupportedOperationException("opsColumn字段不能为空!");
+                    throw new UnsupportedOperationException("导入的opsColumn字段不能为空!");
                 }
             }
 
@@ -157,7 +157,7 @@ public class OpsSheet<R> extends AbsParent<OpsParse<R>> {
             //5.创建Sax的xmlReader对象
             XMLReader xmlReader = XMLReaderFactory.createXMLReader();
             //6.注册事件处理器
-            SheetHandler<R> sheetHandler = new SheetHandler<R>(this.sheetIndex, this.parent.rowClass, this.headerCount, columns, this.map, partSize, partResult, this.parent.allFields);
+            SheetHandler<R> sheetHandler = new SheetHandler<R>(this.sheetIndex, this.parent.rowClass, this.headerCount, columns, this.map, partSize, partResult);
             XSSFSheetXMLHandler xmlHandler = new XSSFSheetXMLHandler(stylesTable, table, sheetHandler, false);
             xmlReader.setContentHandler(xmlHandler);
             //7.逐行读取
@@ -210,14 +210,14 @@ public class OpsSheet<R> extends AbsParent<OpsParse<R>> {
         }
         if (this.parent.fromMode == 1) {
             if (this.parent.password != null) {
-                return ExcelUtil.readSheet(this.parent.fromPath, this.parent.password, poiSheetArea, columns, this.map, this.parent.rowClass, this.parent.allFields);
+                return ExcelUtil.readSheet(this.parent.fromPath, this.parent.password, poiSheetArea, columns, this.map, this.parent.rowClass);
             }
-            return ExcelUtil.readSheet(this.parent.fromPath, poiSheetArea, columns, this.map, this.parent.rowClass, this.parent.allFields);
+            return ExcelUtil.readSheet(this.parent.fromPath, poiSheetArea, columns, this.map, this.parent.rowClass);
         } else if (this.parent.fromMode == 2) {
             if (this.parent.password != null) {
-                return ExcelUtil.readSheet(this.parent.fromStream, this.parent.password, poiSheetArea, columns, this.map, this.parent.rowClass, this.parent.allFields);
+                return ExcelUtil.readSheet(this.parent.fromStream, this.parent.password, poiSheetArea, columns, this.map, this.parent.rowClass);
             }
-            return ExcelUtil.readSheet(this.parent.fromStream, poiSheetArea, columns, this.map, this.parent.rowClass, this.parent.allFields);
+            return ExcelUtil.readSheet(this.parent.fromStream, poiSheetArea, columns, this.map, this.parent.rowClass);
         }
         return PoiResult.fail(null);
     }
