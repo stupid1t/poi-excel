@@ -28,17 +28,7 @@ poi-excel 是一个基于 Apache POI 的 Java 工具，旨在简化新手在处�
 
 只需要将以下依赖项添加到项目的 pom.xml 文件中即可：
 ```xml
-<!-- excel导入导出 POI版本为5.2.2 -->
-<dependency>
-    <groupId>com.github.stupdit1t</groupId>
-    <artifactId>poi-excel</artifactId>
-    <version>3.2.4</version>
-</dependency>
-```
-最新优化快照版本，更方便使用。文档看`3.3.0-SNAPSHOT`分支
-
-```xml
-
+<!-- excel导入导出 POI版本为5.2.3 -->
 <dependency>
     <groupId>com.github.stupdit1t</groupId>
     <artifactId>poi-excel</artifactId>
@@ -46,22 +36,6 @@ poi-excel 是一个基于 Apache POI 的 Java 工具，旨在简化新手在处�
 </dependency>
 ```
 
-如版本冲突，目前兼容两个低版本POI，截止到3.2.2版本
-```xml
-<!-- excel导入导出 POI版本为3.17 -->
-<dependency>
-    <groupId>com.github.stupdit1t</groupId>
-    <artifactId>poi-excel</artifactId>
-    <version>poi-317.8</version>
-</dependency>
-
-<!-- excel导入导出 POI版本为4.1.2 -->
-<dependency>
-<groupId>com.github.stupdit1t</groupId>
-<artifactId>poi-excel</artifactId>
-<version>poi-412.8</version>
-</dependency>
-```
 在 Spring 环境下的以下是一个简单的示例代码，进行导出操作：
 ```java
 @GetMapping("/export")
@@ -76,7 +50,6 @@ public void export(HttpServletResponse response, SysErrorLogQueryParam queryPara
                 .texts("请求地址", "请求方式", "IP地址", "简要信息", "异常时间", "创建人").done()
             .opsColumn()
                 .fields("requestUri","requestMethod","ip","errorSimpleInfo","createDate","creatorName").done()
-            .done()
             .export(response, "异常日志.xlsx");
 }
 ```
