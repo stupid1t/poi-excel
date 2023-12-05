@@ -58,4 +58,8 @@ public class OpsColumn<R> extends AbsParent<OpsSheet<R>> {
         columns.put(index, inColumn);
         return inColumn.getCellVerifyRule();
     }
+
+    public OpsSheet<R> fieldAuto(String index, String field) {
+        return this.parent;
+    }
 }

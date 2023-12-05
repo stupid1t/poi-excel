@@ -92,17 +92,16 @@ public class OpsSheet<R> extends AbsParent<OpsParse<R>> {
     }
 
     public OpsColumn<R> opsColumn() {
-        return this.opsColumn(false);
+       return this.opsColumn(false);
     }
 
     /**
      * 列设置
-     *
      * @param autoField 是否自动字段
      * @return
      */
     public OpsColumn<R> opsColumn(boolean autoField) {
-        this.opsColumn = new OpsColumn<>(this, autoField);
+        this.opsColumn = new OpsColumn<>( this, autoField);
         return this.opsColumn;
     }
 
@@ -120,7 +119,7 @@ public class OpsSheet<R> extends AbsParent<OpsParse<R>> {
      * 行回调方法
      *
      * @param map row 当前数据
-     *            index 当前数据下标
+     *                 index 当前数据下标
      * @return OpsSheet
      */
     public OpsSheet<R> map(InCallback<R> map) {
@@ -136,16 +135,20 @@ public class OpsSheet<R> extends AbsParent<OpsParse<R>> {
      */
     public void parsePart(int partSize, Consumer<PoiResult<R>> partResult) {
         try {
-            // 校验用户输入, 非Map, 列必填
-            if (this.opsColumn == null || (!parent.mapData && this.opsColumn.columns.isEmpty())) {
-                throw new UnsupportedOperationException("导入的opsColumn字段不能为空!");
+            Map<String, InColumn<?>> columns = Collections.emptyMap();
+            if (this.opsColumn != null) {
+                columns = this.opsColumn.columns;
             }
-
-            Map<String, InColumn<?>> columns =  this.opsColumn.columns;
 
             // 校验用户输入, 必填项校验
             if (StringUtils.isBlank(this.parent.fromPath) && this.parent.fromStream == null) {
                 throw new UnsupportedOperationException("Excel来源不能为空!");
+            }
+            // 校验用户输入, 非Map, 列必填
+            if (!this.parent.mapData) {
+                if (columns.isEmpty()) {
+                    throw new UnsupportedOperationException("opsColumn字段不能为空!");
+                }
             }
 
             //1.根据excel报表获取OPCPackage
@@ -164,7 +167,7 @@ public class OpsSheet<R> extends AbsParent<OpsParse<R>> {
             //5.创建Sax的xmlReader对象
             XMLReader xmlReader = XMLReaderFactory.createXMLReader();
             //6.注册事件处理器
-            SheetHandler<R> sheetHandler = new SheetHandler<R>(this.opsColumn.autoField, this.sheetIndex, this.parent.rowClass, this.headerCount, columns, this.map, partSize, partResult, this.parent.allFields);
+            SheetHandler<R> sheetHandler = new SheetHandler<R>(this.sheetIndex, this.parent.rowClass, this.headerCount, columns, this.map, partSize, partResult, this.parent.allFields);
             XSSFSheetXMLHandler xmlHandler = new XSSFSheetXMLHandler(stylesTable, table, sheetHandler, false);
             xmlReader.setContentHandler(xmlHandler);
             //7.逐行读取
@@ -194,17 +197,19 @@ public class OpsSheet<R> extends AbsParent<OpsParse<R>> {
      * @return PoiResult
      */
     public PoiResult<R> parse() {
-        // 校验用户输入, 非Map, 列必填
-        if (this.opsColumn == null || (!parent.mapData && this.opsColumn.columns.isEmpty())) {
-            throw new UnsupportedOperationException("导入的opsColumn字段不能为空!");
+        Map<String, InColumn<?>> columns = new HashMap<>();
+        if (this.opsColumn != null) {
+            columns = this.opsColumn.columns;
         }
 
-        Map<String, InColumn<?>> columns = this.opsColumn.columns;
         // 校验用户输入, 必填项校验
         if (StringUtils.isBlank(this.parent.fromPath) && this.parent.fromStream == null) {
             throw new UnsupportedOperationException("Excel来源不能为空!");
         }
-
+        // 校验用户输入, 非Map, 列必填
+        if (columns.isEmpty()) {
+            throw new UnsupportedOperationException("导入的opsColumn字段不能为空!");
+        }
 
         PoiSheetDataArea poiSheetArea;
         if (StringUtils.isNotBlank(this.sheetName)) {
