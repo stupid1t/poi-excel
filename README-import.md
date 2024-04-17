@@ -141,7 +141,13 @@ public class Test {
                 // 指定数据区域
                 .opsSheet(0, 1, 0)
                 .opsColumn()
-                .field(Col.A, ProjectEvaluate::getProjectName)
+                .field(Col.A, ProjectEvaluate::getProjectName).map((val) -> {
+                    // 自定义验证，抛异常
+                    if (val == null) {
+                        throw PoiException.error("项目名称不能为空!");
+                    }
+                    return val;
+                })
                 .field(Col.H, ProjectEvaluate::getScore)
                 .done()
                 .parse();

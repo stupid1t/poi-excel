@@ -1,6 +1,7 @@
 package excel.parse;
 
 import com.github.stupdit1t.excel.common.Col;
+import com.github.stupdit1t.excel.common.PoiException;
 import com.github.stupdit1t.excel.common.PoiResult;
 import com.github.stupdit1t.excel.core.ExcelHelper;
 import org.junit.After;
@@ -32,10 +33,18 @@ public class ParseMapTest {
     public void parseMap1() {
         name.set("快速转map，自动映射列");
         PoiResult<HashMap> parse = ExcelHelper.opsParse(HashMap.class)
-                .from("src/test/java/excel/parse/excel/simpleExport.xlsx")
+                .from("src/test/java/excel/parse/excel/simpleExport - 副本.xls")
                 // 指定数据区域
                 .opsSheet(0, 1, 0)
-                .opsColumn(true).done()
+                .opsColumn(true)
+                .field(Col.A, "A").defaultValue("").map((val) -> {
+                    // 自定义验证，抛异常
+                    if (val == null) {
+                        throw PoiException.error("单元格不能为空!");
+                    }
+                    return val;
+                })
+                .done()
                 .parse();
         if (parse.hasError()) {
             // 输出验证不通过的信息
@@ -103,6 +112,11 @@ public class ParseMapTest {
         // 打印解析的数据
         parse.getData().forEach(System.out::println);
     }
+
+    public static void main(String[] args) {
+        System.out.println(1 | 0);
+    }
+
 }
 
 
