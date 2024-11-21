@@ -282,6 +282,10 @@ public class OpsSheet<R> extends AbsParent<OpsExport> implements OpsFinish {
         this.parent.export(toResponse, fileName);
     }
 
+    public void export(jakarta.servlet.http.HttpServletResponse toResponse, String fileName) {
+        this.parent.export(toResponse, fileName);
+    }
+
     @Override
     public void export(Workbook workbook) {
         this.parent.export(workbook);

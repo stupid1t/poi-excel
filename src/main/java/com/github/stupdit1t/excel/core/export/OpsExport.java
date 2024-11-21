@@ -78,6 +78,11 @@ public class OpsExport implements OpsFinish {
 	HttpServletResponse response;
 
 	/**
+	 * 输出 Servlet 响应
+	 */
+	jakarta.servlet.http.HttpServletResponse responseNew;
+
+	/**
 	 * 输出 Servlet 响应 文件名
 	 */
 	String responseName;
@@ -197,6 +202,21 @@ public class OpsExport implements OpsFinish {
 	}
 
 	/**
+	 * 输出servlet
+	 *
+	 * @param toResponse 输出servlet
+	 * @param fileName   文件名
+	 */
+	@Override
+	public void export(jakarta.servlet.http.HttpServletResponse toResponse, String fileName) {
+		checkSetToMode(3);
+		this.responseNew = toResponse;
+		this.responseName = fileName;
+		final Workbook workbook = this.getWorkBook();
+		this.export(workbook);
+	}
+
+	/**
 	 * 执行输出
 	 *
 	 * @param workbook 导出workbook
@@ -212,7 +232,11 @@ public class OpsExport implements OpsFinish {
 				OpsPoiUtil.export(workbook, this.stream, this.password);
 				break;
 			case 3:
-				OpsPoiUtil.export(workbook, this.response, this.responseName, this.password);
+				if (this.response != null) {
+					OpsPoiUtil.export(workbook, this.response, this.responseName, this.password);
+				} else {
+					OpsPoiUtil.export(workbook, this.responseNew, this.responseName, this.password);
+				}
 				break;
 		}
 	}

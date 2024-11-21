@@ -33,6 +33,14 @@ public interface OpsFinish {
     void export(HttpServletResponse toResponse, String fileName);
 
     /**
+     * 输出servlet
+     *
+     * @param toResponse 输出servlet
+     * @param fileName   文件名
+     */
+    void export(jakarta.servlet.http.HttpServletResponse toResponse, String fileName);
+
+    /**
      * 执行输出
      *
      * @param workbook 导出workbook
