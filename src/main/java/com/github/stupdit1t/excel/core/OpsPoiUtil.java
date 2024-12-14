@@ -8,6 +8,7 @@ import com.github.stupdit1t.excel.core.export.OutColumn;
 import com.github.stupdit1t.excel.core.parse.InColumn;
 import com.github.stupdit1t.excel.style.CellPosition;
 import com.github.stupdit1t.excel.style.ICellStyle;
+import jakarta.servlet.http.HttpServletResponse;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.reflect.TypeUtils;
 import org.apache.commons.lang3.time.DateUtils;
@@ -28,7 +29,6 @@ import org.apache.poi.xssf.streaming.SXSSFWorkbook;
 import org.apache.poi.xssf.usermodel.*;
 import org.openxmlformats.schemas.drawingml.x2006.spreadsheetDrawing.CTMarker;
 
-import javax.servlet.http.HttpServletResponse;
 import java.io.*;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
@@ -139,28 +139,6 @@ public class OpsPoiUtil {
     }
 
     /**
-     * 获取导出Excel的流
-     *
-     * @param response 响应流
-     * @param fileName 文件名
-     */
-    static OutputStream getDownloadStream(jakarta.servlet.http.HttpServletResponse response, String fileName) {
-        try {
-            if (fileName.endsWith(".xlsx")) {
-                response.setContentType("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet");
-            } else {
-                response.setContentType("application/vnd.ms-excel");
-            }
-            response.setCharacterEncoding(StandardCharsets.UTF_8.name());
-            response.setHeader("Content-disposition", "attachment; filename=" + URLEncoder.encode(fileName, StandardCharsets.UTF_8.name()));
-            return response.getOutputStream();
-        } catch (IOException e) {
-            LOG.error(e);
-        }
-        return null;
-    }
-
-    /**
      * 导出
      *
      * @param workbook 工作簿
@@ -169,18 +147,6 @@ public class OpsPoiUtil {
      * @param fileName 文件名
      */
     public static void export(Workbook workbook, HttpServletResponse response, String fileName, String password) {
-        export(workbook, getDownloadStream(response, fileName), password);
-    }
-
-    /**
-     * 导出
-     *
-     * @param workbook 工作簿
-     * @param response 响应
-     * @param password 文件密码
-     * @param fileName 文件名
-     */
-    public static void export(Workbook workbook, jakarta.servlet.http.HttpServletResponse response, String fileName, String password) {
         export(workbook, getDownloadStream(response, fileName), password);
     }
 

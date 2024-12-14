@@ -1,8 +1,8 @@
 package com.github.stupdit1t.excel.core.export;
 
+import jakarta.servlet.http.HttpServletResponse;
 import org.apache.poi.ss.usermodel.Workbook;
 
-import javax.servlet.http.HttpServletResponse;
 import java.io.OutputStream;
 
 /**
@@ -32,13 +32,6 @@ public interface OpsFinish {
      */
     void export(HttpServletResponse toResponse, String fileName);
 
-    /**
-     * 输出servlet
-     *
-     * @param toResponse 输出servlet
-     * @param fileName   文件名
-     */
-    void export(jakarta.servlet.http.HttpServletResponse toResponse, String fileName);
 
     /**
      * 执行输出
