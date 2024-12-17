@@ -1,6 +1,6 @@
-### v3.3.1
+### v4.0.0
 
-1. 添加 `jakarta.servlet-api` 支持
+1. 添加 `jakarta.servlet-api` 支持，最低java11
 
 ### v3.3.0
 
