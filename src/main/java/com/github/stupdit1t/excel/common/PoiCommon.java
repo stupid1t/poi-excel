@@ -51,6 +51,9 @@ public class PoiCommon {
      * @return Map<String, Field>
      */
     public static Map<String, Field> getAllFields(Class<?> t) {
+        if (Map.class.isAssignableFrom(t)) {
+            return new HashMap<>();
+        }
         Map<String, Field> field = new LinkedHashMap<>();
         List<Field> allFieldsList = FieldUtils.getAllFieldsList(t);
         for (Field f : allFieldsList) {
