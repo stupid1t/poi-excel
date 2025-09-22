@@ -33,11 +33,11 @@ public class ParseMapTest {
     public void parseMap1() {
         name.set("快速转map，自动映射列");
         PoiResult<HashMap> parse = ExcelHelper.opsParse(HashMap.class)
-                .from("src/test/java/excel/parse/excel/simpleExport - 副本.xls")
+                .from("src/test/java/excel/parse/excel/simpleExport.xls")
                 // 指定数据区域
                 .opsSheet(0, 1, 0)
                 .opsColumn(true)
-                .field(Col.A, "A").defaultValue("").map((val) -> {
+                .field(Col.AS, "AS").defaultValue("").map((val) -> {
                     // 自定义验证，抛异常
                     if (val == null) {
                         throw PoiException.error("单元格不能为空!");
