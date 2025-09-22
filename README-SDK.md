@@ -736,4 +736,144 @@ String fileName = URLEncoder.encode("中文文件名.xlsx", StandardCharsets.UTF
 response.setHeader("Content-Disposition", "attachment; filename=" + fileName);
 ```
 
-**Q
+**Q: 密码保护的Excel文件无法读取？**
+
+A: 使用password方法设置密码：
+
+```java
+ExcelHelper.opsParse(Student.class)
+    .from("protected.xlsx")
+    .password("yourPassword")  // 设置密码
+    .opsSheet(0, 1, 0)
+    .opsColumn(true).done()
+    .parse();
+```
+
+**Q: 模板替换变量未生效？**
+
+A: 检查变量名格式和数据类型：
+
+```java
+// 确保模板中使用 ${variableName} 格式
+// 确保变量名完全匹配
+ExcelHelper.opsReplace()
+    .from("template.xlsx")
+    .var("projectName", "正确的项目名称")  // 变量名必须与模板一致
+    .export("result.xlsx");
+```
+
+### ⚡ 性能相关问题
+
+**Q: 处理大文件时内存溢出？**
+
+A: 使用流式处理和分批操作：
+
+```java
+// 1. 使用BIG_XLSX格式
+ExcelHelper.opsExport(PoiWorkbookType.BIG_XLSX)
+
+// 2. 分批导入
+ExcelHelper.opsParse(Student.class)
+    .from("large_file.xlsx")
+    .opsSheet(0, 1, 0)
+    .opsColumn(true).done()
+    .parsePart(1000, this::processBatch);  // 每1000条处理一次
+```
+
+**Q: 导出速度慢如何优化？**
+
+A: 使用并行导出和合适的工作簿类型：
+
+```java
+// 多Sheet并行导出
+ExcelHelper.opsExport(PoiWorkbookType.XLSX)
+    .parallelSheet()  // 启用并行
+    .opsSheet(data1).sheetName("Sheet1").done()
+    .opsSheet(data2).sheetName("Sheet2").done()
+    .export("multi_sheet.xlsx");
+```
+
+### 🔧 配置相关问题
+
+**Q: 如何调整JVM参数优化性能？**
+
+A: 推荐的JVM参数配置：
+
+```bash
+# 生产环境推荐配置
+-Xms2g -Xmx4g
+-XX:+UseG1GC
+-XX:MaxGCPauseMillis=200
+-XX:+PrintGCDetails
+-XX:+PrintGCTimeStamps
+```
+
+**Q: Spring Boot项目中如何配置？**
+
+A: 添加配置类：
+
+```java
+@Configuration
+public class ExcelConfig {
+    
+    @Bean
+    public ICellStyle customHeaderStyle() {
+        return new ICellStyle() {
+            @Override
+            public CellPosition getPosition() {
+                return CellPosition.HEADER;
+            }
+            
+            @Override
+            public void handleStyle(Font font, CellStyle cellStyle) {
+                font.setBold(true);
+                cellStyle.setFillForegroundColor(IndexedColors.LIGHT_BLUE.index);
+                cellStyle.setFillPattern(FillPatternType.SOLID_FOREGROUND);
+            }
+        };
+    }
+}
+```
+
+## 版本历史
+
+### v1.0.0 (最新版本)
+- ✅ 完整的导出功能支持
+- ✅ 强大的导入数据校验
+- ✅ 灵活的模板替换机制
+- ✅ 丰富的样式自定义
+- ✅ 高性能大数据处理
+- ✅ 完善的异常处理
+
+### 路线图
+- 🔄 图表导出支持
+- 🔄 更多数据格式支持
+- 🔄 性能进一步优化
+- 🔄 更丰富的样式模板
+
+---
+
+## 🤝 贡献指南
+
+我们欢迎社区贡献！如果您发现bug或有新功能建议，请：
+
+1. Fork 项目
+2. 创建功能分支 (`git checkout -b feature/AmazingFeature`)
+3. 提交更改 (`git commit -m 'Add some AmazingFeature'`)
+4. 推送到分支 (`git push origin feature/AmazingFeature`)
+5. 创建 Pull Request
+
+## 📄 许可证
+
+本项目基于 Apache 2.0 许可证开源 - 查看 [LICENSE](LICENSE) 文件了解详情。
+
+## 🆘 技术支持
+
+- 📧 邮箱: support@poi-excel.com
+- 💬 QQ群: 123456789
+- 📚 文档: [https://poi-excel.github.io](https://poi-excel.github.io)
+- 🐛 Bug报告: [GitHub Issues](https://github.com/poi-excel/poi-excel/issues)
+
+---
+
+**⭐ 如果这个项目对您有帮助，请给我们一个Star！**
