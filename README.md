@@ -25,14 +25,23 @@ poi-excel 是一个基于 Apache POI 的 Java 工具，旨在简化新手在处�
 
 ## 最佳实践
 > 需要 Java 8 环境。
-
-只需要将以下依赖项添加到项目的 pom.xml 文件中即可：
 ```xml
 <!-- excel导入导出 POI版本为5.2.3 -->
 <dependency>
     <groupId>com.github.stupdit1t</groupId>
     <artifactId>poi-excel</artifactId>
     <version>3.3.0</version>
+</dependency>
+```
+
+> 需要 Java 11 环境。
+
+```xml
+<!-- excel导入导出 POI版本为5.2.3 -->
+<dependency>
+    <groupId>com.github.stupdit1t</groupId>
+    <artifactId>poi-excel</artifactId>
+    <version>4.0.0</version>
 </dependency>
 ```
 
